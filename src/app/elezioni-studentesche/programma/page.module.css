@@ -1,0 +1,192 @@
+.hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #2d1515 50%, var(--red-darker) 100%);
+  padding: 8rem 1.5rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: var(--white);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 800px;
+}
+
+.heroInner h1 {
+  color: var(--white);
+  font-size: clamp(2rem, 4.5vw, 3rem);
+}
+
+.heroInner > p {
+  color: rgba(255,255,255,0.75);
+  font-size: 1.1rem;
+}
+
+.jumpLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.jumpChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.jumpChip:hover {
+  background: rgba(255,255,255,0.18);
+  color: var(--white);
+}
+
+/* TEMI */
+.temiList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.temaSection {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  scroll-margin-top: 100px;
+}
+
+.temaSection:hover {
+  border-color: var(--red-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.temaHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 2.5rem;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.temaNumber {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--gray-200);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.temaTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.temaIcon {
+  font-size: 2rem;
+}
+
+.temaHeader h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.temaPoints {
+  padding: 1.5rem 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: var(--off-white);
+}
+
+.temaPoint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.pointBullet {
+  color: var(--red-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.temaPoint span:last-child {
+  color: var(--gray-700);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* FACOLTA */
+.facoltaGrid {
+  margin-top: 2.5rem;
+}
+
+.facoltaCard {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.facoltaCard h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.comingSoon {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  font-style: italic;
+}
+
+/* BACK */
+.backSection {
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .temaHeader {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .temaNumber {
+    font-size: 2rem;
+  }
+
+  .temaPoints {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .jumpLinks {
+    display: none;
+  }
+}
