@@ -39,8 +39,11 @@ next-env.d.ts
 .vscode/
 *.swp
 *.swo
+.gemini/
 
 # Netlify
 .netlify/
 
 modifiche/
+
+archivi_walkthrough/
