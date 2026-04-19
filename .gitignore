@@ -42,3 +42,5 @@ next-env.d.ts
 
 # Netlify
 .netlify/
+
+modifiche/

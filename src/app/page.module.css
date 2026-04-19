@@ -204,7 +204,7 @@
 }
 
 .aboutCardFeatured::before {
-  content: 'Prima lista d\2019Ateneo';
+  content: "Prima lista d'Ateneo";
   position: absolute;
   top: -14px;
   left: 50%;
@@ -217,6 +217,8 @@
   padding: 0.25rem 0.9rem;
   border-radius: var(--radius-full);
   white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 5;
 }
 
 .cardIcon {

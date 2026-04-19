@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './Navbar.module.css';
 
 const NAV_ITEMS = [
@@ -28,12 +29,11 @@ const NAV_ITEMS = [
     label: 'Matricole',
     href: '/matricole',
     children: [
-      { label: 'Guida per le Matricole', href: '/matricole/guida' },
       { label: 'Gruppi WhatsApp & Telegram', href: '/matricole/gruppi' },
       { label: 'Kit dello Studente', href: '/matricole/kit' },
     ],
   },
-  { label: 'UDU', href: '/udu' },
+  { label: 'UDU', href: 'https://unioneuniversitari.it/', external: true },
   { label: 'Contatti', href: '/contatti' },
 ];
 
@@ -72,6 +72,14 @@ export default function Navbar() {
       <div className={`container ${styles.inner}`}>
         {/* LOGO */}
         <Link href="/" className={styles.logo} onClick={() => setMobileOpen(false)}>
+          <Image
+            src="/gulliver-tondo.png"
+            alt="Gulliver UNIVPM"
+            width={44}
+            height={44}
+            className={styles.logoImg}
+            priority
+          />
           <span className={styles.logoText}>GULLIVER</span>
           <span className={styles.logoDot} />
           <span className={styles.logoSub}>UNIVPM</span>
@@ -86,17 +94,28 @@ export default function Navbar() {
               onMouseEnter={() => item.children ? handleMouseEnter(item.label) : undefined}
               onMouseLeave={item.children ? handleMouseLeave : undefined}
             >
-              <Link
-                href={item.href}
-                className={`${styles.navLink} ${item.children ? styles.hasDropdown : ''}`}
-              >
-                {item.label}
-                {item.children && (
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={`${styles.chevron} ${openDropdown === item.label ? styles.chevronOpen : ''}`}>
-                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
-              </Link>
+              {'external' in item && item.external ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.navLink}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={`${styles.navLink} ${item.children ? styles.hasDropdown : ''}`}
+                >
+                  {item.label}
+                  {item.children && (
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={`${styles.chevron} ${openDropdown === item.label ? styles.chevronOpen : ''}`}>
+                      <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </Link>
+              )}
               {item.children && (
                 <div
                   className={`${styles.dropdown} ${openDropdown === item.label ? styles.dropdownOpen : ''}`}
@@ -113,13 +132,6 @@ export default function Navbar() {
             </div>
           ))}
         </nav>
-
-        {/* CTA */}
-        <div className={styles.navCta}>
-          <Link href="/contatti" className="btn btn-primary" id="nav-contattaci">
-            Contattaci
-          </Link>
-        </div>
 
         {/* HAMBURGER */}
         <button
@@ -140,13 +152,24 @@ export default function Navbar() {
         <nav className={styles.mobileNav} aria-label="Menu mobile">
           {NAV_ITEMS.map((item) => (
             <div key={item.label} className={styles.mobileNavItem}>
-              <Link
-                href={item.href}
-                className={styles.mobileNavLink}
-                onClick={() => { if (!item.children) setMobileOpen(false); }}
-              >
-                {item.label}
-              </Link>
+              {'external' in item && item.external ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.mobileNavLink}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={styles.mobileNavLink}
+                  onClick={() => { if (!item.children) setMobileOpen(false); }}
+                >
+                  {item.label}
+                </Link>
+              )}
               {item.children && (
                 <div className={styles.mobileSubMenu}>
                   {item.children.map((child) => (

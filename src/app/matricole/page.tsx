@@ -22,7 +22,7 @@ export default function MatricolePage() {
           clipPath: 'ellipse(55% 100% at 50% 100%)',
         }} />
         <div className="container">
-          <span className="section-tag section-tag-white">Nuovɜ universitariɜ</span>
+          <span className="section-tag section-tag-white">UNIVPM</span>
           <h1 style={{ color: 'var(--white)', marginTop: '1rem', fontSize: 'clamp(2rem, 4.5vw, 3rem)' }}>Matricole</h1>
           <p style={{ color: 'rgba(255,255,255,0.75)', marginTop: '0.75rem', fontSize: '1.1rem', maxWidth: '600px' }}>
             Iniziare l&apos;università può essere disorientante. Siamo qui per aiutarti.

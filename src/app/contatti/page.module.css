@@ -36,15 +36,16 @@
   line-height: 1.7;
 }
 
-/* CONTACT GRID */
+/* CONTACT GRID - 4 card allineate */
 .contactGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
+  align-items: stretch;
 }
 
 .contactCard {
-  padding: 2rem 1.75rem;
+  padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -53,12 +54,14 @@
 }
 
 .contactCard h3 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .contactCard p {
   font-size: 0.875rem;
   color: var(--gray-600);
+  margin: 0;
 }
 
 .contactCardLink {
@@ -66,101 +69,172 @@
   cursor: pointer;
 }
 
+.contactCardTall {
+  /* Card Contatti più alta: si allunga automaticamente con align-items: stretch */
+}
+
 .contactIcon {
-  font-size: 2.5rem;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--red-soft);
+  color: var(--red-primary);
   margin-bottom: 0.25rem;
+  flex-shrink: 0;
+}
+
+.contactCardLink:hover .contactIcon {
+  background: var(--red-primary);
+  color: var(--white);
+  transition: all var(--transition-base);
 }
 
 .contactLink {
   color: var(--red-primary);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   margin-top: auto;
   transition: color var(--transition-fast);
   word-break: break-all;
+  text-decoration: none;
 }
 
 .contactCardLink:hover .contactLink {
   color: var(--red-dark);
 }
 
-/* FORM */
-.formSection {
-  padding: 5rem 1.5rem 6rem;
-}
-
-.formWrapper {
-  max-width: 760px;
-  margin: 0 auto;
-}
-
-.formHeader {
-  margin-bottom: 2.5rem;
+/* Referenti list inside card */
+.referentiList {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.25rem;
 }
 
-.formHeader h2 {
-  font-size: 2rem;
+.referente {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem;
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
 }
 
-.formHeader p {
+.referente strong {
+  font-size: 0.95rem;
+  color: var(--dark);
+}
+
+.referente span {
+  font-size: 0.8rem;
   color: var(--gray-600);
+  line-height: 1.4;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
+/* AULETTE GRID */
+.aulettaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
-.formRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-}
-
-.formGroup {
+.aulettaCard {
+  padding: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
-.formGroup label {
+.aulettaHeader {
+  background: var(--red-primary);
+  padding: 1.25rem 1.5rem;
+}
+
+.aulettaHeader h3 {
+  color: var(--white);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.aulettaBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.aulettaRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
   font-size: 0.875rem;
+}
+
+.aulettaLabel {
   font-weight: 600;
-  color: var(--gray-800);
-  font-family: var(--font-heading);
+  color: var(--gray-700);
+  flex-shrink: 0;
+  width: 70px;
 }
 
-.formInput {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--radius-md);
-  font-family: var(--font-body);
-  font-size: 0.95rem;
+.aulettaLink {
+  color: var(--red-primary);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+  word-break: break-all;
+}
+
+.aulettaLink:hover {
+  color: var(--red-dark);
+}
+
+.aulettaReferente {
+  border-top: 1px solid var(--gray-200);
+  padding-top: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.aulettaReferenteName {
+  display: block;
+  font-weight: 600;
   color: var(--dark);
-  background: var(--white);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  resize: vertical;
-  outline: none;
+  font-size: 0.875rem;
+  margin-bottom: 0.2rem;
 }
 
-.formInput:focus {
-  border-color: var(--red-primary);
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
-}
+/* COLOR VARIATIONS */
+.cardGreen .aulettaHeader { background-color: #27ae60; }
+.cardGreen .aulettaLink { color: #27ae60; }
+.cardGreen .aulettaLink:hover { color: #1e8449; }
 
-.formInput::placeholder {
-  color: var(--gray-400);
-}
+.cardYellow .aulettaHeader { background-color: #f1c40f; }
+.cardYellow .aulettaHeader h3 { color: #2c3e50; } /* Darker text for yellow background */
+.cardYellow .aulettaLink { color: #d4ac0d; }
+.cardYellow .aulettaLink:hover { color: #b7950b; }
+
+.cardPurple .aulettaHeader { background-color: #9b59b6; }
+.cardPurple .aulettaLink { color: #8e44ad; }
+.cardPurple .aulettaLink:hover { color: #71368a; }
+
+.cardBlue .aulettaHeader { background-color: #2980b9; }
+.cardBlue .aulettaLink { color: #2980b9; }
+.cardBlue .aulettaLink:hover { color: #21618c; }
+
+.cardRed .aulettaHeader { background-color: var(--red-primary); }
+.cardRed .aulettaLink { color: var(--red-primary); }
+.cardRed .aulettaLink:hover { color: var(--red-dark); }
 
 /* Responsive */
 @media (max-width: 1024px) {
   .contactGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .aulettaGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -169,8 +243,7 @@
   .contactGrid {
     grid-template-columns: 1fr;
   }
-
-  .formRow {
+  .aulettaGrid {
     grid-template-columns: 1fr;
   }
 }

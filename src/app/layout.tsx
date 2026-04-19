@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     "Ancona",
   ],
   authors: [{ name: "Gulliver UNIVPM" }],
+  icons: {
+    icon: "/gulliver-tondo.png",
+    shortcut: "/gulliver-tondo.png",
+    apple: "/gulliver-tondo.png",
+  },
   openGraph: {
     type: "website",
     locale: "it_IT",

@@ -1,0 +1,248 @@
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--red-darker) 0%, var(--red-primary) 100%);
+  padding: 9rem 1.5rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--white);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 700px;
+}
+
+.heroInner h1 {
+  color: var(--white);
+  font-size: clamp(2.5rem, 5.5vw, 3.75rem);
+}
+
+.heroInner p {
+  color: rgba(255,255,255,0.8);
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+
+.heroCtas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+/* DESC SECTION */
+.descSection {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4rem;
+  align-items: start;
+}
+
+.descTitle {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 1rem;
+}
+
+.descStats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statBox {
+  background: var(--red-soft);
+  border: 2px solid var(--red-muted);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.75rem;
+  text-align: center;
+  min-width: 140px;
+}
+
+.statNum {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--red-primary);
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* EVENT GRID */
+.eventGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.locandina {
+  position: relative;
+}
+
+.eventInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editionBadge {
+  display: inline-block;
+  background: var(--red-primary);
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  padding: 0.4rem 1.1rem;
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+.eventTitle {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  color: var(--dark);
+  margin: 0;
+}
+
+.eventDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.eventDetailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.eventDetailIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 2rem;
+  text-align: center;
+  margin-top: 0.1rem;
+}
+
+.eventDetailItem div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.eventDetailItem strong {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-500);
+  font-family: var(--font-heading);
+}
+
+.eventDetailItem span {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.freeEntry {
+  color: var(--red-primary) !important;
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+  font-family: var(--font-heading);
+}
+
+/* EDITIONS TABLE */
+.editionsTable {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+}
+
+.editionRow {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--gray-100);
+  transition: background var(--transition-fast);
+}
+
+.editionRow:last-child {
+  border-bottom: none;
+}
+
+.editionRow:hover {
+  background: var(--red-soft);
+}
+
+.editionYear {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--red-primary);
+  width: 130px;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.editionArtists {
+  color: var(--gray-700);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .descSection {
+    grid-template-columns: 1fr;
+  }
+  .descStats {
+    flex-direction: row;
+  }
+  .eventGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .descStats {
+    flex-wrap: wrap;
+  }
+  .editionRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .editionYear {
+    width: auto;
+  }
+  .heroCtas {
+    flex-direction: column;
+  }
+}

@@ -20,12 +20,11 @@ export default function ElezioniPage() {
             <span className={styles.dateChip}>13</span>
             <span className={styles.dateSep}>·</span>
             <span className={styles.dateChip}>14</span>
-            <span className={styles.dateSepLabel}>Maggio 2025</span>
+            <span className={styles.dateSepLabel}>Maggio 2026</span>
           </div>
           <h1>Elezioni Studentesche UNIVPM</h1>
           <p>
-            Il momento in cui la tua voce conta davvero. Vota Gulliver e scegli
-            chi lavora ogni giorno per i tuoi diritti.
+            Abbiamo ancora tanto da fare, facciamolo insieme.
           </p>
 
           <div className={styles.heroCtas}>
@@ -67,14 +66,11 @@ export default function ElezioniPage() {
             <span className="section-tag">Il nostro impegno</span>
             <h2>Il programma elettorale</h2>
             <div className="divider-red divider-red-center" />
-            <p style={{ maxWidth: '600px', margin: '0 auto' }}>
-              9 aree tematiche, proposte concrete, ascolto costante della comunità studentesca.
-            </p>
           </div>
 
           <div className={`grid-3 ${styles.programGrid}`}>
             {PROGRAMMA_ITEMS.map((item) => (
-              <Link key={item.id} href={`/elezioni-studentesche/programma#${item.anchor}`} className={styles.programCard} id={item.id}>
+              <Link key={item.id} href={`/elezioni-studentesche/programma/${item.anchor}`} className={styles.programCard} id={item.id}>
                 <span className={styles.programIcon}>{item.icon}</span>
                 <h4>{item.title}</h4>
                 <p>{item.desc}</p>

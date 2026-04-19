@@ -34,43 +34,55 @@ export default function RappresentanzaPage() {
 
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'start' }}>
             <div>
               <h2>Come operiamo</h2>
               <div className="divider-red" />
-              <p style={{ lineHeight: 1.8, marginBottom: '1.25rem' }}>
-                Siamo presenti in tutti gli <strong>organi collegiali</strong> dell&apos;UNIVPM:
-                Senato Accademico, Consiglio di Amministrazione, Consigli di Dipartimento
-                e Commissioni Paritetiche.
+              <p style={{ lineHeight: 1.85, marginBottom: '1.25rem' }}>
+                Siamo presenti in tutti gli <strong>organi collegiali</strong> dell&apos;UNIVPM: Senato Accademico, 
+                Consiglio di Amministrazione, Consigli di Facoltà e Dipartimento, Consigli di Corso e 
+                Commissioni Paritetiche.
               </p>
-              <p style={{ lineHeight: 1.8, marginBottom: '1.25rem' }}>
-                Ci interfacciamo direttamente con la <strong>Governance d&apos;Ateneo</strong>
-                e con il <strong>Comune di Ancona</strong> per portare le istanze studentesche
-                dove si prendono le decisioni.
+              <p style={{ lineHeight: 1.85, marginBottom: '1.25rem' }}>
+                Ci interfacciamo direttamente con la <strong>Governance d&apos;Ateneo</strong>, l&apos;ERDIS e con il 
+                <strong> Comune di Ancona</strong> per portare le istanze studentesche dove si prendono le decisioni.
               </p>
-              <p style={{ lineHeight: 1.8 }}>
-                Il nostro approccio è concreto: ascoltiamo i problemi, li portiamo nelle
-                sedi opportune e monitoriamo i risultati. La rappresentanza non è solo
-                presenzialismo: è lavoro quotidiano.
+              <p style={{ lineHeight: 1.85 }}>
+                Il nostro approccio è concreto: ascoltiamo i problemi, li portiamo nelle sedi opportune e 
+                monitoriamo i risultati. Ogni vittoria è frutto di un lavoro collettivo, sempre volto a migliorare 
+                la condizione della comunità studentesca del nostro Ateneo.
               </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {[
-                { icon: '🏛️', title: 'Senato Accademico', desc: 'Presenza attiva nel massimo organo di governo dell\'Ateneo.' },
-                { icon: '💰', title: 'Consiglio di Amministrazione', desc: 'Monitoraggio del bilancio e delle politiche di investimento.' },
-                { icon: '🗣️', title: 'Consiglio Studentesco', desc: 'Il massimo organo di rappresentanza studentesca d\'Ateneo.' },
-                { icon: '📋', title: 'Consigli di Dipartimento', desc: 'Rappresentanza in tutti i dipartimenti dell\'UNIVPM.' },
-                { icon: '🏫', title: 'Consigli di Facoltà', desc: 'Rappresentanza capillare nella Facoltà di Economia e Ingegneria.' },
-              ].map((item) => (
-                <div key={item.title} className="card" style={{ padding: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: '1.75rem', flexShrink: 0 }}>{item.icon}</span>
-                  <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.35rem' }}>{item.title}</h4>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--gray-600)' }}>{item.desc}</p>
-                  </div>
+            <div>
+              <div className="card" style={{ padding: '2rem' }}>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  background: 'var(--red-soft)',
+                  color: 'var(--red-primary)',
+                  padding: '0.4rem 1rem',
+                  borderRadius: 'var(--radius-full)',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  marginBottom: '1.25rem',
+                }}>
+                  🏛️ Consiglio Studentesco
                 </div>
-              ))}
+                <h3 style={{ fontSize: '1.35rem', marginBottom: '1rem' }}>Consiglio Studentesco</h3>
+                <p style={{ lineHeight: 1.8, marginBottom: '1.5rem', color: 'var(--gray-700)' }}>
+                  È un organo costituito interamente da studenti. Qui portiamo le nostre proposte ed esprimiamo 
+                  pareri su alcune importanti questioni per la vita universitaria, come la contribuzione studentesca 
+                  e il bilancio, l&apos;offerta formativa e l&apos;apertura di nuovi corsi di studio, bandi per tutorato e 150 ore.
+                </p>
+                <Link href="/rappresentanza/proposte" className="btn btn-primary" id="rapp-proposte" style={{ display: 'inline-flex' }}>
+                  Scopri le nostre proposte →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -78,7 +90,7 @@ export default function RappresentanzaPage() {
 
       <section className="section section-light">
         <div className="container text-center">
-          <h2>Hai un problema con l&apos;Ateneo?</h2>
+          <h2>Hai un problema?</h2>
           <div className="divider-red divider-red-center" />
           <p style={{ maxWidth: '560px', margin: '0 auto 2rem' }}>
             Siamo qui per aiutarti. Che si tratti di un problema con una segreteria,

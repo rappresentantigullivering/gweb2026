@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Metadata } from 'next';
+import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Gulliver Rock | Gulliver UNIVPM',
-  description: 'Gulliver Rock è il festival musicale gratuito organizzato ogni anno dalla nostra associazione.',
+  description: 'Gulliver Rock è il festival musicale gratuito organizzato ogni anno dalla nostra associazione. XXXIII edizione: 23 maggio 2026, Piazza Roma, Ancona.',
 };
 
 export default function GulliverRockPage() {
@@ -33,56 +35,137 @@ export default function GulliverRockPage() {
     { year: "2022", artists: "Scarda, Motta" },
     { year: "2023", artists: "Marlene Kunts, Uochi Toki" },
     { year: "2024", artists: "Emma Nolde, Quercia" },
+    { year: "2025", artists: "Little Pieces of Marmelade, La Municipàl, Rumba de Bodas" },
   ];
 
   return (
     <>
-      <div style={{ backgroundColor: 'var(--primary-color)', padding: '6rem 1rem 4rem', textAlign: 'center', color: 'white' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Gulliver Rock</h1>
-        <p style={{ fontSize: '1.2rem', maxWidth: '800px', margin: '0 auto', opacity: 0.9 }}>
-          Musica, cultura e socialità. Il festival musicale gratuito della comunità studentesca.
-        </p>
+      {/* HERO */}
+      <div className={styles.hero}>
+        <div className={`container ${styles.heroInner}`}>
+          <span className="section-tag section-tag-white">Associazione Culturale</span>
+          <h1>Gulliver Rock</h1>
+          <p>
+            Musica, cultura e socialità. Il festival musicale gratuito della comunità studentesca.
+          </p>
+          <div className={styles.heroCtas}>
+            <a href="#edizione-2026" className="btn btn-white btn-lg">
+              🎵 Edizione 2026
+            </a>
+            <a href="#edizioni" className="btn btn-outline-white btn-lg">
+              📖 Edizioni passate
+            </a>
+          </div>
+        </div>
       </div>
 
+      {/* DESCRIZIONE */}
       <section className="section">
-        <div className="container" style={{ maxWidth: '800px' }}>
-          <div style={{ fontSize: '1.1rem', lineHeight: 1.8, color: 'var(--text-color)', marginBottom: '4rem' }}>
-            <p style={{ marginBottom: '1rem' }}>
-              Il <strong>GulliverRock</strong> è un festival musicale gratuito organizzato ogni anno dalla nostra associazione. Questo evento rappresenta un'importante occasione di aggregazione per la componente studentesca e la comunità locale.
-            </p>
-            <p>
-              Giunto ormai alla trentaduesima edizione, si distingue per la sua capacità di unire musica, cultura e socialità, offrendo non solo uno spettacolo dal vivo, ma anche attività collaterali di intrattenimento, spazi di confronto e buon cibo, contribuendo a creare un'atmosfera unica e coinvolgente!
-            </p>
-          </div>
-
-          <div style={{ backgroundColor: 'var(--card-bg)', padding: '3rem', borderRadius: 'var(--radius)', boxShadow: 'var(--shadow)' }}>
-            <h2 style={{ fontSize: '2rem', marginBottom: '2rem', color: 'var(--primary-color)', textAlign: 'center' }}>
-              Edizioni Precedenti
-            </h2>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {pastEditions.map((edition, i) => (
-                <div key={i} style={{ 
-                  display: 'flex', 
-                  padding: '1rem', 
-                  borderBottom: i !== pastEditions.length - 1 ? '1px solid var(--border-color)' : 'none',
-                  alignItems: 'center',
-                  flexWrap: 'wrap'
-                }}>
-                  <div style={{ fontWeight: 'bold', width: '120px', color: 'var(--primary-color)' }}>
-                    {edition.year}
-                  </div>
-                  <div style={{ flex: 1, color: 'var(--text-color)' }}>
-                    {edition.artists}
-                  </div>
-                </div>
-              ))}
+        <div className="container" style={{ maxWidth: '860px' }}>
+          <div className={styles.descSection}>
+            <div>
+              <h2 className={styles.descTitle}>Un festival nato dalla comunità</h2>
+              <div className="divider-red" />
+              <p style={{ lineHeight: 1.85, marginBottom: '1.25rem' }}>
+                Il <strong>GulliverRock</strong> è un festival musicale gratuito organizzato ogni anno dalla nostra
+                associazione. Questo evento rappresenta un&apos;importante occasione di aggregazione per la componente
+                studentesca e la comunità locale.
+              </p>
+              <p style={{ lineHeight: 1.85 }}>
+                Giunto ormai alla <strong>trentatreesima edizione</strong>, si distingue per la sua capacità di unire
+                musica, cultura e socialità, offrendo non solo uno spettacolo dal vivo, ma anche attività collaterali
+                di intrattenimento, spazi di confronto e buon cibo.
+              </p>
+            </div>
+            <div className={styles.descStats}>
+              <div className={styles.statBox}>
+                <span className={styles.statNum}>33</span>
+                <span className={styles.statLabel}>edizioni</span>
+              </div>
+              <div className={styles.statBox}>
+                <span className={styles.statNum}>dal 1993</span>
+                <span className={styles.statLabel}>ogni anno</span>
+              </div>
+              <div className={styles.statBox}>
+                <span className={styles.statNum}>GRATUITO</span>
+                <span className={styles.statLabel}>ingresso libero</span>
+              </div>
             </div>
           </div>
-          
+        </div>
+      </section>
+
+      {/* EDIZIONE 2026 */}
+      <section className="section section-light" id="edizione-2026">
+        <div className="container">
+          <div className="section-header text-center">
+            <span className="section-tag">Prossima edizione</span>
+            <h2>XXXIII Edizione — 2026</h2>
+            <div className="divider-red divider-red-center" />
+          </div>
+
+          <div className={styles.eventGrid}>
+            <div className={styles.locandina}>
+              <Image
+                src="/locandina-elea.png"
+                alt="Locandina Gulliver Rock XXXII Edizione 2026"
+                width={500}
+                height={700}
+                style={{ width: '100%', height: 'auto', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)' }}
+              />
+            </div>
+            <div className={styles.eventInfo}>
+              <div className={styles.editionBadge}>XXXIII EDIZIONE</div>
+              <h3 className={styles.eventTitle}>Gulliver Rock 2026</h3>
+              <div className={styles.eventDetails}>
+                <div className={styles.eventDetailItem}>
+                  <span className={styles.eventDetailIcon}>📍</span>
+                  <div>
+                    <strong>Dove</strong>
+                    <span>Piazza Roma, Ancona</span>
+                  </div>
+                </div>
+                <div className={styles.eventDetailItem}>
+                  <span className={styles.eventDetailIcon}>📅</span>
+                  <div>
+                    <strong>Quando</strong>
+                    <span>23 Maggio 2026</span>
+                  </div>
+                </div>
+                <div className={styles.eventDetailItem}>
+                  <span className={styles.eventDetailIcon}>🎟️</span>
+                  <div>
+                    <strong>Ingresso</strong>
+                    <span className={styles.freeEntry}>GRATUITO</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* EDIZIONI PASSATE */}
+      <section className="section" id="edizioni">
+        <div className="container" style={{ maxWidth: '860px' }}>
+          <div className="section-header text-center">
+            <span className="section-tag">Storia</span>
+            <h2>Edizioni Precedenti</h2>
+            <div className="divider-red divider-red-center" />
+          </div>
+
+          <div className={styles.editionsTable}>
+            {pastEditions.slice().reverse().map((edition, i) => (
+              <div key={i} className={styles.editionRow}>
+                <div className={styles.editionYear}>{edition.year}</div>
+                <div className={styles.editionArtists}>{edition.artists}</div>
+              </div>
+            ))}
+          </div>
+
           <div style={{ textAlign: 'center', marginTop: '3rem' }}>
             <Link href="/associazione-culturale" className="btn btn-outline" style={{ display: 'inline-flex' }}>
-              Torna all'Associazione Culturale
+              ← Torna all&apos;Associazione Culturale
             </Link>
           </div>
         </div>

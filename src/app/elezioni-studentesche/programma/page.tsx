@@ -124,11 +124,11 @@ const TEMI = [
 ];
 
 const FACOLTA = [
-  { id: "fac-economia", nome: "Economia", href: "#facolta-economia" },
-  { id: "fac-ingegneria", nome: "Ingegneria", href: "#facolta-ingegneria" },
-  { id: "fac-medicina", nome: "Medicina e Chirurgia", href: "#facolta-medicina" },
-  { id: "fac-scienze", nome: "Scienze e Tecnologie", href: "#facolta-scienze" },
-  { id: "fac-agraria", nome: "Agraria", href: "#facolta-agraria" },
+  { id: "fac-ingegneria", nome: "Ingegneria", slug: "ingegneria" },
+  { id: "fac-economia", nome: "Economia", slug: "economia" },
+  { id: "fac-medicina", nome: "Medicina", slug: "medicina" },
+  { id: "fac-scienze", nome: "Scienze", slug: "scienze" },
+  { id: "fac-agraria", nome: "Agraria", slug: "agraria" },
 ];
 
 export default function ProgrammaPage() {
@@ -182,7 +182,7 @@ export default function ProgrammaPage() {
         <div className="container">
           <div className="section-header text-center">
             <span className="section-tag">Più vicini a te</span>
-            <h2>I nostri programmi di Facoltà</h2>
+            <h2>I nostri programmi di Facoltà e Dipartimento</h2>
             <div className="divider-red divider-red-center" />
             <p style={{ maxWidth: '600px', margin: '0 auto' }}>
               Ogni facoltà ha esigenze specifiche. Abbiamo elaborato proposte mirate per ogni realtà accademica.
@@ -191,10 +191,10 @@ export default function ProgrammaPage() {
 
           <div className={`grid-3 ${styles.facoltaGrid}`}>
             {FACOLTA.map((f) => (
-              <div key={f.id} className={`card ${styles.facoltaCard}`} id={f.id}>
+              <Link key={f.id} href={`/elezioni-studentesche/programma/facolta/${f.slug}`} className={`card ${styles.facoltaCard}`} id={f.id}>
                 <h4>{f.nome}</h4>
-                <p className={styles.comingSoon}>Programma in arrivo</p>
-              </div>
+                <p className={styles.comingSoon}>Scopri il programma →</p>
+              </Link>
             ))}
           </div>
         </div>
