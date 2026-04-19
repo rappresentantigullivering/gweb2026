@@ -42,7 +42,7 @@ Ogni contributo, dalla correzione di un typo all'aggiunta di una nuova sezione, 
 
 ---
 
-## 💻 Sviluppo Locale
+## Sviluppo Locale
 
 Se vuoi avviare il progetto sul tuo computer:
 
@@ -53,13 +53,13 @@ Se vuoi avviare il progetto sul tuo computer:
 
 ---
 
-## 📧 Contatti
+## Contatti
 
 Vuoi saperne di più o hai bisogno di aiuto?
-- 🌐 Sito Web: [gulliverancona.it](https://gulliverancona.it)
-- 📧 Email: [acugulliver@gmail.com](mailto:acugulliver@gmail.com)
-- 📱 Instagram: [@acu_gulliver](https://www.instagram.com/acu_gulliver)
+- Sito Web: [gulliverancona.it](https://gulliverancona.it)
+- Email: [acugulliver@gmail.com](mailto:acugulliver@gmail.com)
+- Instagram: [@acu_gulliver](https://www.instagram.com/acu_gulliver)
 
 ---
 
-*Gulliver UNIVPM – Dal 1987, dalla parte degll3 studenti.* 🔴
+*Gulliver UNIVPM – Dal 1987, dalla parte degll3 studenti.* ❤️
