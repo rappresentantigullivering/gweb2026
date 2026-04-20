@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import styles from "./page.module.css";
@@ -49,12 +50,14 @@ export default function ElezioniPage() {
             <h2>Il Manifesto</h2>
             <div className="divider-red divider-red-center" />
           </div>
-          <div className={styles.manifestoPlaceholder}>
-            <div className={styles.manifestoInner}>
-              <span className={styles.manifestoIcon}>📋</span>
-              <h3>Manifesto in arrivo</h3>
-              <p>Il manifesto della campagna elettorale sarà pubblicato a breve. Torna presto!</p>
-            </div>
+          <div className={styles.manifestoImage}>
+            <Image
+              src="/manifesto-elettorale.png"
+              alt="Manifesto Elettorale Gulliver UNIVPM 2026"
+              width={1000}
+              height={1414}
+              priority
+            />
           </div>
         </div>
       </section>

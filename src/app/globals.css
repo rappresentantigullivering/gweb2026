@@ -2,12 +2,12 @@
 
 /* ── DESIGN TOKENS ── */
 :root {
-  --red-primary: #ed1a34;
-  --red-dark: #c0102a;
-  --red-darker: #8a0a1e;
-  --red-light: #f24a5e;
-  --red-soft: rgba(237, 26, 52, 0.08);
-  --red-muted: rgba(237, 26, 52, 0.15);
+  --red-primary: #e40329;
+  --red-dark: #b30020;
+  --red-darker: #800016;
+  --red-light: #ec4d68;
+  --red-soft: rgba(228, 3, 41, 0.08);
+  --red-muted: rgba(228, 3, 41, 0.15);
 
   --white: #FFFFFF;
   --off-white: #FAFAFA;

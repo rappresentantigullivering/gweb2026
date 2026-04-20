@@ -234,7 +234,7 @@
   right: 0;
   bottom: 0;
   background: var(--white);
-  z-index: 999;
+  z-index: 1010;
   overflow-y: auto;
   opacity: 0;
   pointer-events: none;

@@ -68,12 +68,13 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+    <>
+      <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <div className={`container ${styles.inner}`}>
         {/* LOGO */}
         <Link href="/" className={styles.logo} onClick={() => setMobileOpen(false)}>
           <Image
-            src="/gulliver-tondo.png"
+            src="/logo-gulliver-tondo-png.png"
             alt="Gulliver UNIVPM"
             width={44}
             height={44}
@@ -147,50 +148,51 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* MOBILE MENU */}
-      <div className={`${styles.mobileMenu} ${mobileOpen ? styles.mobileMenuOpen : ''}`} id="mobile-menu">
-        <nav className={styles.mobileNav} aria-label="Menu mobile">
-          {NAV_ITEMS.map((item) => (
-            <div key={item.label} className={styles.mobileNavItem}>
-              {'external' in item && item.external ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.mobileNavLink}
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <Link
-                  href={item.href}
-                  className={styles.mobileNavLink}
-                  onClick={() => { if (!item.children) setMobileOpen(false); }}
-                >
-                  {item.label}
-                </Link>
-              )}
-              {item.children && (
-                <div className={styles.mobileSubMenu}>
-                  {item.children.map((child) => (
-                    <Link
-                      key={child.label}
-                      href={child.href}
-                      className={styles.mobileSubLink}
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      → {child.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-          <Link href="/contatti" className="btn btn-primary btn-lg" id="mobile-cta" onClick={() => setMobileOpen(false)}>
-            Contattaci
-          </Link>
-        </nav>
-      </div>
     </header>
+    {/* MOBILE MENU */}
+    <div className={`${styles.mobileMenu} ${mobileOpen ? styles.mobileMenuOpen : ''}`} id="mobile-menu">
+      <nav className={styles.mobileNav} aria-label="Menu mobile">
+        {NAV_ITEMS.map((item) => (
+          <div key={item.label} className={styles.mobileNavItem}>
+            {'external' in item && item.external ? (
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.mobileNavLink}
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link
+                href={item.href}
+                className={styles.mobileNavLink}
+                onClick={() => { if (!item.children) setMobileOpen(false); }}
+              >
+                {item.label}
+              </Link>
+            )}
+            {item.children && (
+              <div className={styles.mobileSubMenu}>
+                {item.children.map((child) => (
+                  <Link
+                    key={child.label}
+                    href={child.href}
+                    className={styles.mobileSubLink}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    → {child.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        <Link href="/contatti" className="btn btn-primary btn-lg" id="mobile-cta" onClick={() => setMobileOpen(false)}>
+          Contattaci
+        </Link>
+      </nav>
+    </div>
+</>
   );
 }

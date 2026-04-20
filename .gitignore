@@ -40,6 +40,8 @@ next-env.d.ts
 *.swp
 *.swo
 .gemini/
+AGENTS.md
+CLAUDE.md
 
 # Netlify
 .netlify/

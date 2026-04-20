@@ -77,29 +77,8 @@ const BATTAGLIE = [
 export default function HomePage() {
   return (
     <>
-      {/* ── HERO BAND + PHOTO ── */}
+      {/* ── HERO PHOTO ── */}
       <section className={styles.hero} id="hero">
-        {/* Banda rossa superiore */}
-        <div className={styles.heroBand}>
-          <div className={`container ${styles.heroBandInner}`}>
-            <div className={styles.heroBandLogos}>
-              {/* Logo Gulliver */}
-              <div className={styles.heroBandLogo}>
-                <span className={styles.heroBandLogoText}>GULLIVER</span>
-                <span className={styles.heroBandLogoSub}>Università Politecnica delle Marche</span>
-              </div>
-              <div className={styles.heroBandSep} aria-hidden="true" />
-              {/* Logo UDU */}
-              <div className={styles.heroBandLogo}>
-                <span className={styles.heroBandLogoText} style={{ fontSize: '1.1rem', letterSpacing: '0.15em' }}>UDU</span>
-                <span className={styles.heroBandLogoSub}>Unione degli Universitari</span>
-              </div>
-            </div>
-            <Link href="/contatti" className="btn btn-white" id="hero-contattaci">
-              Contattaci
-            </Link>
-          </div>
-        </div>
 
         {/* Foto con slogan */}
         <div className={styles.heroPhoto}>
@@ -124,7 +103,7 @@ export default function HomePage() {
           </div>
           <a href="#about" className={styles.scrollDown} aria-label="Scorri in basso">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </a>
         </div>

@@ -3,65 +3,15 @@
   position: relative;
 }
 
-/* ── Banda rossa ── */
-.heroBand {
-  background: var(--red-primary);
-  position: relative;
-  z-index: 10;
-}
-
-.heroBandInner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: calc(72px + 1.25rem);
-  padding-bottom: 1.25rem;
-  gap: 2rem;
-}
-
-.heroBandLogos {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.heroBandLogo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.heroBandLogoText {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--white);
-  letter-spacing: 0.06em;
-  line-height: 1;
-}
-
-.heroBandLogoSub {
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.65);
-  text-transform: uppercase;
-}
-
-.heroBandSep {
-  width: 1px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.25);
-}
-
 /* ── Foto hero ── */
 .heroPhoto {
   position: relative;
-  min-height: 85vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
   overflow: hidden;
+  padding-top: 72px; /* Navbar height */
 }
 
 .heroOverlay {

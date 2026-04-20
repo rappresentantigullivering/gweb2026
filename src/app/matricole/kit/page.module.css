@@ -1,0 +1,137 @@
+.hero {
+  background: linear-gradient(135deg, var(--red-darker) 0%, var(--red-primary) 100%);
+  padding: 8rem 1.5rem 6rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--white);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.section {
+  padding: 5rem 0;
+}
+
+.contentWrapper {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.description {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--gray-700);
+  margin-bottom: 3rem;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.featureCard {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--red-primary);
+}
+
+.featureIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.featureTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+}
+
+.featureText {
+  font-size: 0.95rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.ctaSection {
+  background: var(--gray-50);
+  border-radius: var(--radius-2xl);
+  padding: 4rem;
+  text-align: center;
+  border: 1px solid var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--red-primary);
+}
+
+.ctaTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 1.5rem;
+}
+
+.ctaText {
+  font-size: 1.1rem;
+  color: var(--gray-600);
+  margin-bottom: 2.5rem;
+}
+
+.downloadButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--red-primary);
+  color: var(--white);
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.downloadButton:hover {
+  background: var(--red-dark);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 768px) {
+  .ctaSection {
+    padding: 3rem 1.5rem;
+  }
+
+  .ctaTitle {
+    font-size: 1.75rem;
+  }
+}
