@@ -33,7 +33,7 @@ export default function DSUPage() {
         }} />
         <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <span className="section-tag section-tag-white">Programma Generale</span>
-          <h1 style={{ color: 'var(--white)', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center' }}>
+          <h1 style={{ color: 'var(--white)', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center', textTransform: 'uppercase' }}>
             Diritto allo studio
           </h1>
         </div>
@@ -43,18 +43,10 @@ export default function DSUPage() {
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h2 style={{ marginBottom: '2.5rem', fontWeight: 800 }}>I punti del nostro programma</h2>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {POINTS.map((point, i) => (
-                <li key={i} style={{ 
-                  display: 'flex', 
-                  gap: '1.25rem', 
-                  padding: '2rem', 
-                  background: 'var(--gray-100)', 
-                  borderRadius: 'var(--radius-lg)',
-                  borderLeft: '5px solid var(--red-primary)',
-                  boxShadow: 'var(--shadow-sm)'
-                }}>
-                  <span style={{ color: 'var(--red-primary)', fontWeight: 900, fontSize: '1.2rem' }}>•</span>
+                <li key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <span style={{ color: 'var(--red-primary)', fontWeight: 900, fontSize: '1.5rem', lineHeight: '1.2' }}>•</span>
                   <span style={{ fontSize: '1.15rem', lineHeight: '1.6', color: 'var(--gray-800)', fontWeight: 500 }}>{point}</span>
                 </li>
               ))}
@@ -65,6 +57,7 @@ export default function DSUPage() {
               padding: '4rem 2rem', 
               background: 'var(--dark)', 
               borderRadius: 'var(--radius-xl)', 
+              borderTop: `6px solid ${'var(--red-primary)'}`,
               color: '#fff', 
               textAlign: 'center',
               boxShadow: 'var(--shadow-2xl)'

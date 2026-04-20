@@ -34,7 +34,7 @@ export default function EconomiaPage() {
         }} />
         <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <span className="section-tag section-tag-white" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>Programma di Facoltà</span>
-          <h1 style={{ color: '#fff', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center' }}>
+          <h1 style={{ color: '#fff', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center', textTransform: 'uppercase' }}>
             Economia
           </h1>
         </div>
@@ -44,18 +44,10 @@ export default function EconomiaPage() {
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h2 style={{ marginBottom: '2.5rem', fontWeight: 800 }}>Punti salienti per Economia</h2>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {POINTS.map((point, i) => (
-                <li key={i} style={{ 
-                  display: 'flex', 
-                  gap: '1.25rem', 
-                  padding: '2rem', 
-                  background: 'var(--gray-100)', 
-                  borderRadius: 'var(--radius-lg)',
-                  borderLeft: `5px solid ${color}`,
-                  boxShadow: 'var(--shadow-sm)'
-                }}>
-                  <span style={{ color: color, fontWeight: 900, fontSize: '1.2rem' }}>•</span>
+                <li key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <span style={{ color: color, fontWeight: 900, fontSize: '1.5rem', lineHeight: '1.2' }}>•</span>
                   <span style={{ fontSize: '1.15rem', lineHeight: '1.6', color: 'var(--gray-800)', fontWeight: 500 }}>{point}</span>
                 </li>
               ))}
@@ -64,13 +56,14 @@ export default function EconomiaPage() {
             <div style={{ 
               marginTop: '5rem', 
               padding: '4rem 2rem', 
-              background: color, 
+              background: 'var(--dark)', 
               borderRadius: 'var(--radius-xl)', 
-              color: '#212121', 
+              borderTop: `6px solid ${color}`,
+              color: '#fff', 
               textAlign: 'center',
               boxShadow: 'var(--shadow-2xl)'
             }}>
-              <h3 style={{ marginBottom: '1.25rem', color: 'inherit', fontSize: '1.75rem', fontWeight: 800 }}>Programma completo</h3>
+              <h3 style={{ marginBottom: '1.25rem', color: '#fff', fontSize: '1.75rem', fontWeight: 800 }}>Programma completo</h3>
               <p style={{ opacity: 0.9, marginBottom: '2.5rem', fontSize: '1.1rem' }}>Leggi la proposta integrale per Economia scaricando il PDF ufficiale.</p>
               <a 
                 href="/docs/programmi/PROGRAMMA ECONOMIA 2026.pdf" 
