@@ -4,8 +4,6 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Programma Elettorale | Elezioni Studentesche",
-  description:
-    "Il programma elettorale di Gulliver per le elezioni studentesche UNIVPM 2025: didattica, tassazione, strutture, diritto allo studio e molto altro.",
 };
 
 const TOPICS = [
@@ -69,6 +67,7 @@ export default function ProgrammaPage() {
 
           <div className={`grid-3 ${styles.facoltaGrid}`}>
             {FACOLTA.map((f) => (
+              <Link 
                 key={f.id} 
                 href={`/elezioni-studentesche/programma/${f.slug}`} 
                 className={styles.facoltaCard} 
@@ -80,17 +79,17 @@ export default function ProgrammaPage() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
+      </div>
+    </section >
 
-      {/* BACK */}
-      <div className={styles.backSection}>
+      {/* BACK */ }
+      < div className = { styles.backSection } >
         <div className="container">
           <Link href="/elezioni-studentesche" className="btn btn-outline" id="programma-back">
             ← Torna alle Elezioni
           </Link>
         </div>
-      </div>
+      </div >
     </>
   );
 }
