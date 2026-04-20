@@ -12,7 +12,6 @@ export default function NotFound() {
       flexDirection: 'column',
       gap: '1.5rem',
     }}>
-      <span style={{ fontSize: '5rem' }}>🗓️</span>
       <h1 style={{ fontSize: '6rem', fontFamily: 'var(--font-heading)', fontWeight: 900, color: 'var(--red-primary)', lineHeight: 1 }}>404</h1>
       <h2>Pagina non trovata</h2>
       <p style={{ color: 'var(--gray-500)', maxWidth: '400px' }}>

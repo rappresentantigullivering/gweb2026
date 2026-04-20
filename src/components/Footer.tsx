@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './Footer.module.css';
 
 export default function Footer() {
@@ -9,9 +10,14 @@ export default function Footer() {
         <div className={styles.top}>
           {/* Brand */}
           <div className={styles.brand}>
-            <div className={styles.logoMark}>
-              <span className={styles.logoText}>GULLIVER</span>
-              <span className={styles.logoSub}>UNIVPM</span>
+            <div className={styles.logoContainer}>
+              <Image
+                src="/logo-gulliver-tondo-png.png"
+                alt="Gulliver UNIVPM"
+                width={80}
+                height={80}
+                className={styles.footerLogo}
+              />
             </div>
             <p className={styles.brandDesc}>
               Lista di Rappresentanza e Associazione Culturale dell&apos;Università

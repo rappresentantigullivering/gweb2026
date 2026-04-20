@@ -10,63 +10,54 @@ export const metadata: Metadata = {
 
 const BATTAGLIE = [
   {
-    icon: "📚",
     title: "Didattica e tassazione",
     desc: "Lezioni registrate, tasse ridotte e diritti chiari per tutti gli studenti.",
     href: "/elezioni-studentesche/programma#didattica",
     id: "battaglia-didattica",
   },
   {
-    icon: "🏛️",
     title: "Strutture e spazi",
     desc: "Aule studio aperte, mense accessibili e spazi a misura di studente.",
     href: "/elezioni-studentesche/programma#strutture",
     id: "battaglia-strutture",
   },
   {
-    icon: "📍",
     title: "Sedi distaccate",
     desc: "Stesse tutele e opportunità in tutte le sedi dell'Ateneo.",
     href: "/elezioni-studentesche/programma#sedi",
     id: "battaglia-sedi",
   },
   {
-    icon: "🎓",
     title: "Diritto allo studio",
     desc: "Borse di studio, residenze e sostegno concreto per chi ne ha bisogno.",
     href: "/elezioni-studentesche/programma#diritto-studio",
     id: "battaglia-diritto-studio",
   },
   {
-    icon: "🚌",
     title: "Trasporti",
     desc: "Mobilità accessibile, abbonamenti agevolati e connessione con la città.",
     href: "/elezioni-studentesche/programma#trasporti",
     id: "battaglia-trasporti",
   },
   {
-    icon: "🏙️",
     title: "Ancona città universitaria",
     desc: "Una città che valorizza la presenza studentesca, non la subisce.",
     href: "/elezioni-studentesche/programma#ancona",
     id: "battaglia-ancona",
   },
   {
-    icon: "💼",
     title: "Studenti lavoratori",
     desc: "Flessibilità, riconoscimento e supporto per chi studia e lavora.",
     href: "/elezioni-studentesche/programma#studenti-lavoratori",
     id: "battaglia-lavoratori",
   },
   {
-    icon: "♿",
     title: "Ateneo sicuro e accessibile",
     desc: "Inclusività, sicurezza e benessere per tutta la comunità studentesca.",
     href: "/elezioni-studentesche/programma#accessibilita",
     id: "battaglia-accessibilita",
   },
   {
-    icon: "🌱",
     title: "Sostenibilità",
     desc: "Un ateneo green: dalla mobilità alla gestione degli spazi.",
     href: "/elezioni-studentesche/programma#sostenibilita",
@@ -94,7 +85,7 @@ export default function HomePage() {
             </h1>
             <div className={styles.heroActions}>
               <Link href="/elezioni-studentesche" className="btn btn-primary btn-lg" id="hero-elezioni">
-                🗳️ Elezioni Studentesche
+                Elezioni Studentesche
               </Link>
               <Link href="/chi-siamo" className="btn btn-outline-white btn-lg" id="hero-chi-siamo">
                 Chi siamo
@@ -126,7 +117,6 @@ export default function HomePage() {
 
           <div className={`grid-3 ${styles.aboutCards}`}>
             <div className={`card ${styles.aboutCard}`} id="card-associazione">
-              <div className={styles.cardIcon}>🎭</div>
               <h3>Associazione Culturale</h3>
               <p>
                 Organizziamo attività culturali, seminari e conferenze, ma anche concerti,
@@ -139,8 +129,10 @@ export default function HomePage() {
             </div>
 
             <div className={`card ${styles.aboutCard} ${styles.aboutCardFeatured}`} id="card-rappresentanza">
-              <div className={styles.cardIcon}>🏛️</div>
-              <h3>Rappresentanza Studentesca</h3>
+              <div className={styles.cardHeader}>
+                <h3>Rappresentanza Studentesca</h3>
+                <span className={styles.cardTag}>Prima lista d&apos;Ateneo</span>
+              </div>
               <p>
                 Siamo prima lista d&apos;Ateneo all&apos;UNIVPM, ci occupiamo di aiutare la componente
                 studentesca nelle piccole e grandi sfide della vita universitaria. Ci interfacciamo
@@ -152,7 +144,6 @@ export default function HomePage() {
             </div>
 
             <div className={`card ${styles.aboutCard}`} id="card-udu">
-              <div className={styles.cardIcon}>🤝</div>
               <h3>Unione degli Universitari</h3>
               <p>
                 Dal 2008 siamo confederati con l&apos;Unione degli Universitari (UDU), la più grande
@@ -177,10 +168,10 @@ export default function HomePage() {
           </div>
           <div className={styles.electionBannerActions}>
             <Link href="/elezioni-studentesche/candidati" className="btn btn-white btn-lg" id="banner-candidati">
-              👥 Scopri i candidati
+              Scopri i candidati
             </Link>
             <Link href="/elezioni-studentesche/programma" className="btn btn-outline-white btn-lg" id="banner-programma">
-              📄 Il programma
+              Il programma
             </Link>
           </div>
         </div>
@@ -202,7 +193,6 @@ export default function HomePage() {
           <div className={styles.battaglieGrid}>
             {BATTAGLIE.map((b) => (
               <Link key={b.id} href={b.href} className={styles.battagliaCard} id={b.id}>
-                <span className={styles.battagliaIcon}>{b.icon}</span>
                 <h4>{b.title}</h4>
                 <p>{b.desc}</p>
                 <span className={styles.battagliaArrow}>→</span>
@@ -228,10 +218,10 @@ export default function HomePage() {
           </div>
           <div className={styles.matricoleBannerActions}>
             <Link href="/matricole/kit" className="btn btn-primary btn-lg" id="banner-kit">
-              📦 Kit dello Studente
+              Kit dello Studente
             </Link>
             <Link href="/matricole/gruppi" className="btn btn-outline btn-lg" id="banner-gruppi">
-              💬 Gruppi WhatsApp & Telegram
+              Gruppi WhatsApp & Telegram
             </Link>
           </div>
         </div>

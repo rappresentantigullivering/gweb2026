@@ -71,7 +71,7 @@ export default function RappresentanzaPage() {
                   textTransform: 'uppercase',
                   marginBottom: '1.25rem',
                 }}>
-                  🏛️ Consiglio Studentesco
+                  Consiglio Studentesco
                 </div>
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '1rem' }}>Consiglio Studentesco</h3>
                 <p style={{ lineHeight: 1.8, marginBottom: '1.5rem', color: 'var(--gray-700)' }}>

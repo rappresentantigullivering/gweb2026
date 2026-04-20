@@ -38,7 +38,6 @@ export default function AssociazionePageWrapper() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
             <Link href="/associazione-culturale/convenzioni" style={{ textDecoration: 'none' }} id="assocard-convenzioni">
               <div className="card" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-                <span style={{ fontSize: '3rem' }}>🤝</span>
                 <h3>Convenzioni</h3>
                 <p>Sconti e agevolazioni per gli studenti UNIVPM grazie alle nostre convenzioni con negozi, ristoranti e servizi.</p>
                 <span style={{ color: 'var(--red-primary)', fontWeight: 600, marginTop: 'auto' }}>Scopri le convenzioni →</span>
@@ -47,7 +46,6 @@ export default function AssociazionePageWrapper() {
 
             <Link href="/associazione-culturale/gulliver-rock" style={{ textDecoration: 'none' }} id="assocard-rock">
               <div className="card" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-                <span style={{ fontSize: '3rem' }}>🎸</span>
                 <h3>Gulliver Rock</h3>
                 <p>Il festival musicale di Gulliver: l&apos;evento che fonde musica, cultura e vita universitaria nel cuore di Ancona.</p>
                 <span style={{ color: 'var(--red-primary)', fontWeight: 600, marginTop: 'auto' }}>Scopri Gulliver Rock →</span>

@@ -46,7 +46,7 @@ Ogni contributo, dalla correzione di un typo all'aggiunta di una nuova sezione, 
 
 Se vuoi avviare il progetto sul tuo computer:
 
-1. Clona il repo: `git clone https://github.com/lorenzocalifano/gweb2026.git`
+1. Clona il repo: `git clone https://github.com/rappresentantigullivering/gweb2026.git`
 2. Installa le dipendenze: `npm install`
 3. Avvia il server di sviluppo: `npm run dev`
 4. Apri [http://localhost:3000](http://localhost:3000)

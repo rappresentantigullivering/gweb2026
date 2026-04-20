@@ -35,7 +35,6 @@ export default function MatricolePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
             <Link href="/matricole/kit" style={{ textDecoration: 'none' }} id="matricole-kit">
               <div className="card" style={{ padding: '2.25rem', display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-                <span style={{ fontSize: '3rem' }}>📦</span>
                 <h3>Kit dello Studente</h3>
                 <p>Tutto quello che devi sapere: dai servizi universitari alle agevolazioni, dalle mense ai trasporti.</p>
                 <span style={{ color: 'var(--red-primary)', fontWeight: 600, marginTop: 'auto' }}>Scarica il kit →</span>
@@ -44,16 +43,14 @@ export default function MatricolePage() {
 
             <Link href="/matricole/gruppi" style={{ textDecoration: 'none' }} id="matricole-gruppi">
               <div className="card" style={{ padding: '2.25rem', display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-                <span style={{ fontSize: '3rem' }}>💬</span>
                 <h3>Gruppi WhatsApp & Telegram</h3>
-                <p>Entra nei gruppi per la tua facoltà e rimani aggiornato su tutto quello che succede all'Ateneo.</p>
+                <p>Entra nei gruppi per la tua facoltà e rimani aggiornato su tutto quello che succede all&apos;Ateneo.</p>
                 <span style={{ color: 'var(--red-primary)', fontWeight: 600, marginTop: 'auto' }}>Entra nei gruppi →</span>
               </div>
             </Link>
 
             <Link href="/contatti" style={{ textDecoration: 'none' }} id="matricole-contatti">
               <div className="card" style={{ padding: '2.25rem', display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-                <span style={{ fontSize: '3rem' }}>🤙</span>
                 <h3>Contattaci</h3>
                 <p>Hai dubbi, domande o problemi? I nostri rappresentanti sono a disposizione per aiutarti.</p>
                 <span style={{ color: 'var(--red-primary)', fontWeight: 600, marginTop: 'auto' }}>Scrivici →</span>

@@ -153,27 +153,28 @@
   position: relative;
 }
 
-.aboutCardFeatured::before {
-  content: "Prima lista d'Ateneo";
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cardTag {
   background: var(--red-primary);
   color: var(--white);
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  padding: 0.25rem 0.9rem;
+  padding: 0.2rem 0.6rem;
   border-radius: var(--radius-full);
   white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  z-index: 5;
+  text-transform: uppercase;
 }
 
 .cardIcon {
-  font-size: 2.5rem;
-  line-height: 1;
+  display: none;
 }
 
 .cardLink {
@@ -290,9 +291,7 @@
 }
 
 .battagliaIcon {
-  font-size: 2rem;
-  line-height: 1;
-  margin-bottom: 0.25rem;
+  display: none;
 }
 
 .battagliaCard h4 {

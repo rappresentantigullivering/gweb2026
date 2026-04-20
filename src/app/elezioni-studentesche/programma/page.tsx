@@ -12,10 +12,9 @@ const TEMI = [
   {
     id: "didattica",
     anchor: "didattica",
-    icon: "📚",
     title: "Didattica e tassazione",
     content: [
-      "Introduzione di lezioni registrate per tutte le materie",
+      "Introduzione di lezioni registrate for tutte le materie",
       "Riduzione delle tasse universitarie e ampliamento degli esoneri",
       "Diritti chiari per studenti fuori corso e part-time",
       "Miglioramento dei regolamenti didattici con il contributo studentesco",
@@ -25,7 +24,6 @@ const TEMI = [
   {
     id: "strutture",
     anchor: "strutture",
-    icon: "🏛️",
     title: "Strutture, servizi e spazi",
     content: [
       "Potenziamento delle aule studio con orari serali e weekend",
@@ -38,7 +36,6 @@ const TEMI = [
   {
     id: "sedi",
     anchor: "sedi",
-    icon: "📍",
     title: "Sedi distaccate",
     content: [
       "Stesse tutele garantite agli studenti di tutte le sedi",
@@ -50,7 +47,6 @@ const TEMI = [
   {
     id: "diritto-studio",
     anchor: "diritto-studio",
-    icon: "🎓",
     title: "Diritto allo studio",
     content: [
       "Ampliamento delle borse di studio ERDIS",
@@ -63,7 +59,6 @@ const TEMI = [
   {
     id: "trasporti",
     anchor: "trasporti",
-    icon: "🚌",
     title: "Trasporti",
     content: [
       "Abbonamento agevolato per i trasporti pubblici locali",
@@ -75,11 +70,10 @@ const TEMI = [
   {
     id: "ancona",
     anchor: "ancona",
-    icon: "🏙️",
     title: "Ancona città universitaria",
     content: [
       "Collaborazione con il Comune per politiche abitative studente-friendly",
-      "Affitti calmierati e contratti trasparenti per gli studenti",
+      "Affitti calmierati e con tratti trasparenti per gli studenti",
       "Vita notturna, cultura e sport accessibili alla comunità studentesca",
       "Ancona come polo universitario attrattivo a livello nazionale",
     ],
@@ -87,7 +81,6 @@ const TEMI = [
   {
     id: "studenti-lavoratori",
     anchor: "studenti-lavoratori",
-    icon: "💼",
     title: "Studenti lavoratori",
     content: [
       "Riconoscimento ufficiale dello status di studente lavoratore",
@@ -99,7 +92,6 @@ const TEMI = [
   {
     id: "accessibilita",
     anchor: "accessibilita",
-    icon: "♿",
     title: "Ateneo sicuro e accessibile",
     content: [
       "Abbattimento delle barriere architettoniche in tutti gli edifici",
@@ -111,7 +103,6 @@ const TEMI = [
   {
     id: "sostenibilita",
     anchor: "sostenibilita",
-    icon: "🌱",
     title: "Sostenibilità",
     content: [
       "Eliminazione della plastica monouso dalle strutture universitarie",
@@ -143,7 +134,7 @@ export default function ProgrammaPage() {
           <div className={styles.jumpLinks}>
             {TEMI.map((t) => (
               <a key={t.anchor} href={`#${t.anchor}`} className={styles.jumpChip} id={`jump-${t.anchor}`}>
-                {t.icon} {t.title}
+                {t.title}
               </a>
             ))}
           </div>
@@ -159,7 +150,6 @@ export default function ProgrammaPage() {
                 <div className={styles.temaHeader}>
                   <span className={styles.temaNumber}>{String(i + 1).padStart(2, '0')}</span>
                   <div className={styles.temaTitleGroup}>
-                    <span className={styles.temaIcon}>{tema.icon}</span>
                     <h2>{tema.title}</h2>
                   </div>
                 </div>
