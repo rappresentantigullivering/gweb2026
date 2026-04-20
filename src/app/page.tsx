@@ -73,6 +73,7 @@ export default function HomePage() {
 
         {/* Foto con slogan */}
         <div className={styles.heroPhoto}>
+          <div className={styles.heroBg} />
           <div className={styles.heroOverlay} />
           <div className={`container ${styles.heroContent}`}>
             <p className={styles.heroTag}>Dal 1987 · UNIVPM</p>
