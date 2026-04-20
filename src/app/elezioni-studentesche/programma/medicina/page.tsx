@@ -23,6 +23,7 @@ export default function MedicinaPage() {
         padding: '10rem 1.5rem 6rem',
         position: 'relative',
         overflow: 'hidden',
+        textAlign: 'center',
       }}>
         <div style={{
           position: 'absolute',
@@ -31,9 +32,9 @@ export default function MedicinaPage() {
           background: 'var(--white)',
           clipPath: 'ellipse(55% 100% at 50% 100%)',
         }} />
-        <div className="container">
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <span className="section-tag section-tag-white" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>Programma di Facoltà</span>
-          <h1 style={{ color: '#fff', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800 }}>
+          <h1 style={{ color: '#fff', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center' }}>
             Medicina
           </h1>
         </div>
@@ -50,7 +51,7 @@ export default function MedicinaPage() {
                   gap: '1.25rem', 
                   padding: '2rem', 
                   background: 'var(--gray-100)', 
-                  borderRadius: 'var(--radius-xl)',
+                  borderRadius: 'var(--radius-lg)',
                   borderLeft: `5px solid ${color}`,
                   boxShadow: 'var(--shadow-sm)'
                 }}>
@@ -64,7 +65,7 @@ export default function MedicinaPage() {
               marginTop: '5rem', 
               padding: '4rem 2rem', 
               background: color, 
-              borderRadius: 'var(--radius-2xl)', 
+              borderRadius: 'var(--radius-xl)', 
               color: '#fff', 
               textAlign: 'center',
               boxShadow: 'var(--shadow-2xl)'

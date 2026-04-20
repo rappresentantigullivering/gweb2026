@@ -22,6 +22,7 @@ export default function DottorandiPage() {
         padding: '10rem 1.5rem 6rem',
         position: 'relative',
         overflow: 'hidden',
+        textAlign: 'center',
       }}>
         <div style={{
           position: 'absolute',
@@ -30,9 +31,9 @@ export default function DottorandiPage() {
           background: 'var(--white)',
           clipPath: 'ellipse(55% 100% at 50% 100%)',
         }} />
-        <div className="container">
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <span className="section-tag section-tag-white">Programma Generale</span>
-          <h1 style={{ color: 'var(--white)', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800 }}>
+          <h1 style={{ color: 'var(--white)', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center' }}>
             Dottorandi
           </h1>
         </div>
@@ -49,7 +50,7 @@ export default function DottorandiPage() {
                   gap: '1.25rem', 
                   padding: '2rem', 
                   background: 'var(--gray-100)', 
-                  borderRadius: 'var(--radius-xl)',
+                  borderRadius: 'var(--radius-lg)',
                   borderLeft: '5px solid var(--red-primary)',
                   boxShadow: 'var(--shadow-sm)'
                 }}>
@@ -63,13 +64,13 @@ export default function DottorandiPage() {
               marginTop: '5rem', 
               padding: '4rem 2rem', 
               background: 'var(--dark)', 
-              borderRadius: 'var(--radius-2xl)', 
+              borderRadius: 'var(--radius-xl)', 
               color: '#fff', 
               textAlign: 'center',
               boxShadow: 'var(--shadow-2xl)'
             }}>
               <h3 style={{ marginBottom: '1.25rem', color: '#fff', fontSize: '1.75rem', fontWeight: 800 }}>Programma completo</h3>
-              <p style={{ opacity: 0.8, marginBottom: '2.5rem', fontSize: '1.1rem' }}>Scarica il documento completo in formato PDF per leggere tutte le proposte dedicate ai dottorandi.</p>
+              <p style={{ opacity: 0.8, marginBottom: '2.5rem', fontSize: '1.1rem' }}>Scarica il documento completo in formato PDF per approfondire tutte le nostre proposte.</p>
               <a 
                 href="/docs/programmi/PROGRAMMA DOTTORANDI 2026.pdf" 
                 className="btn btn-primary btn-lg"

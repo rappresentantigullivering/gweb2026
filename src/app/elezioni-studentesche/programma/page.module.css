@@ -21,8 +21,11 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem; /* Increased gap */
+  gap: 2.5rem;
   max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  align-items: center;
 }
 
 .heroInner h1 {
@@ -31,6 +34,7 @@
   font-weight: 800;
   line-height: 1.1;
   text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  text-align: center;
 }
 
 /* TOPICS GRID */
@@ -41,7 +45,7 @@
 .topicCard {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   padding: 3rem 2rem;
   text-decoration: none;
   transition: all var(--transition-base);
@@ -102,7 +106,7 @@
 .facoltaCard {
   background: var(--white);
   padding: 3rem 2rem;
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   text-decoration: none;
   transition: all var(--transition-base);
   display: flex;
