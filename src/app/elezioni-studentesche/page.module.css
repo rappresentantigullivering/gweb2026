@@ -89,70 +89,62 @@
   margin-top: 0.5rem;
 }
 
-.manifestoCard {
+.pdfViewerContainer {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 3rem;
-  background: var(--white);
-  border: 1px solid var(--gray-200);
   border-radius: var(--radius-2xl);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  text-align: center;
-  box-shadow: var(--shadow-lg);
-  transition: all var(--transition-base);
-}
-
-.manifestoCard:hover {
-  border-color: var(--red-primary);
+  overflow: hidden;
+  background: var(--white);
   box-shadow: var(--shadow-xl);
-  transform: translateY(-5px);
+  border: 1px solid var(--gray-200);
 }
 
-.manifestoContent {
+.pdfWrapper {
+  position: relative;
+  width: 100%;
+  height: 800px; /* Large desktop height */
+  background: var(--gray-100);
+}
+
+.pdfFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.pdfFooter {
+  padding: 1.5rem 2rem;
+  background: var(--off-white);
+  border-top: 1px solid var(--gray-200);
   display: flex;
   align-items: center;
-  gap: 2rem;
-  text-align: left;
+  justify-content: space-between;
+  gap: 1.5rem;
 }
 
-.manifestoIcon {
-  flex-shrink: 0;
-  width: 100px;
-  height: 100px;
-  background: var(--red-soft);
-  color: var(--red-primary);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.pdfFooter p {
+  color: var(--gray-500);
+  font-size: 0.875rem;
+  margin: 0;
 }
 
-.manifestoText h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--dark);
-  margin-bottom: 0.5rem;
+@media (max-width: 1024px) {
+  .pdfWrapper {
+    height: 600px;
+  }
 }
 
-.manifestoText p {
-  color: var(--gray-600);
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-@media (max-width: 640px) {
-  .manifestoContent {
-    flex-direction: column;
-    text-align: center;
-    gap: 1.5rem;
+@media (max-width: 768px) {
+  .pdfWrapper {
+    height: 500px;
   }
   
-  .manifestoCard {
-    padding: 2rem 1.5rem;
+  .pdfFooter {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
   }
 }
 
