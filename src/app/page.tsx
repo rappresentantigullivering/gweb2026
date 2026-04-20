@@ -8,62 +8,7 @@ export const metadata: Metadata = {
     "Gulliver è la lista di rappresentanza studentesca dell'Università Politecnica delle Marche. Dal 1987 difendiamo i diritti degli studenti.",
 };
 
-const BATTAGLIE = [
-  {
-    title: "Didattica e tassazione",
-    desc: "Lezioni registrate, tasse ridotte e diritti chiari per tutti gli studenti.",
-    href: "/elezioni-studentesche/programma#didattica",
-    id: "battaglia-didattica",
-  },
-  {
-    title: "Strutture e spazi",
-    desc: "Aule studio aperte, mense accessibili e spazi a misura di studente.",
-    href: "/elezioni-studentesche/programma#strutture",
-    id: "battaglia-strutture",
-  },
-  {
-    title: "Sedi distaccate",
-    desc: "Stesse tutele e opportunità in tutte le sedi dell'Ateneo.",
-    href: "/elezioni-studentesche/programma#sedi",
-    id: "battaglia-sedi",
-  },
-  {
-    title: "Diritto allo studio",
-    desc: "Borse di studio, residenze e sostegno concreto per chi ne ha bisogno.",
-    href: "/elezioni-studentesche/programma#diritto-studio",
-    id: "battaglia-diritto-studio",
-  },
-  {
-    title: "Trasporti",
-    desc: "Mobilità accessibile, abbonamenti agevolati e connessione con la città.",
-    href: "/elezioni-studentesche/programma#trasporti",
-    id: "battaglia-trasporti",
-  },
-  {
-    title: "Ancona città universitaria",
-    desc: "Una città che valorizza la presenza studentesca, non la subisce.",
-    href: "/elezioni-studentesche/programma#ancona",
-    id: "battaglia-ancona",
-  },
-  {
-    title: "Studenti lavoratori",
-    desc: "Flessibilità, riconoscimento e supporto per chi studia e lavora.",
-    href: "/elezioni-studentesche/programma#studenti-lavoratori",
-    id: "battaglia-lavoratori",
-  },
-  {
-    title: "Ateneo sicuro e accessibile",
-    desc: "Inclusività, sicurezza e benessere per tutta la comunità studentesca.",
-    href: "/elezioni-studentesche/programma#accessibilita",
-    id: "battaglia-accessibilita",
-  },
-  {
-    title: "Sostenibilità",
-    desc: "Un ateneo green: dalla mobilità alla gestione degli spazi.",
-    href: "/elezioni-studentesche/programma#sostenibilita",
-    id: "battaglia-sostenibilita",
-  },
-];
+
 
 export default function HomePage() {
   return (
@@ -168,46 +113,17 @@ export default function HomePage() {
             <p>Il momento in cui la tua voce conta davvero. Vota Gulliver.</p>
           </div>
           <div className={styles.electionBannerActions}>
-            <Link href="/elezioni-studentesche/candidati" className="btn btn-white btn-lg" id="banner-candidati">
+            <Link href="/elezioni-studentesche/programma" className="btn btn-white btn-lg" id="banner-programma">
+              Il programma elettorale
+            </Link>
+            <Link href="/elezioni-studentesche/candidati" className="btn btn-outline-white btn-lg" id="banner-candidati">
               Scopri i candidati
             </Link>
-            <Link href="/elezioni-studentesche/programma" className="btn btn-outline-white btn-lg" id="banner-programma">
-              Il programma
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── LE NOSTRE BATTAGLIE ── */}
-      <section className={`section section-light ${styles.battaglie}`} id="battaglie">
-        <div className="container">
-          <div className={`section-header text-center`}>
-            <span className="section-tag">Il nostro impegno</span>
-            <h2>Le nostre battaglie</h2>
-            <div className="divider-red divider-red-center" />
-            <p style={{ maxWidth: '600px', margin: '0 auto' }}>
-              Ogni proposta nasce dall&apos;ascolto della comunità studentesca.
-              Queste sono le aree in cui ci battiamo ogni giorno.
-            </p>
-          </div>
 
-          <div className={styles.battaglieGrid}>
-            {BATTAGLIE.map((b) => (
-              <Link key={b.id} href={b.href} className={styles.battagliaCard} id={b.id}>
-                <h4>{b.title}</h4>
-                <p>{b.desc}</p>
-                <span className={styles.battagliaArrow}>→</span>
-              </Link>
-            ))}
-          </div>
-
-          <div className={styles.battaglieFooter}>
-            <Link href="/elezioni-studentesche/programma" className="btn btn-primary btn-lg" id="battaglie-programma-cta">
-              Leggi il programma completo
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ── MATRICOLE BANNER ── */}
       <section className={styles.matricoleBanner} id="matricole-banner">

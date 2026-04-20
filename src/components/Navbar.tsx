@@ -167,7 +167,7 @@ export default function Navbar() {
               <Link
                 href={item.href}
                 className={styles.mobileNavLink}
-                onClick={() => { if (!item.children) setMobileOpen(false); }}
+                onClick={() => setMobileOpen(false)}
               >
                 {item.label}
               </Link>

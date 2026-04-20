@@ -28,17 +28,7 @@ export default function ElezioniPage() {
             Abbiamo ancora tanto da fare, facciamolo insieme.
           </p>
 
-          <div className={styles.heroCtas}>
-            <Link href="/elezioni-studentesche/candidati" className="btn btn-white btn-lg" id="elezioni-candidati">
-              Scopri i candidati
-            </Link>
-            <Link href="/elezioni-studentesche/programma" className="btn btn-outline-white btn-lg" id="elezioni-programma">
-              Scopri il programma
-            </Link>
-            <Link href="/elezioni-studentesche/gulliver46" className="btn btn-outline-white btn-lg" id="elezioni-gioco">
-              Gioca a Gulliver46
-            </Link>
-          </div>
+
         </div>
       </div>
 
@@ -71,61 +61,21 @@ export default function ElezioniPage() {
               </a>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* PROGRAMMA PREVIEW */}
-      <section className={`section section-light`} id="programma-preview">
-        <div className="container">
-          <div className="section-header text-center">
-            <span className="section-tag">Il nostro impegno</span>
-            <h2>Il programma elettorale</h2>
-            <div className="divider-red divider-red-center" />
-          </div>
-
-          <div className={`grid-3 ${styles.programGrid}`}>
-            {PROGRAMMA_ITEMS.map((item) => (
-              <Link key={item.id} href={`/elezioni-studentesche/programma/${item.anchor}`} className={styles.programCard} id={item.id}>
-                <h4>{item.title}</h4>
-                <p>{item.desc}</p>
-              </Link>
-            ))}
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-            <Link href="/elezioni-studentesche/programma" className="btn btn-primary btn-lg" id="elezioni-programma-completo">
-              Leggi il programma completo
+          <div className={styles.manifestoActions}>
+            <Link href="/elezioni-studentesche/programma" className="btn btn-primary btn-lg" id="elezioni-programma">
+              Il nostro programma elettorale
+            </Link>
+            <Link href="/elezioni-studentesche/candidati" className="btn btn-outline btn-lg" id="elezioni-candidati">
+              Scopri i candidati
+            </Link>
+            <Link href="/elezioni-studentesche/gulliver46" className="btn btn-outline btn-lg" id="elezioni-gioco">
+              Gioca a Gulliver46
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* PROGRAMMI FACOLTA */}
-      <section className="section" id="programmi-facolta">
-        <div className="container text-center">
-          <span className="section-tag">Più vicini a te</span>
-          <h2>Programmi di Facoltà e Dipartimento</h2>
-          <div className="divider-red divider-red-center" />
-          <p style={{ maxWidth: '600px', margin: '0 auto 2.5rem' }}>
-            Oltre al programma generale, abbiamo proposte specifiche per ogni realtà accademica dell&apos;UNIVPM.
-          </p>
-          <Link href="/elezioni-studentesche/programma#facolta" className="btn btn-outline btn-lg" id="elezioni-programmi-facolta">
-            Vai ai programmi di Facoltà →
-          </Link>
         </div>
       </section>
     </>
   );
 }
 
-const PROGRAMMA_ITEMS = [
-  { id: "prog-didattica", title: "Didattica e tassazione", desc: "Qualità della didattica, riduzione tasse, diritti chiari.", anchor: "didattica" },
-  { id: "prog-strutture", title: "Strutture, servizi e spazi", desc: "Aule studio, mense, servizi digitali e spazi di aggregazione.", anchor: "strutture" },
-  { id: "prog-sedi", title: "Sedi distaccate", desc: "Stesse tutele e opportunità in tutte le sedi dell'Ateneo.", anchor: "sedi" },
-  { id: "prog-diritto", title: "Diritto allo studio", desc: "Borse, residenze, sostegno per chi ne ha bisogno.", anchor: "diritto-studio" },
-  { id: "prog-trasporti", title: "Trasporti", desc: "Mobilità accessibile e abbonamenti agevolati.", anchor: "trasporti" },
-  { id: "prog-ancona", title: "Ancona città universitaria", desc: "Una città a misura di studente.", anchor: "ancona" },
-  { id: "prog-lavoratori", title: "Studenti lavoratori", desc: "Flessibilità e riconoscimento per chi studia e lavora.", anchor: "studenti-lavoratori" },
-  { id: "prog-accessibilita", title: "Ateneo sicuro e accessibile", desc: "Inclusività, sicurezza e benessere per tuttɜ.", anchor: "accessibilita" },
-  { id: "prog-sostenibilita", title: "Sostenibilità", desc: "Un ateneo green, dalla mobilità agli spazi.", anchor: "sostenibilita" },
-];
+

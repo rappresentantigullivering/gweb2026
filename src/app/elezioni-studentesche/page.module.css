@@ -240,3 +240,19 @@
     justify-content: center;
   }
 }
+
+.manifestoActions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+  .manifestoActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+

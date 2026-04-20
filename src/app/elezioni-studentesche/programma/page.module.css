@@ -35,158 +35,103 @@
   font-size: 1.1rem;
 }
 
-.jumpLinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+/* TOPICS GRID */
+.topicsGrid {
+  margin-top: 3rem;
 }
 
-.jumpChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.8);
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 0.4rem 0.9rem;
-  border-radius: var(--radius-full);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-}
-
-.jumpChip:hover {
-  background: rgba(255,255,255,0.18);
-  color: var(--white);
-}
-
-/* TEMI */
-.temiList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.temaSection {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition: all var(--transition-base);
-  scroll-margin-top: 100px;
-}
-
-.temaSection:hover {
-  border-color: var(--red-primary);
-  box-shadow: var(--shadow-md);
-}
-
-.temaHeader {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2rem 2.5rem;
+.topicCard {
   background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
-}
-
-.temaNumber {
-  font-family: var(--font-heading);
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--gray-200);
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.temaTitleGroup {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.temaIcon {
-  font-size: 2rem;
-}
-
-.temaHeader h2 {
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-
-.temaPoints {
-  padding: 1.5rem 2.5rem 2rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-2xl);
+  padding: 2.5rem 2rem;
+  text-decoration: none;
+  transition: all var(--transition-base);
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  background: var(--off-white);
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
 }
 
-.temaPoint {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
+.topicCard:hover {
+  border-color: var(--red-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-5px);
 }
 
-.pointBullet {
-  color: var(--red-primary);
+.topicIcon {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+.topicCard h4 {
+  font-size: 1.25rem;
   font-weight: 700;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-  margin-top: 0.05rem;
+  color: var(--dark);
+  line-height: 1.3;
 }
 
-.temaPoint span:last-child {
-  color: var(--gray-700);
-  font-size: 0.95rem;
-  line-height: 1.65;
+.discoverText {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--red-primary);
+  margin-top: auto;
 }
 
-/* FACOLTA */
+/* FACOLTA GRID */
 .facoltaGrid {
-  margin-top: 2.5rem;
+  margin-top: 3rem;
 }
 
 .facoltaCard {
-  padding: 2rem;
+  background: var(--accent-color, var(--red-primary));
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-2xl);
+  text-decoration: none;
+  transition: all var(--transition-base);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+  color: var(--text-color, #fff);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.facoltaCard:hover {
+  transform: scale(1.03);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
 }
 
 .facoltaCard h4 {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: inherit;
 }
 
-.comingSoon {
-  font-size: 0.85rem;
-  color: var(--gray-400);
-  font-style: italic;
+.facoltaCard p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 /* BACK */
 .backSection {
-  padding: 2rem 1.5rem 4rem;
+  padding: 3rem 1.5rem 5rem;
+  display: flex;
+  justify-content: center;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .temaHeader {
-    padding: 1.5rem;
-    gap: 1rem;
+  .topicCard {
+    padding: 2rem 1.5rem;
   }
-
-  .temaNumber {
-    font-size: 2rem;
-  }
-
-  .temaPoints {
-    padding: 1.25rem 1.5rem 1.5rem;
-  }
-
-  .jumpLinks {
-    display: none;
+  
+  .facoltaCard {
+    padding: 2rem 1.5rem;
   }
 }
+
