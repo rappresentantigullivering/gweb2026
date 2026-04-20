@@ -41,22 +41,9 @@ export default function AgrariaPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ marginBottom: '2rem' }}>Punti salienti per Agraria</h2>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {POINTS.map((point, i) => (
-                <li key={i} style={{
-                  display: 'flex',
-                  gap: '1rem',
-                  padding: '1.5rem',
-                  background: 'var(--gray-100)',
-                  borderRadius: 'var(--radius-lg)',
-                  borderLeft: `4px solid ${color}`
-                }}>
-                  <span style={{ color: color, fontWeight: 'bold' }}>•</span>
-                  <span style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--gray-800)' }}>{point}</span>
-                </li>
-              ))}
-            </ul>
+            <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--gray-100)', borderRadius: 'var(--radius-lg)' }}>
+              <h3 style={{ color: 'var(--gray-600)', fontWeight: 600, margin: 0, fontSize: '1.5rem' }}>In aggiornamento</h3>
+            </div>
 
             <div style={{
               marginTop: '4rem',
@@ -70,7 +57,7 @@ export default function AgrariaPage() {
               <h3 style={{ marginBottom: '1rem', color: '#fff' }}>Programma completo</h3>
               <p style={{ opacity: 0.9, marginBottom: '2rem' }}>Leggi la proposta integrale per Agraria scaricando il PDF ufficiale.</p>
               <a
-                href="/docs/programmi/PROGRAMMA AGRARIA 2026.pdf"
+                href="/404"
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -81,7 +68,7 @@ export default function AgrariaPage() {
 
             <div style={{ marginTop: '3rem', textAlign: 'center' }}>
               <Link href="/elezioni-studentesche/programma" className="btn btn-outline" style={{ border: `2px solid ${color}`, color: color }}>
-                ← Torna ai programmi di Facoltà
+                ← Indietro
               </Link>
             </div>
           </div>

@@ -42,15 +42,11 @@ export default function AteneoPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ marginBottom: '2.5rem', fontWeight: 800 }}>I punti del nostro programma</h2>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {POINTS.map((point, i) => (
-                <li key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                  <span style={{ color: 'var(--red-primary)', fontWeight: 900, fontSize: '1.5rem', lineHeight: '1.2' }}>•</span>
-                  <span style={{ fontSize: '1.15rem', lineHeight: '1.6', color: 'var(--gray-800)', fontWeight: 500 }}>{point}</span>
-                </li>
-              ))}
-            </ul>
+            <div style={{ background: 'var(--gray-100)', padding: '2.5rem', borderRadius: 'var(--radius-lg)', borderLeft: '4px solid var(--red-primary)' }}>
+              <p style={{ fontSize: '1.15rem', lineHeight: '1.8', color: 'var(--gray-800)', margin: 0 }}>
+                Il nostro impegno per l'Ateneo si basa sul miglioramento della qualità della didattica e sulla digitalizzazione dei processi, garantendo totale trasparenza nelle decisioni degli organi accademici. Lavoriamo al potenziamento dei servizi di orientamento e placement, oltre che all'incremento cruciale dei fondi per la ricerca, per un'università protagonista e a misura di studente.
+              </p>
+            </div>
 
             <div style={{ 
               marginTop: '4rem', 
@@ -74,7 +70,7 @@ export default function AteneoPage() {
             
             <div style={{ marginTop: '4rem', textAlign: 'center' }}>
               <Link href="/elezioni-studentesche/programma" className="btn btn-outline" style={{ padding: '0.8rem 2rem' }}>
-                ← Torna al programma generale
+                ← Indietro
               </Link>
             </div>
           </div>
