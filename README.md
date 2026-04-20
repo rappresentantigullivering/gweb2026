@@ -44,7 +44,7 @@ Ogni contributo, dalla correzione di un typo all'aggiunta di una nuova sezione, 
 
 ## Sviluppo Locale
 
-Se vuoi avviare il progetto sul tuo computer:
+Per avviare il progetto in locale:
 
 1. Clona il repo: `git clone https://github.com/rappresentantigullivering/gweb2026.git`
 2. Installa le dipendenze: `npm install`
