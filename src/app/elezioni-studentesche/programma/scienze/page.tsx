@@ -20,20 +20,21 @@ export default function ScienzePage() {
     <>
       <div style={{
         background: `linear-gradient(135deg, ${color} 0%, var(--dark) 150%)`,
-        padding: '8rem 1.5rem 5rem',
+        padding: '10rem 1.5rem 6rem',
         position: 'relative',
+        overflow: 'hidden',
       }}>
         <div style={{
           position: 'absolute',
           bottom: '-2px', left: 0, right: 0,
-          height: '60px',
+          height: '70px',
           background: 'var(--white)',
           clipPath: 'ellipse(55% 100% at 50% 100%)',
         }} />
         <div className="container">
           <span className="section-tag section-tag-white" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>Programma di Facoltà</span>
-          <h1 style={{ color: '#fff', marginTop: '1rem', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)' }}>
-            🔬 Scienze
+          <h1 style={{ color: '#fff', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800 }}>
+            Scienze
           </h1>
         </div>
       </div>
@@ -41,34 +42,35 @@ export default function ScienzePage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ marginBottom: '2rem' }}>Punti salienti per Scienze</h2>
+            <h2 style={{ marginBottom: '2.5rem', fontWeight: 800 }}>Punti salienti per Scienze</h2>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {POINTS.map((point, i) => (
                 <li key={i} style={{ 
                   display: 'flex', 
-                  gap: '1rem', 
-                  padding: '1.5rem', 
+                  gap: '1.25rem', 
+                  padding: '2rem', 
                   background: 'var(--gray-100)', 
-                  borderRadius: 'var(--radius-lg)',
-                  borderLeft: `4px solid ${color}`
+                  borderRadius: 'var(--radius-xl)',
+                  borderLeft: `5px solid ${color}`,
+                  boxShadow: 'var(--shadow-sm)'
                 }}>
-                  <span style={{ color: color, fontWeight: 'bold' }}>•</span>
-                  <span style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--gray-800)' }}>{point}</span>
+                  <span style={{ color: color, fontWeight: 900, fontSize: '1.2rem' }}>•</span>
+                  <span style={{ fontSize: '1.15rem', lineHeight: '1.6', color: 'var(--gray-800)', fontWeight: 500 }}>{point}</span>
                 </li>
               ))}
             </ul>
 
             <div style={{ 
-              marginTop: '4rem', 
-              padding: '3rem', 
+              marginTop: '5rem', 
+              padding: '4rem 2rem', 
               background: color, 
               borderRadius: 'var(--radius-2xl)', 
               color: '#fff', 
               textAlign: 'center',
-              boxShadow: '0 15px 40px rgba(0,0,0,0.1)'
+              boxShadow: 'var(--shadow-2xl)'
             }}>
-              <h3 style={{ marginBottom: '1rem', color: '#fff' }}>Programma completo</h3>
-              <p style={{ opacity: 0.9, marginBottom: '2rem' }}>Leggi la proposta integrale per Scienze scaricando il PDF ufficiale.</p>
+              <h3 style={{ marginBottom: '1.25rem', color: '#fff', fontSize: '1.75rem', fontWeight: 800 }}>Programma completo</h3>
+              <p style={{ opacity: 0.9, marginBottom: '2.5rem', fontSize: '1.1rem' }}>Leggi la proposta integrale per Scienze scaricando il PDF ufficiale.</p>
               <a 
                 href="/docs/programmi/PROGRAMMA SCIENZE 2026.pdf" 
                 className="btn btn-white btn-lg"
@@ -79,8 +81,8 @@ export default function ScienzePage() {
               </a>
             </div>
             
-            <div style={{ marginTop: '3rem', textAlign: 'center' }}>
-              <Link href="/elezioni-studentesche/programma" className="btn btn-outline" style={{ border: `2px solid ${color}`, color: color }}>
+            <div style={{ marginTop: '4rem', textAlign: 'center' }}>
+              <Link href="/elezioni-studentesche/programma" className="btn btn-outline" style={{ border: `2px solid ${color}`, color: color, padding: '0.8rem 2rem' }}>
                 ← Torna ai programmi di Facoltà
               </Link>
             </div>
