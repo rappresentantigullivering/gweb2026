@@ -105,17 +105,19 @@
 
 .facoltaCard {
   background: var(--white);
-  padding: 3rem 2rem;
+  padding: 2.5rem 2rem;
   border-radius: var(--radius-xl);
   text-decoration: none;
   transition: all var(--transition-base);
   display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--gray-200);
   position: relative;
   overflow: hidden;
+  min-height: 140px;
 }
 
 .facoltaCard::before {
@@ -141,10 +143,7 @@
 }
 
 .facoltaCard p {
-  font-size: 1rem;
-  color: var(--gray-600);
-  line-height: 1.6;
-  font-weight: 500;
+  display: none;
 }
 
 /* BACK */
@@ -160,8 +159,13 @@
     padding-top: 8rem;
   }
   
-  .topicCard, .facoltaCard {
-    padding: 2.5rem 1.5rem;
+  .topicCard {
+    padding: 2rem 1.5rem;
+  }
+  
+  .facoltaCard {
+    padding: 2rem 1.5rem;
+    min-height: 120px;
   }
   
   .facoltaCard h4 {
