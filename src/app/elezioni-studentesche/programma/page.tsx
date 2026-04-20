@@ -78,7 +78,6 @@ export default function ProgrammaPage() {
                 style={{ '--accent-color': f.color } as React.CSSProperties}
               >
                 <h4>{f.nome}</h4>
-                <p>Leggi le nostre proposte specifiche per questo polo e scarica il PDF completo.</p>
               </Link>
             ))}
           </div>

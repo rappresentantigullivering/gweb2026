@@ -53,24 +53,22 @@ export default function DecentratePage() {
             </ul>
 
             <div style={{ 
-              marginTop: '5rem', 
-              padding: '4rem 2rem', 
-              background: 'var(--dark)', 
-              borderRadius: 'var(--radius-xl)', 
-              borderTop: `6px solid ${'var(--red-primary)'}`,
-              color: '#fff', 
-              textAlign: 'center',
-              boxShadow: 'var(--shadow-2xl)'
+              marginTop: '4rem', 
+              paddingTop: '3rem', 
+              borderTop: '1px solid var(--gray-200)',
+              textAlign: 'center'
             }}>
-              <h3 style={{ marginBottom: '1.25rem', color: '#fff', fontSize: '1.75rem', fontWeight: 800 }}>Programma completo</h3>
-              <p style={{ opacity: 0.8, marginBottom: '2.5rem', fontSize: '1.1rem' }}>Scarica il documento completo in formato PDF per leggere tutte le proposte per le sedi decentrate dell&apos;Ateneo.</p>
+              <h3 style={{ marginBottom: '1rem', color: 'var(--dark)', fontSize: '1.75rem', fontWeight: 800 }}>Scarica il programma completo</h3>
+              <p style={{ color: 'var(--gray-600)', marginBottom: '2rem', fontSize: '1.15rem' }}>
+                Leggi la proposta integrale scaricando il documento PDF ufficiale.
+              </p>
               <a 
                 href="/docs/programmi/PROGRAMMA DECENTRATE 2026.pdf" 
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Leggi il PDF completo
+                Vai al PDF completo
               </a>
             </div>
             
