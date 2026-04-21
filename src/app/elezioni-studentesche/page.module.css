@@ -113,6 +113,27 @@
   border: none;
 }
 
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+.pdfWrapperMobile {
+  width: 100%;
+  line-height: 0;
+  background: var(--gray-100);
+}
+
+.mobileImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+
 .pdfFooter {
   padding: 1.25rem 2rem;
   background: var(--white); /* Match container */
@@ -137,6 +158,14 @@
 }
 
 @media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
+  
+  .mobileOnly {
+    display: block;
+  }
+
   .pdfWrapper {
     height: 700px;
   }

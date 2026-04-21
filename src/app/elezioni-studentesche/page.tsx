@@ -41,13 +41,27 @@ export default function ElezioniPage() {
             <div className="divider-red divider-red-center" />
           </div>
           <div className={styles.pdfViewerContainer}>
-            <div className={styles.pdfWrapper}>
+            {/* DESKTOP/TABLET: Viewer PDF */}
+            <div className={`${styles.pdfWrapper} ${styles.desktopOnly}`}>
               <iframe 
                 src="/docs/manifesto-elettorale-aggiornato.pdf#toolbar=0&view=Fit" 
                 className={styles.pdfFrame}
                 title="Manifesto Elettorale 2026"
               />
             </div>
+
+            {/* MOBILE: Immagine nativa per raggirare il bug di zoom di iOS Safari */}
+            <div className={`${styles.pdfWrapperMobile} ${styles.mobileOnly}`}>
+              <Image 
+                src="/manifesto-elettorale.png"
+                alt="Manifesto Elettorale Gulliver 2026"
+                width={1000}
+                height={1414}
+                className={styles.mobileImage}
+                priority
+              />
+            </div>
+
             <div className={styles.pdfFooter}>
               <p>Il caricamento del manifesto dipende dalla velocità della tua connessione.</p>
               <a 
