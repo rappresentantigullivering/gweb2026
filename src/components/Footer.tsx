@@ -51,7 +51,7 @@ export default function Footer() {
               <li><Link href="/associazione-culturale">Associazione Culturale</Link></li>
               <li><Link href="/rappresentanza">Rappresentanza</Link></li>
               <li><Link href="/matricole">Matricole</Link></li>
-              <li><Link href="/udu">UDU</Link></li>
+              <li><a href="https://www.udu.it/">UDU</a></li>
             </ul>
           </div>
 

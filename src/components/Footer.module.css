@@ -23,6 +23,8 @@
 .brand {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 1.25rem;
 }
 
@@ -43,6 +45,7 @@
   color: rgba(255,255,255,0.55);
   line-height: 1.7;
   max-width: 300px;
+  margin: 0 auto;
 }
 
 .socials {

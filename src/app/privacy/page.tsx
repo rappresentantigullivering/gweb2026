@@ -14,10 +14,10 @@ export default function PrivacyPage() {
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Titolare del trattamento</h2>
         <p style={{ marginTop: '0.75rem' }}>Gulliver – Lista di Rappresentanza UNIVPM<br />Università Politecnica delle Marche, Ancona</p>
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Dati raccolti</h2>
-        <p style={{ marginTop: '0.75rem' }}>Il sito non raccoglie dati personali se non quelli forniti volontariamente tramite il modulo di contatto. I dati inseriti nel form vengono inviati a Formspree e trattati secondo la loro privacy policy.</p>
+        <p style={{ marginTop: '0.75rem' }}>Il sito non raccoglie dati personali.</p>
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Cookie</h2>
         <p style={{ marginTop: '0.75rem' }}>Il sito non utilizza cookie di profilazione o di terze parti.</p>
-        
+
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Infrastruttura di Rete</h2>
         <p style={{ marginTop: '0.75rem' }}>
           Il nostro sito web è ospitato parallelamente sulle piattaforme cloud di Netlify e Vercel, fornite rispettivamente da Netlify, Inc. e Vercel Inc. Questa configurazione a doppia infrastruttura, gestita attraverso un instradamento DNS dinamico, assicura una maggiore resilienza, ridondanza e continuità operativa del servizio (uptime garantito).
