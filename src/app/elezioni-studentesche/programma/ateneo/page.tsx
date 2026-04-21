@@ -45,9 +45,9 @@ export default function AteneoPage() {
           background: 'var(--white)',
           clipPath: 'ellipse(55% 100% at 50% 100%)',
         }} />
-        <div className="container">
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <span className="section-tag section-tag-white">Programma Generale</span>
-          <h1 style={{ color: 'var(--white)', marginTop: '1rem', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)' }}>
+          <h1 style={{ color: 'var(--white)', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center', textTransform: 'uppercase' }}>
             Ateneo
           </h1>
         </div>
@@ -57,23 +57,21 @@ export default function AteneoPage() {
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>I punti del nostro programma</h2>
-            <div style={{ background: 'var(--gray-100)', padding: '2.5rem', borderRadius: 'var(--radius-lg)', borderLeft: '4px solid var(--red-primary)' }}>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {POINTS.map((point, i) => (
-                  <li key={i} style={{
-                    display: 'flex',
-                    gap: '0.75rem',
-                    marginBottom: i === POINTS.length - 1 ? 0 : '1rem',
-                    lineHeight: '1.8',
-                    color: 'var(--gray-800)',
-                    fontSize: '1.1rem'
-                  }}>
-                    <span style={{ color: 'var(--red-primary)', fontWeight: 'bold' }}>•</span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 auto', maxWidth: '700px' }}>
+              {POINTS.map((point, i) => (
+                <li key={i} style={{
+                  display: 'flex',
+                  gap: '0.75rem',
+                  marginBottom: i === POINTS.length - 1 ? 0 : '1rem',
+                  lineHeight: '1.8',
+                  color: 'var(--gray-800)',
+                  fontSize: '1.1rem'
+                }}>
+                  <span style={{ color: 'var(--red-primary)', fontWeight: 'bold' }}>•</span>
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
 
 
             <div style={{ marginTop: '4rem', padding: '3rem', background: 'var(--dark)', borderRadius: 'var(--radius-2xl)', color: '#fff', textAlign: 'center' }}>
