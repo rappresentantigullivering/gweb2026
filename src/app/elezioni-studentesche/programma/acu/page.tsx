@@ -7,23 +7,23 @@ export const metadata: Metadata = {
 };
 
 const POINTS = [
-  "aule studio aperte 24/7",
-  "potenziamento trasporto pubblico locale nei quartieri periferici",
-  "affitti a canone concordato",
-  "istituzione di uno sportello affitti",
-  "calmierazione dei costi delle utenze",
-  "abbonamenti trasporti gratis per studenti",
-  "sincronizzazione orari di autobus e treni",
-  "autobus notturni",
-  "incremento delle corse nelle fasce di maggiore affluenza",
-  "adozione metodo di pagamento “tap and go” sugli autobus",
-  "testi universitari nelle biblioteche comunali",
-  "promozione di corsi culturali gratuiti",
-  "riqualificazione degli spazi verdi e creazione di aree attrezzate con postazioni per lo studio",
-  "convenzioni con strutture sportive",
-  "spazi di aggregazione gratuiti",
-  "spazi per la vita notturna",
-  "cinema gratuito per studenti",
+  "Aule studio aperte 24/7",
+  "Potenziamento trasporto pubblico locale nei quartieri periferici",
+  "Affitti a canone concordato",
+  "Istituzione di uno sportello affitti",
+  "Calmierazione dei costi delle utenze",
+  "Abbonamenti trasporti gratis per studenti",
+  "Sincronizzazione orari di autobus e treni",
+  "Autobus notturni",
+  "Incremento delle corse nelle fasce di maggiore affluenza",
+  "Adozione metodo di pagamento “tap and go” sugli autobus",
+  "Testi universitari nelle biblioteche comunali",
+  "Promozione di corsi culturali gratuiti",
+  "Riqualificazione degli spazi verdi e creazione di aree attrezzate con postazioni per lo studio",
+  "Convenzioni con strutture sportive",
+  "Spazi di aggregazione gratuiti",
+  "Spazi per la vita notturna",
+  "Cinema gratuito per studenti",
 ];
 
 export default function ACUPage() {
@@ -57,10 +57,10 @@ export default function ACUPage() {
             <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>I punti del nostro programma</h2>
             <ul style={{ listStyle: 'none', padding: 0, margin: '0 auto', maxWidth: '700px' }}>
               {POINTS.map((point, index) => (
-                <li key={index} style={{ 
-                  fontSize: '1.1rem', 
-                  lineHeight: '1.8', 
-                  color: 'var(--gray-800)', 
+                <li key={index} style={{
+                  fontSize: '1.1rem',
+                  lineHeight: '1.8',
+                  color: 'var(--gray-800)',
                   marginBottom: index === POINTS.length - 1 ? 0 : '1rem',
                   display: 'flex',
                   gap: '0.75rem'
@@ -71,9 +71,9 @@ export default function ACUPage() {
               ))}
             </ul>
 
-            <div style={{ 
-              marginTop: '4rem', 
-              paddingTop: '3rem', 
+            <div style={{
+              marginTop: '4rem',
+              paddingTop: '3rem',
               borderTop: '1px solid var(--gray-200)',
               textAlign: 'center'
             }}>
@@ -81,8 +81,8 @@ export default function ACUPage() {
               <p style={{ color: 'var(--gray-600)', marginBottom: '2rem', fontSize: '1.15rem' }}>
                 Leggi la proposta integrale scaricando il documento PDF ufficiale.
               </p>
-              <a 
-                href="/docs/programmi/PROGRAMMA ACU 2026.pdf" 
+              <a
+                href="/docs/programmi/PROGRAMMA ACU 2026.pdf"
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -90,7 +90,7 @@ export default function ACUPage() {
                 Vai al PDF completo
               </a>
             </div>
-            
+
             <div style={{ marginTop: '4rem', textAlign: 'center' }}>
               <Link href="/elezioni-studentesche/programma" className="btn btn-outline" style={{ padding: '0.8rem 2rem' }}>
                 ← Indietro
