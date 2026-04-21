@@ -41,17 +41,7 @@ export default function ElezioniPage() {
             <div className="divider-red divider-red-center" />
           </div>
           <div className={styles.pdfViewerContainer}>
-            {/* DESKTOP/TABLET: Viewer PDF */}
-            <div className={`${styles.pdfWrapper} ${styles.desktopOnly}`}>
-              <iframe 
-                src="/docs/manifesto-elettorale-aggiornato.pdf#toolbar=0&view=Fit" 
-                className={styles.pdfFrame}
-                title="Manifesto Elettorale 2026"
-              />
-            </div>
-
-            {/* MOBILE: Immagine nativa per raggirare il bug di zoom di iOS Safari */}
-            <div className={`${styles.pdfWrapperMobile} ${styles.mobileOnly}`}>
+            <div className={styles.pdfWrapperMobile}>
               <Image 
                 src="/manifesto-elettorale.png"
                 alt="Manifesto Elettorale Gulliver 2026"
