@@ -26,9 +26,9 @@ export default function ChiSiamoPage() {
           <div className={styles.contentGrid}>
             <div className={styles.mainText}>
               <h2>CHI SIAMO</h2>
-              <div className="divider-red" />
+              <div className="divider-red" style={{ margin: "1rem auto" }} />
               <p>
-                Gulliver nasce nel <strong>1987</strong> all&apos;Università Politecnica delle Marche. In quasi
+                Gulliver nasce nel <strong>1987 </strong> all&apos;Università Politecnica delle Marche. In quasi
                 quarant&apos;anni di attività è diventata un punto di riferimento per migliaia di studentɜ che
                 hanno vissuto e continuano a vivere l&apos;esperienza universitaria ad Ancona e nelle sedi
                 decentrate dell&apos;Ateneo.
@@ -80,11 +80,11 @@ export default function ChiSiamoPage() {
           <div className={styles.uduContent}>
             <p>
               Dal <strong>2008</strong> Gulliver è confederata con l&apos;<strong>Unione degli
-              Universitari (UDU)</strong>, la più grande rete nazionale di associazioni
+                Universitari (UDU)</strong>, la più grande rete nazionale di associazioni
               studentesche universitarie di stampo sindacale.
             </p>
             <p>
-              All&apos;UDU aderiscono ogni anno circa <strong>10.000 studentɜ</strong> in tutta Italia,
+              All&apos;UDU aderiscono ogni anno circa <strong>10.000 studenti</strong> in tutta Italia,
               rendendo questa rete un interlocutore fondamentale nei tavoli nazionali sul diritto
               allo studio, le politiche universitarie e i temi che riguardano il mondo della
               formazione superiore.

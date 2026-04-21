@@ -10,8 +10,8 @@ const TOPICS = [
   { id: "ateneo", slug: "ateneo", title: "Ateneo" },
   { id: "diritto", slug: "dsu", title: "Diritto allo studio universitario" },
   { id: "ancona", slug: "acu", title: "Ancona Città Universitaria" },
-  { id: "dottorand3", slug: "dottorand3", title: "Dottorand3" },
-  { id: "specializzand3", slug: "specializzand3", title: "Specializzand3" },
+  { id: "dottorand3", slug: "dottorandɜ", title: "Dottorandɜ" },
+  { id: "specializzand3", slug: "specializzandɜ", title: "Specializzandɜ" },
   { id: "decentrate", slug: "decentrate", title: "Decentrate" },
 ];
 
@@ -45,10 +45,10 @@ export default function ProgrammaPage() {
 
           <div className={`grid-3 ${styles.topicsGrid}`}>
             {TOPICS.map((topic) => (
-              <Link 
-                key={topic.id} 
-                href={`/elezioni-studentesche/programma/${topic.slug}`} 
-                className={styles.topicCard} 
+              <Link
+                key={topic.id}
+                href={`/elezioni-studentesche/programma/${topic.slug}`}
+                className={styles.topicCard}
                 id={`topic-${topic.slug}`}
               >
                 <h4>{topic.title}</h4>

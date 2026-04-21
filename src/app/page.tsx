@@ -96,7 +96,7 @@ export default function HomePage() {
                 rete nazionale di associazioni studentesche universitarie di stampo sindacale, a cui
                 aderiscono ogni anno circa 10.000 studentɜ.
               </p>
-              <a href="https://www.udu.it/" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>
+              <a href="https://www.unionedegliuniversitari.it/" target="_blank" rel="noopener noreferrer" className={styles.cardLink}>
                 Scopri di più →
               </a>
             </div>

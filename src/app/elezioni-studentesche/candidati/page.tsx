@@ -79,7 +79,7 @@ const DATA = [
       "Marco Massacesi detto Ivo (Pref: DICEA)",
       "Penelope Bezi (Pref: DICEA)",
       "Sokeng Arol Mendel (Pref: DII)",
-      "Ivan Migliore detto Divanetto (Pref: DIISM)",
+      "Ivan Migliore detto divanetto (Pref: DIISM)",
       "Amedea Di Santo (Pref: DII)",
       "Martina Travaglini (Pref: DICEA)",
       "Vittorio Emanuele Raciti (Pref: DIISM)",
@@ -352,7 +352,7 @@ const DATA = [
       "Celeste Maiorani",
       "Lorenzo Carpinteri",
       "Pier Francesco Capretta",
-      "Ivan Migliore detto Divanetto",
+      "Ivan Migliore detto divanetto",
       "Alessandro Pardi detto Gatto",
       "Emanuel Hoxha detto Ema",
       "Greta Puzone",
@@ -997,7 +997,7 @@ function CandidateItem({ name, num, type }: { name: string; num: number; type?: 
       <span className={styles.candidateName}>
         {name}
         {type && type !== "Ordinari" && type !== "Dipartimento" && (
-           <span className={`${styles.badge} ${styles['badge' + type]}`}>{type}</span>
+          <span className={`${styles.badge} ${styles['badge' + type]}`}>{type}</span>
         )}
       </span>
     </div>
@@ -1026,20 +1026,20 @@ export default function CandidatiPage() {
           {organs.map(organ => (
             <div key={organ} className={styles.organSection}>
               <h2 className={styles.organTitle}>{organ}</h2>
-              
+
               {DATA.filter(d => d.organ === organ).map((sub, idx) => (
                 <div key={idx} className={`${styles.subOrganSection} ${sub.is_cs ? styles.csHighlight : ""}`}>
                   <div className={styles.subOrganHeader}>
                     <h3>{sub.sub_organ || sub.organ}</h3>
                     <span className={styles.subOrganCount}>{sub.count} Candidati</span>
                   </div>
-                  
+
                   <div className={styles.candidateList}>
                     {sub.candidates.map((name, cIdx) => (
-                      <CandidateItem 
-                        key={cIdx} 
-                        name={name} 
-                        num={cIdx + 1} 
+                      <CandidateItem
+                        key={cIdx}
+                        name={name}
+                        num={cIdx + 1}
                         type={sub.type}
                       />
                     ))}
