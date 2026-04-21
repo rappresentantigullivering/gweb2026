@@ -80,7 +80,7 @@
 }
 
 .heroSloganAccent {
-  color: #ff4d3a; /* More vibrant red */
+  color: var(--red-primary); /* Colore istituzionale Gulliver */
   position: relative;
   display: inline-block;
 }
