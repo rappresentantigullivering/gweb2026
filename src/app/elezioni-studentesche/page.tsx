@@ -43,7 +43,7 @@ export default function ElezioniPage() {
           <div className={styles.pdfViewerContainer}>
             <div className={styles.pdfWrapper}>
               <iframe 
-                src="/docs/manifesto-elettorale-aggiornato.pdf#toolbar=0&view=FitH" 
+                src="/docs/manifesto-elettorale-aggiornato.pdf#toolbar=0&view=Fit" 
                 className={styles.pdfFrame}
                 title="Manifesto Elettorale 2026"
               />
