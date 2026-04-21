@@ -10,7 +10,7 @@ export default function PrivacyPage() {
       <div className="container" style={{ maxWidth: '760px' }}>
         <h1>Privacy Policy</h1>
         <div className="divider-red" style={{ marginBottom: '2rem', marginTop: '1rem' }} />
-        <p>Questa pagina descrive le pratiche di raccolta e utilizzo dei dati del sito Gulliver UNIVPM.</p>
+        <p>Questa pagina descrive le pratiche di raccolta e utilizzo dei dati del sito gullivernacona.it</p>
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Titolare del trattamento</h2>
         <p style={{ marginTop: '0.75rem' }}>Gulliver – Lista di Rappresentanza UNIVPM<br />Università Politecnica delle Marche, Ancona</p>
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Dati raccolti</h2>
