@@ -7,11 +7,23 @@ export const metadata: Metadata = {
 };
 
 const POINTS = [
-  "Integrazione reale tra Ateneo e tessuto cittadino",
-  "Convenzioni per trasporti urbani ed extra-urbani agevolati",
-  "Valorizzazione degli spazi culturali e ricreativi per studenti",
-  "Miglioramento dell'illuminazione e della sicurezza nei quartieri universitari",
-  "Promozione di eventi e iniziative dedicate al mondo studentesco",
+  "aule studio aperte 24/7",
+  "potenziamento trasporto pubblico locale nei quartieri periferici",
+  "affitti a canone concordato",
+  "istituzione di uno sportello affitti",
+  "calmierazione dei costi delle utenze",
+  "abbonamenti trasporti gratis per studenti",
+  "sincronizzazione orari di autobus e treni",
+  "autobus notturni",
+  "incremento delle corse nelle fasce di maggiore affluenza",
+  "adozione metodo di pagamento “tap and go” sugli autobus",
+  "testi universitari nelle biblioteche comunali",
+  "promozione di corsi culturali gratuiti",
+  "riqualificazione degli spazi verdi e creazione di aree attrezzate con postazioni per lo studio",
+  "convenzioni con strutture sportive",
+  "spazi di aggregazione gratuiti",
+  "spazi per la vita notturna",
+  "cinema gratuito per studenti",
 ];
 
 export default function ACUPage() {
@@ -42,6 +54,7 @@ export default function ACUPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>I punti del nostro programma</h2>
             <div style={{ background: 'var(--gray-100)', padding: '2.5rem', borderRadius: 'var(--radius-lg)', borderLeft: '4px solid var(--red-primary)' }}>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {POINTS.map((point, index) => (

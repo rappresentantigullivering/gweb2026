@@ -7,11 +7,27 @@ export const metadata: Metadata = {
 };
 
 const POINTS = [
-  "Miglioramento della qualità della didattica e dei materiali di studio",
-  "Semplificazione burocratica e digitalizzazione dei processi",
-  "Trasparenza nelle decisioni degli organi accademici",
-  "Potenziamento dei servizi di orientamento e placement",
-  "Incremento dei fondi per la ricerca e il dottorato",
+  "8 appelli garantiti ed esami parziali",
+  "lezioni registrate su elearn",
+  "voto dello scritto per 12 mesi",
+  "riforma tutorato",
+  "questionari post esame",
+  "rimozione voto più basso dal calcolo del voto di laurea",
+  "fac-simile dell’esame sul syllabus",
+  "innalzamento no tax area",
+  "eliminazione delle more",
+  "riconoscimento della figura dellə studente lavoratorə e caregiver",
+  "sala ristoro",
+  "riqualificazione spazi esterni",
+  "elettrificazione delle aule",
+  "potenziamento rete wifi",
+  "abbassamento prezzo bar",
+  "prestito dispositivi informatici",
+  "miglioramento CUS",
+  "estensione servizio supporto psicologico",
+  "sportello antiviolenza in presenza",
+  "consultorio settimanale in università",
+  "nuove fontanelle d’acqua",
 ];
 
 export default function AteneoPage() {
@@ -40,22 +56,25 @@ export default function AteneoPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ marginBottom: '2rem' }}>I punti del nostro programma</h2>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {POINTS.map((point, i) => (
-                <li key={i} style={{
-                  display: 'flex',
-                  gap: '1rem',
-                  padding: '1.5rem',
-                  background: 'var(--gray-100)',
-                  borderRadius: 'var(--radius-lg)',
-                  borderLeft: '4px solid var(--red-primary)'
-                }}>
-                  <span style={{ color: 'var(--red-primary)', fontWeight: 'bold' }}>•</span>
-                  <span style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--gray-800)' }}>{point}</span>
-                </li>
-              ))}
-            </ul>
+            <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>I punti del nostro programma</h2>
+            <div style={{ background: 'var(--gray-100)', padding: '2.5rem', borderRadius: 'var(--radius-lg)', borderLeft: '4px solid var(--red-primary)' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {POINTS.map((point, i) => (
+                  <li key={i} style={{
+                    display: 'flex',
+                    gap: '0.75rem',
+                    marginBottom: i === POINTS.length - 1 ? 0 : '1rem',
+                    lineHeight: '1.8',
+                    color: 'var(--gray-800)',
+                    fontSize: '1.1rem'
+                  }}>
+                    <span style={{ color: 'var(--red-primary)', fontWeight: 'bold' }}>•</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
 
             <div style={{ marginTop: '4rem', padding: '3rem', background: 'var(--dark)', borderRadius: 'var(--radius-2xl)', color: '#fff', textAlign: 'center' }}>
               <h3 style={{ marginBottom: '1rem', color: '#fff' }}>Programma completo</h3>
