@@ -17,6 +17,13 @@ export default function PrivacyPage() {
         <p style={{ marginTop: '0.75rem' }}>Il sito non raccoglie dati personali se non quelli forniti volontariamente tramite il modulo di contatto. I dati inseriti nel form vengono inviati a Formspree e trattati secondo la loro privacy policy.</p>
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Cookie</h2>
         <p style={{ marginTop: '0.75rem' }}>Il sito non utilizza cookie di profilazione o di terze parti.</p>
+        
+        <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Infrastruttura di Rete</h2>
+        <p style={{ marginTop: '0.75rem' }}>
+          Il nostro sito web è ospitato parallelamente sulle piattaforme cloud di Netlify e Vercel, fornite rispettivamente da Netlify, Inc. e Vercel Inc. Questa configurazione a doppia infrastruttura, gestita attraverso un instradamento DNS dinamico, assicura una maggiore resilienza, ridondanza e continuità operativa del servizio (uptime garantito).
+          <br /><br />
+          Quando visiti il sito, il tuo traffico può essere reindirizzato automaticamente verso uno dei due provider in base a logiche di bilanciamento e ottimizzazione delle risorse. Entrambi i provider potrebbero raccogliere informazioni tecniche standard (come indirizzi IP, log di accesso e statistiche di utilizzo) necessarie unicamente per il corretto funzionamento, la misurazione delle performance e la sicurezza dell'infrastruttura di rete. I dati tecnici trattati da queste piattaforme sono gestiti in conformità alle rispettive privacy policy.
+        </p>
       </div>
     </div>
   );

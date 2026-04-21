@@ -86,6 +86,8 @@ export default function Footer() {
           <div className={styles.bottomLinks}>
             <Link href="/privacy">Privacy Policy</Link>
             <span>·</span>
+            <Link href="/trasparenza">Trasparenza</Link>
+            <span>·</span>
             <a href="https://www.udu.it" target="_blank" rel="noopener noreferrer">UDU Nazionale</a>
           </div>
         </div>
