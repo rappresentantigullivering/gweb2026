@@ -79,7 +79,7 @@ export default function RappresentanzaPage() {
                   pareri su alcune importanti questioni per la vita universitaria, come la contribuzione studentesca 
                   e il bilancio, l&apos;offerta formativa e l&apos;apertura di nuovi corsi di studio, bandi per tutorato e 150 ore.
                 </p>
-                <Link href="/rappresentanza/proposte" className="btn btn-primary" id="rapp-proposte" style={{ display: 'inline-flex' }}>
+                <Link href="/elezioni-studentesche/programma" className="btn btn-primary" id="rapp-proposte" style={{ display: 'inline-flex' }}>
                   Scopri le nostre proposte →
                 </Link>
               </div>
