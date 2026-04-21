@@ -42,8 +42,22 @@ export default function ACUPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--gray-100)', borderRadius: 'var(--radius-lg)' }}>
-              <h3 style={{ color: 'var(--gray-600)', fontWeight: 600, margin: 0, fontSize: '1.5rem' }}>In aggiornamento</h3>
+            <div style={{ background: 'var(--gray-100)', padding: '2.5rem', borderRadius: 'var(--radius-lg)', borderLeft: '4px solid var(--red-primary)' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {POINTS.map((point, index) => (
+                  <li key={index} style={{ 
+                    fontSize: '1.1rem', 
+                    lineHeight: '1.8', 
+                    color: 'var(--gray-800)', 
+                    marginBottom: index === POINTS.length - 1 ? 0 : '1rem',
+                    display: 'flex',
+                    gap: '0.75rem'
+                  }}>
+                    <span style={{ color: 'var(--red-primary)', fontWeight: 'bold' }}>•</span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div style={{ 
