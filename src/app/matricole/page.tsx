@@ -32,7 +32,7 @@ export default function MatricolePage() {
 
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+          <div className="grid-3">
             <Link href="/matricole/kit" style={{ textDecoration: 'none' }} id="matricole-kit">
               <div className="card" style={{ padding: '2.25rem', display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
                 <h3>Kit dello Studente</h3>

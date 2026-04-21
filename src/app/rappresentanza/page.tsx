@@ -34,7 +34,7 @@ export default function RappresentanzaPage() {
 
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'start' }}>
+          <div className="grid-2" style={{ alignItems: 'start' }}>
             <div>
               <h2>Come operiamo</h2>
               <div className="divider-red" />

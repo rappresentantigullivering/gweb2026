@@ -35,7 +35,7 @@ export default function ConvenzioniPage() {
           <div style={{
             border: '2px dashed var(--gray-300)',
             borderRadius: 'var(--radius-xl)',
-            padding: '5rem 3rem',
+            padding: '4rem 1.5rem',
             background: 'var(--gray-100)',
             maxWidth: '600px',
             margin: '0 auto',
@@ -45,7 +45,7 @@ export default function ConvenzioniPage() {
             <p style={{ marginTop: '0.75rem', color: 'var(--gray-500)' }}>
               Stiamo raccogliendo tutte le nostre convenzioni attive. Torna presto!
             </p>
-            <Link href="/contatti" className="btn btn-primary" style={{ marginTop: '2rem', display: 'inline-flex' }} id="conv-contattaci">
+            <Link href="/contatti" className="btn btn-primary" style={{ marginTop: '2rem', display: 'inline-flex', whiteSpace: 'normal', textAlign: 'center', height: 'auto' }} id="conv-contattaci">
               Hai una convenzione da proporre? Scrivici
             </Link>
           </div>
