@@ -6,13 +6,6 @@ export const metadata: Metadata = {
   description: "Il programma di Gulliver per la Facoltà di Economia dell'UNIVPM.",
 };
 
-const POINTS = [
-  "Ampliamento dell'offerta di corsi in lingua inglese",
-  "Supporto alla ricerca di stage e tirocini formativi",
-  "Miglioramento dell'aula magna e delle dotazioni tecnologiche",
-  "Seminari e workshop con esperti del mondo del lavoro",
-  "Semplificazione dei piani di studio e della mobilità internazionale",
-];
 
 export default function EconomiaPage() {
   const color = "#f9a825";
@@ -43,14 +36,8 @@ export default function EconomiaPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--gray-100)', borderRadius: 'var(--radius-lg)' }}>
-              <h3 style={{ color: 'var(--gray-600)', fontWeight: 600, margin: 0, fontSize: '1.5rem' }}>In aggiornamento</h3>
-            </div>
-
             <div style={{ 
-              marginTop: '4rem', 
-              paddingTop: '3rem', 
-              borderTop: '1px solid var(--gray-200)',
+              marginTop: '2rem', 
               textAlign: 'center'
             }}>
               <h3 style={{ marginBottom: '1rem', color: 'var(--dark)', fontSize: '1.75rem', fontWeight: 800 }}>Scarica il programma completo</h3>
@@ -58,7 +45,7 @@ export default function EconomiaPage() {
                 Leggi la proposta integrale scaricando il documento PDF ufficiale.
               </p>
               <a 
-                href="/404" 
+                href="/docs/programmi/PROGRAMMA DI ECONOMIA 2026.pdf" 
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"
