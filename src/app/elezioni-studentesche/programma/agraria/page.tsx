@@ -30,9 +30,9 @@ export default function AgrariaPage() {
           background: 'var(--white)',
           clipPath: 'ellipse(55% 100% at 50% 100%)',
         }} />
-        <div className="container">
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <span className="section-tag section-tag-white" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>Programma di Facoltà</span>
-          <h1 style={{ color: '#fff', marginTop: '1rem', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)' }}>
+          <h1 style={{ color: '#fff', marginTop: '2rem', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, textAlign: 'center', textTransform: 'uppercase' }}>
             Agraria
           </h1>
         </div>
@@ -45,19 +45,18 @@ export default function AgrariaPage() {
               <h3 style={{ color: 'var(--gray-600)', fontWeight: 600, margin: 0, fontSize: '1.5rem' }}>In aggiornamento</h3>
             </div>
 
-            <div style={{
-              marginTop: '4rem',
-              padding: '3rem',
-              background: color,
-              borderRadius: 'var(--radius-2xl)',
-              color: '#fff',
-              textAlign: 'center',
-              boxShadow: '0 15px 40px rgba(0,0,0,0.1)'
+            <div style={{ 
+              marginTop: '4rem', 
+              paddingTop: '3rem', 
+              borderTop: '1px solid var(--gray-200)',
+              textAlign: 'center'
             }}>
-              <h3 style={{ marginBottom: '1rem', color: '#fff' }}>Programma completo</h3>
-              <p style={{ opacity: 0.9, marginBottom: '2rem' }}>Leggi la proposta integrale per Agraria scaricando il PDF ufficiale.</p>
-              <a
-                href="/404"
+              <h3 style={{ marginBottom: '1rem', color: 'var(--dark)', fontSize: '1.75rem', fontWeight: 800 }}>Scarica il programma completo</h3>
+              <p style={{ color: 'var(--gray-600)', marginBottom: '2rem', fontSize: '1.15rem' }}>
+                Leggi la proposta integrale per Agraria scaricando il PDF ufficiale.
+              </p>
+              <a 
+                href="/docs/programmi/PROGRAMMA DI AGRARIA 2026.pdf" 
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"
