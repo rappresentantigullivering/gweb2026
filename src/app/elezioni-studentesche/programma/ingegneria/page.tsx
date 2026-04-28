@@ -6,13 +6,6 @@ export const metadata: Metadata = {
   description: "Il programma di Gulliver per la Facoltà di Ingegneria dell'UNIVPM.",
 };
 
-const POINTS = [
-  "Potenziamento dei laboratori didattici e delle attrezzature",
-  "Maggiore flessibilità negli orari delle lezioni e degli appelli",
-  "Supporto specifico per i progetti di gruppo e i tirocini",
-  "Miglioramento degli spazi studio dedicati al polo di Ingegneria",
-  "Revisione dei programmi didattici per renderli più attuali",
-];
 
 export default function IngegneriaPage() {
   const color = "#6a1b9a";
@@ -43,28 +36,8 @@ export default function IngegneriaPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ background: 'var(--gray-100)', padding: '2.5rem', borderRadius: 'var(--radius-lg)', borderLeft: `4px solid ${color}` }}>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {POINTS.map((point, index) => (
-                  <li key={index} style={{ 
-                    fontSize: '1.1rem', 
-                    lineHeight: '1.8', 
-                    color: 'var(--gray-800)', 
-                    marginBottom: index === POINTS.length - 1 ? 0 : '1rem',
-                    display: 'flex',
-                    gap: '0.75rem'
-                  }}>
-                    <span style={{ color: color, fontWeight: 'bold' }}>•</span>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
             <div style={{ 
-              marginTop: '4rem', 
-              paddingTop: '3rem', 
-              borderTop: '1px solid var(--gray-200)',
+              marginTop: '2rem', 
               textAlign: 'center'
             }}>
               <h3 style={{ marginBottom: '1rem', color: 'var(--dark)', fontSize: '1.75rem', fontWeight: 800 }}>Scarica il programma completo</h3>

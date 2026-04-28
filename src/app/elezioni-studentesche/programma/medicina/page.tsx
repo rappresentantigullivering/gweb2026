@@ -6,13 +6,6 @@ export const metadata: Metadata = {
   description: "Il programma di Gulliver per la Facoltà di Medicina e Chirurgia dell'UNIVPM.",
 };
 
-const POINTS = [
-  "Tutela dei diritti degli studenti nelle reti formative ospedaliere",
-  "Miglioramento del sistema di simulazione medica e dei laboratori",
-  "Supporto psicologico specifico per il carico di studio e lavoro",
-  "Revisione del sistema di accesso e dei criteri di tirocinio",
-  "Potenziamento delle aule studio in prossimità dell'ospedale",
-];
 
 export default function MedicinaPage() {
   const color = "#c62828";
@@ -43,14 +36,8 @@ export default function MedicinaPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--gray-100)', borderRadius: 'var(--radius-lg)' }}>
-              <h3 style={{ color: 'var(--gray-600)', fontWeight: 600, margin: 0, fontSize: '1.5rem' }}>In aggiornamento</h3>
-            </div>
-
             <div style={{ 
-              marginTop: '4rem', 
-              paddingTop: '3rem', 
-              borderTop: '1px solid var(--gray-200)',
+              marginTop: '2rem', 
               textAlign: 'center'
             }}>
               <h3 style={{ marginBottom: '1rem', color: 'var(--dark)', fontSize: '1.75rem', fontWeight: 800 }}>Scarica il programma completo</h3>
@@ -58,7 +45,7 @@ export default function MedicinaPage() {
                 Leggi la proposta integrale scaricando il documento PDF ufficiale.
               </p>
               <a 
-                href="/404" 
+                href="/docs/programmi/PROGRAMMA DI MEDICINA 2026.pdf" 
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"
