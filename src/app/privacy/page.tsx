@@ -18,6 +18,11 @@ export default function PrivacyPage() {
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Cookie</h2>
         <p style={{ marginTop: '0.75rem' }}>Il sito non utilizza cookie di profilazione o di terze parti.</p>
 
+        <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Statistiche anonime (Web Analytics)</h2>
+        <p style={{ marginTop: '0.75rem' }}>
+          Il nostro sito utilizza gli strumenti <strong>Vercel Analytics</strong> e <strong>Vercel Speed Insights</strong> per raccogliere misurazioni sulle performance e sul traffico (es. page views, numero di visitatori). Questi strumenti sono progettati nel pieno rispetto della privacy (Privacy-First): non utilizzano cookie, non estraggono alcun dato personale né identificativo o IP dell'utente, limitandosi esclusivamente a fornire metriche aggregate e anonime per aiutarci a migliorare la piattaforma.
+        </p>
+
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Infrastruttura di Rete</h2>
         <p style={{ marginTop: '0.75rem' }}>
           Il nostro sito web è ospitato parallelamente sulle piattaforme cloud di Netlify e Vercel, fornite rispettivamente da Netlify, Inc. e Vercel Inc. Questa configurazione a doppia infrastruttura, gestita attraverso un instradamento DNS dinamico, assicura una maggiore resilienza, ridondanza e continuità operativa del servizio (uptime garantito).
