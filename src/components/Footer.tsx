@@ -82,7 +82,12 @@ export default function Footer() {
 
         {/* BOTTOM */}
         <div className={styles.bottom}>
-          <p>© {new Date().getFullYear()} Gulliver – Lista di Rappresentanza UNIVPM. Tutti i diritti riservati.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+            <p>© {new Date().getFullYear()} Gulliver – Lista di Rappresentanza UNIVPM. Tutti i diritti riservati.</p>
+            <p style={{ fontSize: '0.7rem', color: 'var(--gray-500)', lineHeight: '1.4', maxWidth: '800px' }}>
+              Questo sito web è gestito tecnicamente da terze parti. L'autore declina ogni responsabilità legale in merito ai contenuti pubblicati. Per segnalazioni relative <strong>ESCLUSIVAMENTE a malfunzionamenti tecnici</strong> dell'infrastruttura web (non questioni contenutistiche o associative), scrivere a: <a href="mailto:cali@gulliverancona.it" style={{ textDecoration: 'underline' }}>cali@gulliverancona.it</a>.
+            </p>
+          </div>
           <div className={styles.bottomLinks}>
             <Link href="/privacy">Privacy Policy</Link>
             <span>·</span>
