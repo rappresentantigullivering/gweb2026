@@ -10,8 +10,7 @@ const TOPICS = [
   { id: "ateneo", slug: "ateneo", title: "Ateneo" },
   { id: "diritto", slug: "dsu", title: "Diritto allo studio universitario" },
   { id: "ancona", slug: "acu", title: "Ancona Città Universitaria" },
-  { id: "dottorand3", slug: "dottorandɜ", title: "Dottorandɜ" },
-  { id: "specializzand3", slug: "specializzandɜ", title: "Specializzandɜ" },
+  { id: "dottorand3", slug: "dottorand3", title: "Dottorandɜ" },
   { id: "decentrate", slug: "decentrate", title: "Decentrate" },
 ];
 
