@@ -6,29 +6,6 @@ export const metadata: Metadata = {
   description: "Il programma Gulliver per l'Ateneo dell'Università Politecnica delle Marche.",
 };
 
-const POINTS = [
-  "8 appelli garantiti ed esami parziali",
-  "Lezioni registrate su elearn",
-  "Voto dello scritto per 12 mesi",
-  "Riforma tutorato",
-  "Questionari post esame",
-  "Rimozione voto più basso dal calcolo del voto di laurea",
-  "Fac-simile dell’esame sul syllabus",
-  "Innalzamento no tax area",
-  "Eliminazione delle more",
-  "Riconoscimento della figura dellə studente lavoratorə e caregiver",
-  "Sala ristoro",
-  "Riqualificazione spazi esterni",
-  "Elettrificazione delle aule",
-  "Potenziamento rete wifi",
-  "Abbassamento prezzo bar",
-  "Prestito dispositivi informatici",
-  "Miglioramento CUS",
-  "Estensione servizio supporto psicologico",
-  "Sportello antiviolenza in presenza",
-  "Consultorio settimanale in università",
-  "Nuove fontanelle d’acqua",
-];
 
 export default function AteneoPage() {
   return (
@@ -56,28 +33,8 @@ export default function AteneoPage() {
       <section className="section">
         <div className="container">
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>I punti del nostro programma</h2>
-            <ul style={{ listStyle: 'none', padding: 0, margin: '0 auto', maxWidth: '700px' }}>
-              {POINTS.map((point, i) => (
-                <li key={i} style={{
-                  display: 'flex',
-                  gap: '0.75rem',
-                  marginBottom: i === POINTS.length - 1 ? 0 : '1rem',
-                  lineHeight: '1.8',
-                  color: 'var(--gray-800)',
-                  fontSize: '1.1rem'
-                }}>
-                  <span style={{ color: 'var(--red-primary)', fontWeight: 'bold' }}>•</span>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-
-
             <div style={{ 
-              marginTop: '4rem', 
-              paddingTop: '3rem', 
-              borderTop: '1px solid var(--gray-200)',
+              marginTop: '2rem', 
               textAlign: 'center'
             }}>
               <h3 style={{ marginBottom: '1rem', color: 'var(--dark)', fontSize: '1.75rem', fontWeight: 800 }}>Scarica il programma completo</h3>
