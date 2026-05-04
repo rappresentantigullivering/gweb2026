@@ -188,13 +188,12 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
         /* Blocchi cifre */
         .epic-digits {
           display: flex;
-          gap: clamp(0.5rem, 2vw, 2rem);
+          gap: clamp(0.25rem, 1.5vw, 2rem);
           align-items: flex-end;
           justify-content: center;
           margin-bottom: 3.5rem;
           flex-wrap: nowrap;
           width: 100%;
-          overflow-x: auto;
         }
         .epic-digit-block {
           display: flex;
@@ -205,9 +204,9 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
         .epic-digit-box {
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 16px;
-          padding: clamp(0.6rem, 2vw, 1.5rem) clamp(0.7rem, 2.5vw, 2rem);
-          min-width: clamp(64px, 12vw, 140px);
+          border-radius: 12px;
+          padding: clamp(0.5rem, 1.5vw, 1.5rem) clamp(0.4rem, 1.5vw, 2rem);
+          min-width: clamp(56px, calc(20vw - 12px), 140px);
           text-align: center;
           backdrop-filter: blur(8px);
           position: relative;
@@ -222,7 +221,7 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
         }
         .epic-digit-num {
           font-family: 'Outfit', sans-serif;
-          font-size: clamp(2.8rem, 7vw, 7rem);
+          font-size: clamp(2rem, 5.5vw, 7rem);
           font-weight: 900;
           line-height: 1;
           letter-spacing: -0.04em;
@@ -235,15 +234,15 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
         }
         .epic-digit-label {
           font-family: 'Outfit', sans-serif;
-          font-size: clamp(0.65rem, 1.5vw, 0.9rem);
+          font-size: clamp(0.55rem, 1.2vw, 0.9rem);
           font-weight: 600;
-          letter-spacing: 0.2em;
+          letter-spacing: 0.15em;
           text-transform: uppercase;
           color: rgba(255,255,255,0.4);
         }
         .epic-colon {
           font-family: 'Outfit', sans-serif;
-          font-size: clamp(2.5rem, 6vw, 5rem);
+          font-size: clamp(1.5rem, 4vw, 5rem);
           font-weight: 300;
           color: rgba(255,255,255,0.15);
           margin-bottom: 1.5rem;
