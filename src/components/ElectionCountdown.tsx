@@ -66,8 +66,8 @@ export default function ElectionCountdown() {
       maxWidth: '400px'
     }}>
       <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-        {status === 'WAITING' && 'Le urne aprono tra:'}
-        {status === 'ACTIVE' && 'URNE APERTE! Chiudono tra:'}
+        {status === 'WAITING' && 'Le votazioni online iniziano tra:'}
+        {status === 'ACTIVE' && 'VOTAZIONI IN CORSO! Terminano tra:'}
         {status === 'ENDED' && 'Elezioni concluse'}
       </div>
       
