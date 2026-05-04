@@ -188,11 +188,13 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
         /* Blocchi cifre */
         .epic-digits {
           display: flex;
-          gap: clamp(0.75rem, 3vw, 2.5rem);
+          gap: clamp(0.5rem, 2vw, 2rem);
           align-items: flex-end;
           justify-content: center;
           margin-bottom: 3.5rem;
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
+          width: 100%;
+          overflow-x: auto;
         }
         .epic-digit-block {
           display: flex;
@@ -204,8 +206,8 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
           border-radius: 16px;
-          padding: clamp(0.8rem, 3vw, 1.5rem) clamp(1rem, 4vw, 2rem);
-          min-width: clamp(80px, 15vw, 140px);
+          padding: clamp(0.6rem, 2vw, 1.5rem) clamp(0.7rem, 2.5vw, 2rem);
+          min-width: clamp(64px, 12vw, 140px);
           text-align: center;
           backdrop-filter: blur(8px);
           position: relative;
@@ -220,7 +222,7 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
         }
         .epic-digit-num {
           font-family: 'Outfit', sans-serif;
-          font-size: clamp(3.5rem, 10vw, 8rem);
+          font-size: clamp(2.8rem, 7vw, 7rem);
           font-weight: 900;
           line-height: 1;
           letter-spacing: -0.04em;
@@ -306,20 +308,9 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
       <div className="epic-glow" />
 
       <div className="epic-inner">
-        {/* Logo */}
-        <Image
-          src="/gulliver-tondo.png"
-          alt="Gulliver UNIVPM"
-          width={72}
-          height={72}
-          style={{ marginBottom: '2rem', filter: 'drop-shadow(0 0 20px rgba(228,3,41,0.5))' }}
-        />
-
-        {/* Eyebrow */}
-        <p className="epic-eyebrow">{phaseLabel.eyebrow}</p>
-
-        {/* Divisore */}
-        <div className="epic-divider" />
+        {/* Logo RIMOSSO */}
+        {/* Eyebrow RIMOSSO */}
+        {/* Divisore RIMOSSO */}
 
         {/* Titolo */}
         <h1 className="epic-title">{phaseLabel.headline}</h1>
