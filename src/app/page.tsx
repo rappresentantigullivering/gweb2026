@@ -105,21 +105,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── ELEZIONI BANNER ── */}
       <section className={styles.electionBanner} id="elezioni-banner">
         <div className={`container ${styles.electionBannerInner}`}>
           <div className={styles.electionBannerText}>
-            <span className="section-tag section-tag-white">12 · 13 · 14 Maggio</span>
+            <span className="section-tag section-tag-white">12 · 13 · 14 Maggio 2026</span>
             <h2>Elezioni Studentesche 2026</h2>
-            <p>Il momento in cui la tua voce conta davvero. Vota Gulliver.</p>
+            <p>Il momento in cui la tua voce conta davvero. Vota Gulliver, Lista 1.</p>
             <ElectionCountdown />
           </div>
           <div className={styles.electionBannerActions}>
             <Link href="/elezioni-studentesche/programma" className="btn btn-white btn-lg" id="banner-programma">
-              Il programma elettorale
+              Il programma
             </Link>
             <Link href="/elezioni-studentesche/candidati" className="btn btn-outline-white btn-lg" id="banner-candidati">
-              Scopri i candidati
+              I candidati
+            </Link>
+            <Link href="/countdown" className="btn btn-outline-white btn-lg" id="banner-countdown">
+              ⏱ Countdown
             </Link>
           </div>
         </div>
