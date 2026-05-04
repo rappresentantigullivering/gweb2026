@@ -50,22 +50,20 @@ export default function Gulliver46Page() {
         </div>
       </div>
 
-      <section className="section">
-        <div className="container">
+      <section className="section" style={{ paddingLeft: '0', paddingRight: '0' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 0.5rem' }}>
           <div style={{ 
             width: '100%', 
-            maxWidth: '1000px', 
-            margin: '0 auto', 
             overflow: 'hidden', 
-            borderRadius: 'var(--radius-lg)', 
-            border: '8px solid var(--white)', 
+            borderRadius: '12px', 
+            border: '3px solid var(--white)', 
             backgroundColor: 'var(--card-bg)',
-            boxShadow: 'var(--shadow-lg)'
+            boxShadow: 'var(--shadow-md)'
           }}>
             <iframe 
               id="bus-game"
               src="https://gulliver46.pages.dev/" 
-              style={{ width: '100%', height: '700px', border: 'none', display: 'block' }}
+              style={{ width: '100%', height: '80vh', minHeight: '600px', border: 'none', display: 'block' }}
               allow="accelerometer; gyroscope; magnetometer; fullscreen">
             </iframe>
           </div>
