@@ -152,7 +152,7 @@ export default function HomePage() {
           <div className="divider-red divider-red-center" />
           <p style={{ maxWidth: '560px', margin: '0 auto 2.5rem' }}>
             Siamo sempre alla ricerca di persone motivate che vogliono impegnarsi
-            per migliorare la vita universitaria ad Ancona. Scrivici, vieni a un&apos;assemblea,
+            per migliorare la vita universitaria ad Ancona. Scrivici,
             fai parte del cambiamento.
           </p>
           <div className={styles.ctaActions}>
