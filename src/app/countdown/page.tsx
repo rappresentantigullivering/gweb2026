@@ -1,4 +1,6 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 import ElectionCountdown from '@/components/ElectionCountdown';
 
 export const metadata: Metadata = {
@@ -56,7 +58,7 @@ export default function CountdownPage() {
         
         {/* Logo piccolo in alto */}
         <div style={{ opacity: 0.8 }}>
-          <img src="/gulliver-tondo.png" alt="Gulliver" width={80} height={80} style={{ filter: 'drop-shadow(0 0 10px rgba(255,0,0,0.3))' }} />
+          <Image src="/gulliver-tondo.png" alt="Gulliver" width={80} height={80} style={{ filter: 'drop-shadow(0 0 10px rgba(255,0,0,0.3))' }} />
         </div>
 
         {/* Il Countdown Epico */}
@@ -64,7 +66,7 @@ export default function CountdownPage() {
 
         {/* Tasti azione rapidi */}
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '2rem' }}>
-          <a href="/elezioni-studentesche/programma" style={{
+          <Link href="/elezioni-studentesche/programma" style={{
             padding: '1rem 2rem',
             background: 'var(--red-primary)',
             color: 'white',
@@ -79,8 +81,8 @@ export default function CountdownPage() {
           onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             Scopri il Programma
-          </a>
-          <a href="/" style={{
+          </Link>
+          <Link href="/" style={{
             padding: '1rem 2rem',
             background: 'transparent',
             border: '2px solid rgba(255,255,255,0.3)',
@@ -95,7 +97,7 @@ export default function CountdownPage() {
           onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
           >
             Torna alla Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

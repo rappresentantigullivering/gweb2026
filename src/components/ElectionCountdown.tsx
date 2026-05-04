@@ -22,6 +22,7 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line
     setIsClient(true);
 
     const interval = setInterval(() => {

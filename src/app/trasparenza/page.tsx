@@ -1,4 +1,4 @@
-import Link from "next/link";
+/* eslint-disable react/no-unescaped-entities */
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
