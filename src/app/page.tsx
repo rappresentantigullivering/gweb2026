@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import styles from "./page.module.css";
+import ElectionCountdown from "@/components/ElectionCountdown";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -109,8 +110,9 @@ export default function HomePage() {
         <div className={`container ${styles.electionBannerInner}`}>
           <div className={styles.electionBannerText}>
             <span className="section-tag section-tag-white">12 · 13 · 14 Maggio</span>
-            <h2>Elezioni Studentesche 2025</h2>
+            <h2>Elezioni Studentesche 2026</h2>
             <p>Il momento in cui la tua voce conta davvero. Vota Gulliver.</p>
+            <ElectionCountdown />
           </div>
           <div className={styles.electionBannerActions}>
             <Link href="/elezioni-studentesche/programma" className="btn btn-white btn-lg" id="banner-programma">
