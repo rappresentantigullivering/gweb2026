@@ -4,11 +4,17 @@ export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/404'], // Esclude pagine di errore
-    },
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/404'], // Esclude pagine di errore
+      },
+      {
+        userAgent: 'facebookexternalhit',
+        allow: '/',
+      }
+    ],
     sitemap: 'https://www.gulliverancona.it/sitemap.xml',
   };
 }
