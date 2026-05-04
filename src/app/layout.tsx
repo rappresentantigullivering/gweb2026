@@ -9,11 +9,11 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.gulliverancona.it"),
   title: {
-    default: "Gulliver – Lista di Rappresentanza UNIVPM",
+    default: "Gulliver Ancona – Lista di Rappresentanza Studentesca UNIVPM",
     template: "%s | Gulliver UNIVPM",
   },
   description:
-    "Gulliver è la lista di rappresentanza studentesca dell'Università Politecnica delle Marche. Dal 1987 difendiamo i diritti degli studenti. Confederati con UDU.",
+    "Gulliver è la prima associazione e lista di rappresentanza studentesca dell'Università Politecnica delle Marche. Dal 1987 difendiamo i diritti degli studenti.",
   keywords: [
     "Gulliver",
     "Gulliver Ancona",
@@ -44,24 +44,24 @@ export const metadata: Metadata = {
     locale: "it_IT",
     url: "https://www.gulliverancona.it",
     siteName: "Gulliver UNIVPM",
-    title: "Gulliver – Lista di Rappresentanza UNIVPM",
+    title: "Gulliver Ancona – Lista di Rappresentanza Studentesca UNIVPM",
     description:
-      "Dal 1987 difendiamo i diritti della comunità studentesca dell'Università Politecnica delle Marche.",
+      "Gulliver è la prima associazione e lista di rappresentanza studentesca dell'Università Politecnica delle Marche. Dal 1987 difendiamo i diritti degli studenti.",
     images: [
       {
-        url: "/apple-touch-icon.png",
-        width: 180,
-        height: 180,
-        alt: "Logo Gulliver UNIVPM",
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Gulliver UNIVPM - Rappresentanza Studentesca",
       },
     ],
   },
   twitter: {
-    card: "summary",
-    title: "Gulliver – Lista di Rappresentanza UNIVPM",
+    card: "summary_large_image",
+    title: "Gulliver Ancona – Lista di Rappresentanza Studentesca UNIVPM",
     description:
-      "Dal 1987 difendiamo i diritti della comunità studentesca dell'Università Politecnica delle Marche.",
-    images: ["/apple-touch-icon.png"],
+      "Gulliver è la prima associazione e lista di rappresentanza studentesca dell'Università Politecnica delle Marche. Dal 1987 difendiamo i diritti degli studenti.",
+    images: ["/opengraph-image.png"],
   },
   robots: {
     index: true,
