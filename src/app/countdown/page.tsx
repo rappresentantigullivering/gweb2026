@@ -1,12 +1,8 @@
-import { Metadata } from 'next';
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import ElectionCountdown from '@/components/ElectionCountdown';
-
-export const metadata: Metadata = {
-  title: 'Countdown Elezioni 2026',
-  description: 'Manca pochissimo alle elezioni studentesche dell\'Università Politecnica delle Marche. Vota Gulliver, Lista 1.',
-};
 
 export default function CountdownPage() {
   return (
@@ -20,29 +16,30 @@ export default function CountdownPage() {
       overflow: 'hidden',
       padding: '2rem'
     }}>
-      {/* Effetto particelle/luce di sfondo */}
+      {/* Effetto bagliore di sfondo pulsante */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes glow-pulse {
+          0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+          100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.9; }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .countdown-btn-primary:hover { transform: scale(1.06) !important; }
+        .countdown-btn-outline:hover { background: rgba(255,255,255,0.1) !important; border-color: white !important; }
+      `}} />
+
       <div style={{
         position: 'absolute',
         top: '50%',
         left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '80vw',
-        height: '80vw',
-        background: 'radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, transparent 70%)',
-        animation: 'pulse 4s infinite alternate',
+        width: '90vw',
+        height: '90vw',
+        background: 'radial-gradient(circle, rgba(220, 38, 38, 0.18) 0%, transparent 65%)',
+        animation: 'glow-pulse 4s ease-in-out infinite alternate',
         pointerEvents: 'none'
       }} />
-
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes pulse {
-          0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-          100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-        }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}} />
 
       <div style={{
         position: 'relative',
@@ -50,51 +47,61 @@ export default function CountdownPage() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '4rem',
-        animation: 'slideUp 1s ease-out forwards',
-        maxWidth: '1200px',
-        width: '100%'
+        gap: '3.5rem',
+        animation: 'slideUp 0.9s ease-out forwards',
+        maxWidth: '1000px',
+        width: '100%',
+        textAlign: 'center'
       }}>
-        
-        {/* Logo piccolo in alto */}
-        <div style={{ opacity: 0.8 }}>
-          <Image src="/gulliver-tondo.png" alt="Gulliver" width={80} height={80} style={{ filter: 'drop-shadow(0 0 10px rgba(255,0,0,0.3))' }} />
+        {/* Logo */}
+        <div style={{ opacity: 0.85 }}>
+          <Image
+            src="/gulliver-tondo.png"
+            alt="Gulliver UNIVPM"
+            width={90}
+            height={90}
+            style={{ filter: 'drop-shadow(0 0 16px rgba(220, 38, 38, 0.5))' }}
+          />
         </div>
 
-        {/* Il Countdown Epico */}
+        {/* Countdown */}
         <ElectionCountdown variant="epic" />
 
-        {/* Tasti azione rapidi */}
-        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '2rem' }}>
-          <Link href="/elezioni-studentesche/programma" style={{
-            padding: '1rem 2rem',
-            background: 'var(--red-primary)',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: 'var(--radius-full)',
-            fontWeight: 700,
-            fontSize: '1.1rem',
-            boxShadow: '0 4px 15px rgba(220, 38, 38, 0.4)',
-            transition: 'transform 0.2s',
-          }}
-          onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        {/* Tasti azione */}
+        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <Link
+            href="/elezioni-studentesche/programma"
+            className="countdown-btn-primary"
+            style={{
+              padding: '1rem 2.2rem',
+              background: '#dc2626',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '9999px',
+              fontWeight: 700,
+              fontSize: '1.1rem',
+              boxShadow: '0 4px 20px rgba(220, 38, 38, 0.45)',
+              transition: 'transform 0.2s ease',
+              display: 'inline-block'
+            }}
           >
             Scopri il Programma
           </Link>
-          <Link href="/" style={{
-            padding: '1rem 2rem',
-            background: 'transparent',
-            border: '2px solid rgba(255,255,255,0.3)',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: 'var(--radius-full)',
-            fontWeight: 700,
-            fontSize: '1.1rem',
-            transition: 'all 0.2s',
-          }}
-          onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'white'; }}
-          onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
+          <Link
+            href="/"
+            className="countdown-btn-outline"
+            style={{
+              padding: '1rem 2.2rem',
+              background: 'transparent',
+              border: '2px solid rgba(255,255,255,0.3)',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '9999px',
+              fontWeight: 700,
+              fontSize: '1.1rem',
+              transition: 'all 0.2s ease',
+              display: 'inline-block'
+            }}
           >
             Torna alla Home
           </Link>
