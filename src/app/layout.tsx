@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.gulliverancona.it"),
@@ -76,17 +77,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  // Nasconde navbar e footer per sottodomini admin e forms
+  const isAdminOrForms = host.startsWith("admin.") || host.startsWith("forms.");
+
   return (
     <html lang="it">
       <body>
-        <Navbar />
+        {!isAdminOrForms && <Navbar />}
         <main>{children}</main>
-        <Footer />
+        {!isAdminOrForms && <Footer />}
         <Analytics />
         <SpeedInsights />
       </body>

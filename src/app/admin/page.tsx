@@ -32,6 +32,8 @@ export default function AdminPage() {
   const [forms, setForms] = useState<Record<string, FormData>>({});
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const [notification, setNotification] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null);
   const [newSlug, setNewSlug] = useState('');
   const [newTallyId, setNewTallyId] = useState('');
@@ -59,9 +61,34 @@ export default function AdminPage() {
     if (authenticated) fetchForms();
   }, [authenticated]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password) setAuthenticated(true);
+    if (!password) return;
+    setLoginLoading(true);
+    setLoginError('');
+    try {
+      // Verifica la password realmente contro l'API prima di concedere l'accesso
+      const res = await fetch('/api/forms/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
+        body: JSON.stringify({ action: 'create', slug: '__ping__', tallyId: '__ping__', title: '__ping__' }),
+      });
+      if (res.status === 401) {
+        setLoginError('Password errata. Riprova.');
+      } else {
+        setAuthenticated(true);
+        // Puliamo il ping immediatamente
+        await fetch('/api/forms/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
+          body: JSON.stringify({ action: 'delete', slug: '__ping__' }),
+        });
+      }
+    } catch {
+      setLoginError('Errore di rete. Riprova.');
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
   const authHeaders = {
@@ -154,23 +181,29 @@ export default function AdminPage() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={e => { setPassword(e.target.value); setLoginError(''); }}
             autoFocus
             style={{
-              width: '100%', padding: '0.9rem 1rem', marginBottom: '1rem',
-              background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+              width: '100%', padding: '0.9rem 1rem', marginBottom: '0.75rem',
+              background: loginError ? 'rgba(255,69,96,0.08)' : 'rgba(255,255,255,0.06)',
+              border: `1px solid ${loginError ? COLORS.redBorder : COLORS.border}`,
               borderRadius: '12px', color: COLORS.textPrimary, fontSize: '1rem',
               outline: 'none', boxSizing: 'border-box',
             }}
           />
-          <button type="submit" style={{
+          {loginError && (
+            <div style={{ color: COLORS.red, fontSize: '0.82rem', marginBottom: '0.75rem', textAlign: 'center' }}>
+              {loginError}
+            </div>
+          )}
+          <button type="submit" disabled={loginLoading} style={{
             width: '100%', padding: '0.9rem',
-            background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
+            background: loginLoading ? 'rgba(228,3,41,0.4)' : `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
             border: 'none', borderRadius: '12px', color: 'white',
-            fontWeight: 700, fontSize: '1rem', cursor: 'pointer',
+            fontWeight: 700, fontSize: '1rem', cursor: loginLoading ? 'not-allowed' : 'pointer',
             boxShadow: `0 4px 20px ${COLORS.accentGlow}`,
           }}>
-            Accedi →
+            {loginLoading ? '⏳ Verifica...' : 'Accedi →'}
           </button>
         </form>
       </div>
@@ -225,13 +258,6 @@ export default function AdminPage() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{
-            padding: '0.35rem 0.75rem', borderRadius: '99px',
-            background: COLORS.greenBg, border: `1px solid ${COLORS.greenBorder}`,
-            color: COLORS.green, fontSize: '0.75rem', fontWeight: 600,
-          }}>
-            ● ONLINE
-          </div>
           <button onClick={() => setAuthenticated(false)} style={{
             background: COLORS.surface, border: `1px solid ${COLORS.border}`,
             color: COLORS.textSecondary, padding: '0.4rem 1rem',
