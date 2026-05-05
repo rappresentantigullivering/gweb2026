@@ -14,7 +14,7 @@ export const config = {
   ],
 };
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const url = req.nextUrl.clone();
   
   // Otteniamo l'host reale (es. admin.gulliverancona.it)
