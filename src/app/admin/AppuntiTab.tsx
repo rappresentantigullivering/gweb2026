@@ -163,25 +163,25 @@ export default function AppuntiTab() {
         {filtered.length} risultati su {appunti.length} totali
       </div>
 
-      {/* Tabella */}
       <div style={{
         background: COLORS.surface, border: `1px solid ${COLORS.border}`,
         borderRadius: '16px', overflow: 'hidden',
       }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-            <thead>
-              <tr style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                {['Facolta', 'Anno', 'Materia', 'Professore', 'Tipo', 'Qualita', 'Watermark', 'Azioni'].map(h => (
-                  <th key={h} style={{
-                    padding: '0.75rem 1rem', textAlign: 'left',
-                    fontSize: '0.72rem', color: COLORS.textMuted,
-                    textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600,
-                    whiteSpace: 'nowrap',
-                  }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+          <thead>
+            <tr style={{ borderBottom: `1px solid ${COLORS.border}` }}>
+              {['Facolta', 'Anno', 'Materia', 'Professore', 'Tipo', 'Qualita', 'Watermark', 'Azioni'].filter(h => 
+                sheetType === 'digitali' || (h !== 'Watermark' && h !== 'Qualita')
+              ).map(h => (
+                <th key={h} style={{
+                  padding: '0.75rem 0.75rem', textAlign: 'left',
+                  fontSize: '0.7rem', color: COLORS.textMuted,
+                  textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
@@ -191,31 +191,35 @@ export default function AppuntiTab() {
                 </tr>
               ) : filtered.map(a => (
                 <tr key={a.id} style={{ borderBottom: `1px solid rgba(255,255,255,0.05)` }}>
-                  <td style={{ padding: '0.75rem 1rem', color: COLORS.textSecondary, whiteSpace: 'nowrap' }}>{a.facolta}</td>
-                  <td style={{ padding: '0.75rem 1rem', color: COLORS.textSecondary, textAlign: 'center' }}>
+                  <td style={{ padding: '0.75rem 0.75rem', color: COLORS.textSecondary, whiteSpace: 'nowrap' }}>{a.facolta}</td>
+                  <td style={{ padding: '0.75rem 0.75rem', color: COLORS.textSecondary, textAlign: 'center' }}>
                     {a.anno}{a.semestre ? `/${a.semestre}` : ''}
                   </td>
-                  <td style={{ padding: '0.75rem 1rem', color: COLORS.textPrimary, fontWeight: 500 }}>
+                  <td style={{ padding: '0.75rem 0.75rem', color: COLORS.textPrimary, fontWeight: 500 }}>
                     <div>{a.materia}</div>
                     {a.descrizione && (
-                      <div style={{ fontSize: '0.75rem', color: COLORS.textMuted, marginTop: '0.15rem' }}>{a.descrizione}</div>
+                      <div style={{ fontSize: '0.72rem', color: COLORS.textMuted, marginTop: '0.15rem' }}>{a.descrizione}</div>
                     )}
                   </td>
-                  <td style={{ padding: '0.75rem 1rem', color: COLORS.textSecondary }}>{a.professore || '—'}</td>
-                  <td style={{ padding: '0.75rem 1rem', color: COLORS.textMuted, whiteSpace: 'nowrap' }}>{a.tipo || '—'}</td>
-                  <td style={{ padding: '0.75rem 1rem', color: COLORS.textSecondary }}>{a.qualita || '—'}</td>
-                  <td style={{ padding: '0.75rem 1rem' }}>
-                    <span style={{
-                      display: 'inline-block', padding: '0.2rem 0.55rem', borderRadius: '99px',
-                      fontSize: '0.72rem', fontWeight: 700,
-                      background: a.watermark ? COLORS.greenBg : 'rgba(255,255,255,0.05)',
-                      border: `1px solid ${a.watermark ? COLORS.greenBorder : 'rgba(255,255,255,0.1)'}`,
-                      color: a.watermark ? COLORS.green : COLORS.textMuted,
-                    }}>
-                      {a.watermark ? 'Si' : 'No'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '0.75rem 1rem' }}>
+                  <td style={{ padding: '0.75rem 0.75rem', color: COLORS.textSecondary }}>{a.professore || '—'}</td>
+                  <td style={{ padding: '0.75rem 0.75rem', color: COLORS.textMuted, whiteSpace: 'nowrap' }}>{a.tipo || '—'}</td>
+                  {sheetType === 'digitali' && (
+                    <>
+                      <td style={{ padding: '0.75rem 0.75rem', color: COLORS.textSecondary }}>{a.qualita || '—'}</td>
+                      <td style={{ padding: '0.75rem 0.75rem' }}>
+                        <span style={{
+                          display: 'inline-block', padding: '0.2rem 0.55rem', borderRadius: '99px',
+                          fontSize: '0.72rem', fontWeight: 700,
+                          background: a.watermark ? COLORS.greenBg : 'rgba(255,255,255,0.05)',
+                          border: `1px solid ${a.watermark ? COLORS.greenBorder : 'rgba(255,255,255,0.1)'}`,
+                          color: a.watermark ? COLORS.green : COLORS.textMuted,
+                        }}>
+                          {a.watermark ? 'Si' : 'No'}
+                        </span>
+                      </td>
+                    </>
+                  )}
+                  <td style={{ padding: '0.75rem 0.75rem' }}>
                     {a.link ? (
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <a href={a.link} target="_blank" rel="noopener noreferrer" style={{
@@ -242,7 +246,6 @@ export default function AppuntiTab() {
               ))}
             </tbody>
           </table>
-        </div>
       </div>
 
       {/* Bottone Google Sheets */}

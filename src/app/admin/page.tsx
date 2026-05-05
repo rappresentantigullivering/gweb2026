@@ -166,7 +166,12 @@ export default function AdminPage() {
               background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
               margin: '0 auto 1.25rem',
               boxShadow: `0 8px 24px ${COLORS.accentGlow}`,
-            }} />
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+              </svg>
+            </div>
             <h1 style={{ color: COLORS.textPrimary, fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Admin Portal</h1>
             <p style={{ color: COLORS.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>Gulliver Form Manager</p>
             <div style={{
@@ -261,7 +266,12 @@ export default function AdminPage() {
             width: '32px', height: '32px', borderRadius: '9px',
             background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
             boxShadow: `0 4px 12px ${COLORS.accentGlow}`,
-          }} />
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+            </svg>
+          </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '0.95rem', color: COLORS.textPrimary }}>Gulliver Admin</div>
             <div style={{ fontSize: '0.72rem', color: COLORS.textMuted }}>
@@ -279,7 +289,7 @@ export default function AdminPage() {
         </button>
       </header>
 
-      <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
+      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
         {view === 'landing' ? (
           <div style={{ padding: '2rem 0', animation: 'fadeIn 0.4s ease-out' }}>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '2rem', textAlign: 'center' }}>Benvenuto. Di cosa hai bisogno?</h1>
