@@ -58,29 +58,51 @@ export async function GET(request: Request) {
     const lines = text.split(/\r?\n/);
     const appunti: Appunto[] = [];
 
-    for (const line of lines) {
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
       if (!line.trim()) continue;
       const cols = parseCsvLine(line);
 
-      // Le righe di dati reali hanno un ID numerico in col[0] e una facoltà in col[1]
-      const id = cols[0]?.trim();
-      const facolta = cols[1]?.trim();
-      if (!id || isNaN(Number(id)) || !facolta) continue;
+      if (sheetType === 'cartacei') {
+        const facolta = cols[1]?.trim();
+        const materia = cols[3]?.trim();
+        if (!facolta || !materia || facolta === 'Corso') continue; // Salta header o righe vuote
 
-      appunti.push({
-        id,
-        facolta,
-        anno: cols[2]?.trim() || '',
-        semestre: cols[3]?.trim() || '',
-        materia: cols[5]?.trim() || '',
-        professore: cols[6]?.trim() || '',
-        tipo: cols[7]?.trim() || '',
-        annoAccademico: cols[8]?.trim() || '',
-        descrizione: cols[9]?.trim() || '',
-        qualita: cols[10]?.trim() || '',
-        watermark: cols[11]?.trim().toUpperCase() === 'S',
-        link: cols[12]?.trim() || '',
-      });
+        appunti.push({
+          id: `c-${i}`, // ID generato per i cartacei
+          facolta,
+          anno: cols[2]?.trim() || '',
+          semestre: '',
+          materia,
+          professore: cols[4]?.trim() || '',
+          tipo: cols[5]?.trim() || '',
+          annoAccademico: '',
+          descrizione: cols[6]?.trim() || '',
+          qualita: '',
+          watermark: false,
+          link: '',
+        });
+      } else {
+        // Logica originale per Digitali
+        const id = cols[0]?.trim();
+        const facolta = cols[1]?.trim();
+        if (!id || isNaN(Number(id)) || !facolta) continue;
+
+        appunti.push({
+          id,
+          facolta,
+          anno: cols[2]?.trim() || '',
+          semestre: cols[3]?.trim() || '',
+          materia: cols[5]?.trim() || '',
+          professore: cols[6]?.trim() || '',
+          tipo: cols[7]?.trim() || '',
+          annoAccademico: cols[8]?.trim() || '',
+          descrizione: cols[9]?.trim() || '',
+          qualita: cols[10]?.trim() || '',
+          watermark: cols[11]?.trim().toUpperCase() === 'S',
+          link: cols[12]?.trim() || '',
+        });
+      }
     }
 
     return NextResponse.json(appunti);
