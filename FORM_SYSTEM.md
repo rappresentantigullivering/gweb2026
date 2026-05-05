@@ -12,7 +12,7 @@
 4. [API Route: `/api/forms/`](#4-api-route-apiforms)
 5. [Pannello Admin](#5-pannello-admin)
 6. [Renderer pubblico: `forms.gulliverancona.it`](#6-renderer-pubblico-formsgulliverancona-it)
-7. [Middleware di routing sottodomini](#7-middleware-di-routing-sottodomini)
+7. [Proxy di routing sottodomini](#7-proxy-di-routing-sottodomini)
 8. [DNS e Cloudflare](#8-dns-e-cloudflare)
 9. [Deploy e variabili d'ambiente](#9-deploy-e-variabili-dambiente)
 10. [Analisi di sicurezza](#10-analisi-di-sicurezza)
@@ -63,7 +63,7 @@ Tutto **senza build, senza deploy, in tempo reale**.
 ┌─────────────────────────────────────────────────────────┐
 │                  VERCEL (Next.js 16)                     │
 │                                                          │
-│  middleware.ts                                           │
+│  proxy.ts                                                │
 │  ├── admin.gulliverancona.it/* → riscrive in /admin/*   │
 │  ├── forms.gulliverancona.it/slug → riscrive in /f/slug │
 │  └── /api/* → passa diretto (no rewrite)                │
@@ -190,11 +190,11 @@ Questa è una **Server Component dinamica** (non cached): ad ogni visita dello s
 
 ---
 
-## 7. Middleware di routing sottodomini
+## 7. Proxy di routing sottodomini
 
-**File:** `src/middleware.ts`
+**File:** `src/proxy.ts` *(rinominato da `middleware.ts` nella migrazione a Next.js 16)*
 
-Il middleware intercetta **tutte le richieste** al dominio Vercel (comprese quelle dai sottodomini) e le riscrive internamente. Questo permette di avere URL "puliti" senza deploy separati.
+Il proxy intercetta **tutte le richieste** al dominio Vercel (comprese quelle dai sottodomini) e le riscrive internamente. Questo permette di avere URL "puliti" senza deploy separati.
 
 ```typescript
 // admin.gulliverancona.it/       → riscrive in /admin/
@@ -204,7 +204,7 @@ Il middleware intercetta **tutte le richieste** al dominio Vercel (comprese quel
 // forms.gulliverancona.it/volontari → riscrive in /f/volontari
 ```
 
-### Matcher (cosa il middleware ignora)
+### Matcher (cosa il proxy ignora)
 - `/api/*` — chiamate al backend (essenziale! senza questa eccezione, le chiamate API venivano riscritte in `/admin/api/...` e fallivano)
 - `/_next/*` — asset statici di Next.js
 - File con estensioni: `.png`, `.svg`, `.ico`, `.webmanifest`, `.json`, ecc.
@@ -225,7 +225,7 @@ Il layout root legge l'header HTTP `host` lato server e **nasconde Navbar e Foot
 | CNAME | `admin` | `gulliverancona.it` | ✅ Arancione (attivo) |
 | CNAME | `forms` | `gulliverancona.it` | ✅ Arancione (attivo) |
 
-> **Importante:** Le **Cloudflare Transform Rules** NON sono necessarie. Il routing è gestito interamente dal middleware Next.js.
+> **Importante:** Le **Cloudflare Transform Rules** NON sono necessarie. Il routing è gestito interamente dal proxy Next.js (`src/proxy.ts`).
 
 ### Impostazione SSL richiesta
 Cloudflare SSL/TLS deve essere impostato su **Full** (non Flexible). Con Flexible si crea un loop di redirect infiniti perché Cloudflare parla con Vercel in HTTP mentre Vercel forza HTTPS.
@@ -281,7 +281,7 @@ Vercel inietta automaticamente `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` ad ogni deplo
 #### 3. Admin accessibile da `gulliverancona.it/admin`
 **Rischio:** Il pannello admin è tecnicamente accessibile anche dall'URL diretto, non solo da `admin.`.
 **Mitigazione attuale:** Chiunque raggiunga `/admin` deve comunque inserire la password corretta.
-**Soluzione consigliata:** Nel middleware, aggiungere un redirect da `gulliverancona.it/admin` a `admin.gulliverancona.it`.
+**Soluzione consigliata:** Nel proxy (`src/proxy.ts`), aggiungere un redirect da `gulliverancona.it/admin` a `admin.gulliverancona.it`.
 
 #### 4. Nessun log degli accessi
 **Rischio:** Non si sa chi ha fatto cosa e quando.
