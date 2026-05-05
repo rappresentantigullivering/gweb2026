@@ -29,7 +29,7 @@ const COLORS = {
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'form' | 'appunti'>('form');
+  const [view, setView] = useState<'landing' | 'form' | 'appunti'>('landing');
   const [forms, setForms] = useState<Record<string, FormData>>({});
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -77,6 +77,7 @@ export default function AdminPage() {
         setLoginError('Password errata. Riprova.');
       } else {
         setAuthenticated(true);
+        setView('landing');
       }
     } catch {
       setLoginError('Errore di rete. Riprova.');
@@ -239,43 +240,36 @@ export default function AdminPage() {
 
       {/* Header */}
       <header style={{
-        borderBottom: `1px solid ${COLORS.border}`,
         padding: '1.25rem 2rem',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        backdropFilter: 'blur(20px)',
-        position: 'sticky', top: 0, zIndex: 10,
-        background: 'rgba(8,8,16,0.85)',
+        borderBottom: `1px solid ${COLORS.border}`,
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        background: COLORS.bg, position: 'sticky', top: 0, zIndex: 100,
+        backdropFilter: 'blur(10px)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {view !== 'landing' && (
+            <button onClick={() => setView('landing')} style={{
+              background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+              color: COLORS.textPrimary, padding: '0.4rem 0.8rem',
+              borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem',
+              display: 'flex', alignItems: 'center', gap: '0.4rem'
+            }}>
+              ← Indietro
+            </button>
+          )}
           <div style={{
             width: '32px', height: '32px', borderRadius: '9px',
             background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
             boxShadow: `0 4px 12px ${COLORS.accentGlow}`,
           }} />
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: COLORS.textPrimary }}>Gulliver Form Manager</div>
-            <div style={{ fontSize: '0.72rem', color: COLORS.textMuted, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <span>admin.gulliverancona.it</span>
-              <span style={{
-                padding: '0.1rem 0.4rem', borderRadius: '4px',
-                background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-                fontFamily: 'monospace', letterSpacing: '0.04em',
-              }}>v {VERSION}</span>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: COLORS.textPrimary }}>Gulliver Admin</div>
+            <div style={{ fontSize: '0.72rem', color: COLORS.textMuted }}>
+              {view === 'landing' ? 'Area Riservata' : view === 'form' ? 'Gestione Form' : 'Archivio Appunti'}
             </div>
           </div>
         </div>
-        {/* Tab switcher */}
-        <div style={{ display: 'flex', gap: '0.25rem', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', padding: '0.25rem' }}>
-          {(['form', 'appunti'] as const).map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} style={{
-              padding: '0.35rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer',
-              fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.15s',
-              background: activeTab === tab ? COLORS.accent : 'transparent',
-              color: activeTab === tab ? '#fff' : COLORS.textSecondary,
-              textTransform: 'capitalize',
-            }}>{tab === 'form' ? 'Form' : 'Appunti'}</button>
-          ))}
-        </div>
+        
         <button onClick={() => setAuthenticated(false)} style={{
           background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
           color: COLORS.textSecondary, padding: '0.4rem 1rem',
@@ -286,7 +280,55 @@ export default function AdminPage() {
       </header>
 
       <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
-        {activeTab === 'appunti' ? (
+        {view === 'landing' ? (
+          <div style={{ padding: '2rem 0', animation: 'fadeIn 0.4s ease-out' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '2rem', textAlign: 'center' }}>Benvenuto. Di cosa hai bisogno?</h1>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              {[
+                { 
+                  id: 'form', 
+                  title: 'Ho bisogno di creare un form', 
+                  desc: 'Crea e gestisci i link brevi per i moduli Tally del Gulliver.',
+                  icon: '📄'
+                },
+                { 
+                  id: 'appunti', 
+                  title: 'Ho bisogno di consultare il drive appunti', 
+                  desc: 'Visualizza e cerca tra gli appunti digitali e cartacei registrati.',
+                  icon: '📚'
+                }
+              ].map(option => (
+                <button 
+                  key={option.id}
+                  onClick={() => setView(option.id as any)}
+                  style={{
+                    background: COLORS.surface, border: `1px solid ${COLORS.border}`,
+                    borderRadius: '24px', padding: '2.5rem', textAlign: 'left',
+                    cursor: 'pointer', transition: 'all 0.2s ease',
+                    display: 'flex', flexDirection: 'column', gap: '1rem',
+                    color: 'inherit'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = COLORS.accent;
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = `0 12px 24px ${COLORS.accentGlow}`;
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = COLORS.border;
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ fontSize: '2rem' }}>{option.icon}</div>
+                  <div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: COLORS.textPrimary, marginBottom: '0.5rem' }}>{option.title}</div>
+                    <div style={{ fontSize: '0.9rem', color: COLORS.textSecondary, lineHeight: 1.5 }}>{option.desc}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : view === 'appunti' ? (
           <AppuntiTab />
         ) : (<>
 

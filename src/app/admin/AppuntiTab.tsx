@@ -42,9 +42,11 @@ export default function AppuntiTab() {
   const [filterFacolta, setFilterFacolta] = useState('');
   const [filterAnno, setFilterAnno] = useState('');
   const [filterDisponibile, setFilterDisponibile] = useState('');
+  const [sheetType, setSheetType] = useState<'digitali' | 'cartacei'>('digitali');
 
   useEffect(() => {
-    fetch('/api/appunti/')
+    setLoading(true);
+    fetch(`/api/appunti/?sheet=${sheetType}`)
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data)) setAppunti(data);
@@ -52,7 +54,7 @@ export default function AppuntiTab() {
       })
       .catch(() => setError('Errore di rete.'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [sheetType]);
 
   const facolta = useMemo(() =>
     [...new Set(appunti.map(a => a.facolta).filter(Boolean))].sort(),
@@ -90,7 +92,7 @@ export default function AppuntiTab() {
 
   if (loading) return (
     <div style={{ padding: '4rem', textAlign: 'center', color: COLORS.textMuted }}>
-      Caricamento appunti...
+      Caricamento appunti {sheetType}...
     </div>
   );
 
@@ -100,6 +102,20 @@ export default function AppuntiTab() {
 
   return (
     <div>
+      {/* Selettore Foglio */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.25rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '0.3rem' }}>
+          {(['digitali', 'cartacei'] as const).map(type => (
+            <button key={type} onClick={() => setSheetType(type)} style={{
+              padding: '0.5rem 1.25rem', borderRadius: '9px', border: 'none', cursor: 'pointer',
+              fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.15s',
+              background: sheetType === type ? COLORS.textPrimary : 'transparent',
+              color: sheetType === type ? COLORS.bg : COLORS.textSecondary,
+            }}>{type === 'digitali' ? 'Appunti Digitali' : 'Appunti Cartacei'}</button>
+          ))}
+        </div>
+      </div>
+
       {/* Filtri */}
       <div style={{
         background: COLORS.surface, border: `1px solid ${COLORS.border}`,
@@ -211,6 +227,30 @@ export default function AppuntiTab() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Bottone Google Sheets */}
+      <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+        <a 
+          href="https://docs.google.com/spreadsheets/d/1bz-tBt6pjk8Z9zadctHX2INiCUl9RC5beigbYjIRfDo/edit?usp=sharing"
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '0.75rem',
+            padding: '0.85rem 1.75rem', borderRadius: '12px',
+            background: '#0F9D58', // Verde Google Sheets
+            color: 'white', fontWeight: 700, fontSize: '0.95rem',
+            textDecoration: 'none', boxShadow: '0 4px 12px rgba(15,157,88,0.3)',
+            transition: 'transform 0.15s'
+          }}
+          onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+          </svg>
+          Consulta il file completo
+        </a>
       </div>
     </div>
   );

@@ -38,9 +38,20 @@ function parseCsvLine(line: string): string[] {
   return result;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const sheetType = searchParams.get('sheet') || 'digitali';
+  
+  const GIDS: Record<string, string> = {
+    digitali: '0',
+    cartacei: '1603948657'
+  };
+
+  const gid = GIDS[sheetType] || '0';
+  const url = `${SHEET_CSV_URL}&gid=${gid}`;
+
   try {
-    const res = await fetch(SHEET_CSV_URL, { next: { revalidate: 60 } });
+    const res = await fetch(url, { next: { revalidate: 60 } });
     if (!res.ok) throw new Error('Impossibile scaricare il foglio');
     const text = await res.text();
 
