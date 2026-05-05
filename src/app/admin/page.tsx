@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 type FormStatus = 'active' | 'suspended';
 type FormData = { tallyId: string; title: string; status: FormStatus };
 
-const API_BASE = 'https://gulliverancona.it/api/forms/';
+const API_BASE = '/api/forms/';
 
 const COLORS = {
   bg: '#080810',

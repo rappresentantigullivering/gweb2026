@@ -22,7 +22,10 @@ export function middleware(req: NextRequest) {
 
   // 1. Gestione Pannello Admin
   if (hostname.includes('admin.gulliverancona.it') || hostname.includes('admin.localhost')) {
-    // Se l'utente visita admin.gulliverancona.it/ (pathname = '/')
+    // Non riscrivere mai le chiamate API o _next
+    if (url.pathname.startsWith('/api') || url.pathname.startsWith('/_next')) {
+      return NextResponse.next();
+    }
     // Riscriviamo internamente per puntare alla cartella /admin di Next.js
     if (!url.pathname.startsWith('/admin')) {
       url.pathname = `/admin${url.pathname === '/' ? '' : url.pathname}`;
