@@ -61,7 +61,7 @@ export default async function FormPage({ params }: PageProps) {
             <img
               src="/logo-gulliver-tondo-png.png"
               alt="Gulliver UNIVPM"
-              style={{ width: '72px', height: '72px', borderRadius: '50%', marginBottom: '1.5rem' }}
+              style={{ display: 'block', width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 1.5rem' }}
             />
 
             {/* Icona stop */}
