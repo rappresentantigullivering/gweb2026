@@ -309,15 +309,15 @@ export default function AdminPage() {
                   id: 'form',
                   title: 'Ho bisogno di creare un form',
                   desc: 'Crea e gestisci i link brevi per i moduli Tally del Gulliver.',
-                  color: 'rgba(228, 3, 41, 0.08)',
-                  borderColor: 'rgba(228, 3, 41, 0.2)'
+                  color: 'rgba(228, 3, 41, 0.12)',
+                  borderColor: 'rgba(228, 3, 41, 0.3)'
                 },
                 {
                   id: 'appunti',
                   title: 'Ho bisogno di consultare il drive appunti',
                   desc: 'Visualizza e cerca tra gli appunti digitali e cartacei registrati.',
-                  color: 'rgba(16, 185, 129, 0.08)',
-                  borderColor: 'rgba(16, 185, 129, 0.2)'
+                  color: 'rgba(16, 185, 129, 0.12)',
+                  borderColor: 'rgba(16, 185, 129, 0.3)'
                 }
               ].map(option => (
                 <button
@@ -346,7 +346,7 @@ export default function AdminPage() {
                 >
                   {/* Effetto Grana */}
                   <div style={{
-                    position: 'absolute', inset: 0, opacity: 0.04, pointerEvents: 'none',
+                    position: 'absolute', inset: 0, opacity: 0.08, pointerEvents: 'none',
                     backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
                   }} />
 
