@@ -6,6 +6,8 @@ type FormStatus = 'active' | 'suspended';
 type FormData = { tallyId: string; title: string; status: FormStatus };
 
 const API_BASE = '/api/forms/';
+// Vercel inietta automaticamente l'hash del commit — primi 7 caratteri = versione leggibile
+const VERSION = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? 'local';
 
 const COLORS = {
   bg: '#080810',
@@ -176,6 +178,15 @@ export default function AdminPage() {
             }}>🛡</div>
             <h1 style={{ color: COLORS.textPrimary, fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Admin Portal</h1>
             <p style={{ color: COLORS.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>Gulliver Form Manager</p>
+            <div style={{
+              display: 'inline-block', marginTop: '0.75rem',
+              padding: '0.2rem 0.6rem', borderRadius: '6px',
+              background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+              fontFamily: 'monospace', fontSize: '0.72rem', color: COLORS.textMuted,
+              letterSpacing: '0.05em',
+            }}>
+              v {VERSION}
+            </div>
           </div>
           <input
             type="password"
@@ -254,7 +265,14 @@ export default function AdminPage() {
           }}>⚡</div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Gulliver Form Manager</div>
-            <div style={{ fontSize: '0.72rem', color: COLORS.textMuted }}>admin.gulliverancona.it</div>
+            <div style={{ fontSize: '0.72rem', color: COLORS.textMuted, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <span>admin.gulliverancona.it</span>
+              <span style={{
+                padding: '0.1rem 0.4rem', borderRadius: '4px',
+                background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+                fontFamily: 'monospace', letterSpacing: '0.04em',
+              }}>v {VERSION}</span>
+            </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
