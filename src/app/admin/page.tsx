@@ -291,9 +291,20 @@ export default function AdminPage() {
 
       <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
         {view === 'landing' ? (
-          <div style={{ padding: '2rem 0', animation: 'fadeIn 0.4s ease-out' }}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '2rem', textAlign: 'center' }}>Benvenuto. Di cosa hai bisogno?</h1>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ padding: '3rem 0', animation: 'fadeIn 0.6s ease-out' }}>
+            <h1 style={{ 
+              fontSize: '3.5rem', 
+              fontWeight: 900, 
+              marginBottom: '3rem', 
+              textAlign: 'center',
+              color: COLORS.textPrimary,
+              letterSpacing: '-0.02em',
+              textShadow: `0 0 40px ${COLORS.accentGlow}`,
+              fontFamily: "'Inter', sans-serif"
+            }}>
+              Che te serve?
+            </h1>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
               {[
                 { 
                   id: 'form', 
