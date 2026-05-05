@@ -310,41 +310,50 @@ export default function AdminPage() {
                   id: 'form', 
                   title: 'Ho bisogno di creare un form', 
                   desc: 'Crea e gestisci i link brevi per i moduli Tally del Gulliver.',
-                  icon: '📄'
+                  color: 'rgba(228, 3, 41, 0.12)',
+                  borderColor: 'rgba(228, 3, 41, 0.3)'
                 },
                 { 
                   id: 'appunti', 
                   title: 'Ho bisogno di consultare il drive appunti', 
                   desc: 'Visualizza e cerca tra gli appunti digitali e cartacei registrati.',
-                  icon: '📚'
+                  color: 'rgba(16, 185, 129, 0.12)',
+                  borderColor: 'rgba(16, 185, 129, 0.3)'
                 }
               ].map(option => (
                 <button 
                   key={option.id}
                   onClick={() => setView(option.id as any)}
                   style={{
-                    background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-                    borderRadius: '24px', padding: '2.5rem', textAlign: 'left',
-                    cursor: 'pointer', transition: 'all 0.2s ease',
-                    display: 'flex', flexDirection: 'column', gap: '1rem',
-                    color: 'inherit'
+                    background: option.color, 
+                    border: `1px solid ${option.borderColor}`,
+                    borderRadius: '24px', padding: '3rem 2.5rem', textAlign: 'left',
+                    cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                    display: 'flex', flexDirection: 'column', gap: '0.75rem',
+                    color: 'inherit',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = COLORS.accent;
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow = `0 12px 24px ${COLORS.accentGlow}`;
+                    e.currentTarget.style.transform = 'translateY(-6px)';
+                    e.currentTarget.style.boxShadow = `0 20px 40px rgba(0,0,0,0.4), 0 0 20px ${option.borderColor}`;
+                    e.currentTarget.style.background = option.color.replace('0.12', '0.18');
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = COLORS.border;
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.background = option.color;
                   }}
                 >
-                  <div style={{ fontSize: '2rem' }}>{option.icon}</div>
-                  <div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: COLORS.textPrimary, marginBottom: '0.5rem' }}>{option.title}</div>
-                    <div style={{ fontSize: '0.9rem', color: COLORS.textSecondary, lineHeight: 1.5 }}>{option.desc}</div>
-                  </div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: COLORS.textPrimary }}>{option.title}</div>
+                  <div style={{ fontSize: '0.9rem', color: COLORS.textSecondary, lineHeight: 1.6, maxWidth: '280px' }}>{option.desc}</div>
+                  
+                  {/* Effetto decorativo angolare */}
+                  <div style={{
+                    position: 'absolute', top: '-20px', right: '-20px',
+                    width: '60px', height: '60px', borderRadius: '50%',
+                    background: option.borderColor, opacity: 0.2, filter: 'blur(20px)'
+                  }} />
                 </button>
               ))}
             </div>
