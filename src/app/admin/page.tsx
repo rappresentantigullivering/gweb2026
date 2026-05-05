@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import AppuntiTab from './AppuntiTab';
 
 type FormStatus = 'active' | 'suspended';
 type FormData = { tallyId: string; title: string; status: FormStatus };
@@ -28,6 +29,7 @@ const COLORS = {
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
+  const [activeTab, setActiveTab] = useState<'form' | 'appunti'>('form');
   const [forms, setForms] = useState<Record<string, FormData>>({});
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -262,6 +264,18 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+        {/* Tab switcher */}
+        <div style={{ display: 'flex', gap: '0.25rem', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', padding: '0.25rem' }}>
+          {(['form', 'appunti'] as const).map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)} style={{
+              padding: '0.35rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer',
+              fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.15s',
+              background: activeTab === tab ? COLORS.accent : 'transparent',
+              color: activeTab === tab ? '#fff' : COLORS.textSecondary,
+              textTransform: 'capitalize',
+            }}>{tab === 'form' ? 'Form' : 'Appunti'}</button>
+          ))}
+        </div>
         <button onClick={() => setAuthenticated(false)} style={{
           background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
           color: COLORS.textSecondary, padding: '0.4rem 1rem',
@@ -272,6 +286,9 @@ export default function AdminPage() {
       </header>
 
       <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
+        {activeTab === 'appunti' ? (
+          <AppuntiTab />
+        ) : (<>
 
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
@@ -424,6 +441,7 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+        </>)}
       </main>
 
       <style>{`
