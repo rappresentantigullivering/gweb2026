@@ -169,11 +169,10 @@ export default function AdminPage() {
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
               </svg>
             </div>
-            <h1 style={{ color: COLORS.textPrimary, fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Admin Portal</h1>
-            <p style={{ color: COLORS.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>Gulliver Form Manager</p>
+            <h1 style={{ color: COLORS.textPrimary, fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Portale Admin</h1>
             <div style={{
               display: 'inline-block', marginTop: '0.75rem',
               padding: '0.2rem 0.6rem', borderRadius: '6px',
@@ -269,7 +268,7 @@ export default function AdminPage() {
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-              <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+              <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
             </svg>
           </div>
           <div>
@@ -279,7 +278,7 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
-        
+
         <button onClick={() => setAuthenticated(false)} style={{
           background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
           color: COLORS.textSecondary, padding: '0.4rem 1rem',
@@ -292,10 +291,10 @@ export default function AdminPage() {
       <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
         {view === 'landing' ? (
           <div style={{ padding: '3rem 0', animation: 'fadeIn 0.6s ease-out' }}>
-            <h1 style={{ 
-              fontSize: '3.5rem', 
-              fontWeight: 900, 
-              marginBottom: '3rem', 
+            <h1 style={{
+              fontSize: '3.5rem',
+              fontWeight: 900,
+              marginBottom: '3rem',
               textAlign: 'center',
               color: COLORS.textPrimary,
               letterSpacing: '-0.02em',
@@ -306,26 +305,26 @@ export default function AdminPage() {
             </h1>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
               {[
-                { 
-                  id: 'form', 
-                  title: 'Ho bisogno di creare un form', 
+                {
+                  id: 'form',
+                  title: 'Ho bisogno di creare un form',
                   desc: 'Crea e gestisci i link brevi per i moduli Tally del Gulliver.',
                   color: 'rgba(228, 3, 41, 0.12)',
                   borderColor: 'rgba(228, 3, 41, 0.3)'
                 },
-                { 
-                  id: 'appunti', 
-                  title: 'Ho bisogno di consultare il drive appunti', 
+                {
+                  id: 'appunti',
+                  title: 'Ho bisogno di consultare il drive appunti',
                   desc: 'Visualizza e cerca tra gli appunti digitali e cartacei registrati.',
                   color: 'rgba(16, 185, 129, 0.12)',
                   borderColor: 'rgba(16, 185, 129, 0.3)'
                 }
               ].map(option => (
-                <button 
+                <button
                   key={option.id}
                   onClick={() => setView(option.id as any)}
                   style={{
-                    background: option.color, 
+                    background: option.color,
                     border: `1px solid ${option.borderColor}`,
                     borderRadius: '24px', padding: '3rem 2.5rem', textAlign: 'left',
                     cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -347,7 +346,7 @@ export default function AdminPage() {
                 >
                   <div style={{ fontSize: '1.25rem', fontWeight: 800, color: COLORS.textPrimary }}>{option.title}</div>
                   <div style={{ fontSize: '0.9rem', color: COLORS.textSecondary, lineHeight: 1.6, maxWidth: '280px' }}>{option.desc}</div>
-                  
+
                   {/* Effetto decorativo angolare */}
                   <div style={{
                     position: 'absolute', top: '-20px', right: '-20px',
@@ -362,157 +361,157 @@ export default function AdminPage() {
           <AppuntiTab />
         ) : (<>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
-          {[
-            { label: 'Form Totali', value: Object.keys(forms).length },
-            { label: 'Attivi', value: Object.values(forms).filter(f => f.status === 'active').length },
-            { label: 'Sospesi', value: Object.values(forms).filter(f => f.status === 'suspended').length },
-          ].map(stat => (
-            <div key={stat.label} style={{
-              background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-              borderRadius: '16px', padding: '1.5rem',
-            }}>
-              <div style={{ fontSize: '2rem', fontWeight: 800, color: COLORS.textPrimary }}>{stat.value}</div>
-              <div style={{ fontSize: '0.85rem', color: COLORS.textSecondary, marginTop: '0.25rem' }}>{stat.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Nuovo Form */}
-        <div style={{
-          background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-          borderRadius: '20px', padding: '2rem', marginBottom: '2rem',
-        }}>
-          <h2 style={{ margin: '0 0 1.5rem', fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Nuovo Form</h2>
-          <form onSubmit={handleCreate}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
-              {[
-                { label: 'URL Slug', placeholder: 'es. volontari', value: newSlug, set: setNewSlug },
-                { label: 'ID Tally', placeholder: 'es. wA1B2c', value: newTallyId, set: setNewTallyId },
-                { label: 'Titolo (interno)', placeholder: 'es. Diventa Volontario', value: newTitle, set: setNewTitle },
-              ].map(field => (
-                <div key={field.label}>
-                  <label style={{ display: 'block', fontSize: '0.78rem', color: COLORS.textMuted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {field.label}
-                  </label>
-                  <input
-                    required
-                    value={field.value}
-                    onChange={e => field.set(e.target.value)}
-                    placeholder={field.placeholder}
-                    style={{
-                      width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
-                      background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
-                      borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-            <div style={{
-              background: 'rgba(255,255,255,0.03)', border: `1px solid ${COLORS.border}`,
-              borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '1.25rem',
-              fontSize: '0.82rem', color: COLORS.textSecondary, fontFamily: 'monospace',
-            }}>
-              forms.gulliverancona.it/<span style={{ color: COLORS.textPrimary }}>{newSlug || 'slug'}</span>
-            </div>
-            <button disabled={loading} type="submit" style={{
-              padding: '0.75rem 2rem',
-              background: loading ? 'rgba(228,3,41,0.3)' : `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
-              border: 'none', borderRadius: '10px', color: 'white',
-              fontWeight: 700, fontSize: '0.9rem', cursor: loading ? 'not-allowed' : 'pointer',
-              boxShadow: loading ? 'none' : `0 4px 16px ${COLORS.accentGlow}`,
-              transition: 'all 0.2s',
-            }}>
-              {loading ? 'Salvataggio...' : 'Crea Link'}
-            </button>
-          </form>
-        </div>
-
-        {/* Tabella Form */}
-        <div style={{
-          background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-          borderRadius: '20px', overflow: 'hidden',
-        }}>
-          <div style={{ padding: '1.5rem 2rem', borderBottom: `1px solid ${COLORS.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Form</h2>
-            <button onClick={fetchForms} style={{
-              background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-              color: COLORS.textSecondary, padding: '0.4rem 0.9rem',
-              borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem',
-            }}>
-              {fetchLoading ? 'Caricamento...' : 'Aggiorna'}
-            </button>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
+            {[
+              { label: 'Form Totali', value: Object.keys(forms).length },
+              { label: 'Attivi', value: Object.values(forms).filter(f => f.status === 'active').length },
+              { label: 'Sospesi', value: Object.values(forms).filter(f => f.status === 'suspended').length },
+            ].map(stat => (
+              <div key={stat.label} style={{
+                background: COLORS.surface, border: `1px solid ${COLORS.border}`,
+                borderRadius: '16px', padding: '1.5rem',
+              }}>
+                <div style={{ fontSize: '2rem', fontWeight: 800, color: COLORS.textPrimary }}>{stat.value}</div>
+                <div style={{ fontSize: '0.85rem', color: COLORS.textSecondary, marginTop: '0.25rem' }}>{stat.label}</div>
+              </div>
+            ))}
           </div>
 
-          {Object.keys(forms).length === 0 ? (
-            <div style={{ padding: '4rem', textAlign: 'center', color: COLORS.textMuted }}>
-              <p style={{ margin: 0 }}>Nessun form creato. Aggiungine uno sopra.</p>
+          {/* Nuovo Form */}
+          <div style={{
+            background: COLORS.surface, border: `1px solid ${COLORS.border}`,
+            borderRadius: '20px', padding: '2rem', marginBottom: '2rem',
+          }}>
+            <h2 style={{ margin: '0 0 1.5rem', fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Nuovo Form</h2>
+            <form onSubmit={handleCreate}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+                {[
+                  { label: 'URL Slug', placeholder: 'es. volontari', value: newSlug, set: setNewSlug },
+                  { label: 'ID Tally', placeholder: 'es. wA1B2c', value: newTallyId, set: setNewTallyId },
+                  { label: 'Titolo (interno)', placeholder: 'es. Diventa Volontario', value: newTitle, set: setNewTitle },
+                ].map(field => (
+                  <div key={field.label}>
+                    <label style={{ display: 'block', fontSize: '0.78rem', color: COLORS.textMuted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {field.label}
+                    </label>
+                    <input
+                      required
+                      value={field.value}
+                      onChange={e => field.set(e.target.value)}
+                      placeholder={field.placeholder}
+                      style={{
+                        width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
+                        background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
+                        borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div style={{
+                background: 'rgba(255,255,255,0.03)', border: `1px solid ${COLORS.border}`,
+                borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '1.25rem',
+                fontSize: '0.82rem', color: COLORS.textSecondary, fontFamily: 'monospace',
+              }}>
+                forms.gulliverancona.it/<span style={{ color: COLORS.textPrimary }}>{newSlug || 'slug'}</span>
+              </div>
+              <button disabled={loading} type="submit" style={{
+                padding: '0.75rem 2rem',
+                background: loading ? 'rgba(228,3,41,0.3)' : `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
+                border: 'none', borderRadius: '10px', color: 'white',
+                fontWeight: 700, fontSize: '0.9rem', cursor: loading ? 'not-allowed' : 'pointer',
+                boxShadow: loading ? 'none' : `0 4px 16px ${COLORS.accentGlow}`,
+                transition: 'all 0.2s',
+              }}>
+                {loading ? 'Salvataggio...' : 'Crea Link'}
+              </button>
+            </form>
+          </div>
+
+          {/* Tabella Form */}
+          <div style={{
+            background: COLORS.surface, border: `1px solid ${COLORS.border}`,
+            borderRadius: '20px', overflow: 'hidden',
+          }}>
+            <div style={{ padding: '1.5rem 2rem', borderBottom: `1px solid ${COLORS.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Form</h2>
+              <button onClick={fetchForms} style={{
+                background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+                color: COLORS.textSecondary, padding: '0.4rem 0.9rem',
+                borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem',
+              }}>
+                {fetchLoading ? 'Caricamento...' : 'Aggiorna'}
+              </button>
             </div>
-          ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                    {['Link Pubblico', 'Titolo', 'ID Tally', 'Stato', 'Azioni'].map(h => (
-                      <th key={h} style={{
-                        padding: '0.9rem 1.25rem', textAlign: 'left',
-                        fontSize: '0.72rem', color: COLORS.textMuted,
-                        textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600,
-                      }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(forms).map(([slug, form]) => (
-                    <tr key={slug} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                      <td style={{ padding: '1rem 1.25rem' }}>
-                        <a href={`https://forms.gulliverancona.it/${slug}`} target="_blank" rel="noopener noreferrer" style={{
-                          color: COLORS.accent, fontWeight: 600, textDecoration: 'none',
-                          fontSize: '0.9rem', fontFamily: 'monospace',
-                        }}>/{slug}</a>
-                      </td>
-                      <td style={{ padding: '1rem 1.25rem', color: COLORS.textPrimary, fontSize: '0.9rem' }}>{form.title}</td>
-                      <td style={{ padding: '1rem 1.25rem' }}>
-                        <span style={{
-                          fontFamily: 'monospace', fontSize: '0.82rem',
-                          color: COLORS.textSecondary, background: 'rgba(255,255,255,0.06)',
-                          padding: '0.25rem 0.6rem', borderRadius: '6px',
-                        }}>{form.tallyId}</span>
-                      </td>
-                      <td style={{ padding: '1rem 1.25rem' }}>
-                        <select
-                          value={form.status}
-                          onChange={(e) => handleUpdateStatus(slug, e.target.value as FormStatus)}
-                          style={{
-                            padding: '0.4rem 0.75rem', borderRadius: '8px',
-                            border: `1px solid ${form.status === 'active' ? COLORS.greenBorder : COLORS.redBorder}`,
-                            background: form.status === 'active' ? COLORS.greenBg : COLORS.redBg,
-                            color: form.status === 'active' ? COLORS.green : COLORS.red,
-                            fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', outline: 'none',
-                          }}
-                        >
-                          <option value="active">Attivo</option>
-                          <option value="suspended">Sospeso</option>
-                        </select>
-                      </td>
-                      <td style={{ padding: '1rem 1.25rem' }}>
-                        <button onClick={() => handleDelete(slug)} style={{
-                          background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}`,
-                          color: COLORS.red, padding: '0.4rem 0.9rem',
-                          borderRadius: '8px', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600,
-                        }}>
-                          Elimina
-                        </button>
-                      </td>
+
+            {Object.keys(forms).length === 0 ? (
+              <div style={{ padding: '4rem', textAlign: 'center', color: COLORS.textMuted }}>
+                <p style={{ margin: 0 }}>Nessun form creato. Aggiungine uno sopra.</p>
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${COLORS.border}` }}>
+                      {['Link Pubblico', 'Titolo', 'ID Tally', 'Stato', 'Azioni'].map(h => (
+                        <th key={h} style={{
+                          padding: '0.9rem 1.25rem', textAlign: 'left',
+                          fontSize: '0.72rem', color: COLORS.textMuted,
+                          textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600,
+                        }}>{h}</th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                  </thead>
+                  <tbody>
+                    {Object.entries(forms).map(([slug, form]) => (
+                      <tr key={slug} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
+                        <td style={{ padding: '1rem 1.25rem' }}>
+                          <a href={`https://forms.gulliverancona.it/${slug}`} target="_blank" rel="noopener noreferrer" style={{
+                            color: COLORS.accent, fontWeight: 600, textDecoration: 'none',
+                            fontSize: '0.9rem', fontFamily: 'monospace',
+                          }}>/{slug}</a>
+                        </td>
+                        <td style={{ padding: '1rem 1.25rem', color: COLORS.textPrimary, fontSize: '0.9rem' }}>{form.title}</td>
+                        <td style={{ padding: '1rem 1.25rem' }}>
+                          <span style={{
+                            fontFamily: 'monospace', fontSize: '0.82rem',
+                            color: COLORS.textSecondary, background: 'rgba(255,255,255,0.06)',
+                            padding: '0.25rem 0.6rem', borderRadius: '6px',
+                          }}>{form.tallyId}</span>
+                        </td>
+                        <td style={{ padding: '1rem 1.25rem' }}>
+                          <select
+                            value={form.status}
+                            onChange={(e) => handleUpdateStatus(slug, e.target.value as FormStatus)}
+                            style={{
+                              padding: '0.4rem 0.75rem', borderRadius: '8px',
+                              border: `1px solid ${form.status === 'active' ? COLORS.greenBorder : COLORS.redBorder}`,
+                              background: form.status === 'active' ? COLORS.greenBg : COLORS.redBg,
+                              color: form.status === 'active' ? COLORS.green : COLORS.red,
+                              fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', outline: 'none',
+                            }}
+                          >
+                            <option value="active">Attivo</option>
+                            <option value="suspended">Sospeso</option>
+                          </select>
+                        </td>
+                        <td style={{ padding: '1rem 1.25rem' }}>
+                          <button onClick={() => handleDelete(slug)} style={{
+                            background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}`,
+                            color: COLORS.red, padding: '0.4rem 0.9rem',
+                            borderRadius: '8px', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600,
+                          }}>
+                            Elimina
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </>)}
       </main>
 
