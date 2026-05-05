@@ -8,9 +8,9 @@ export const config = {
      * - api (chiamate al backend)
      * - _next/static (file statici generati da Next)
      * - _next/image (immagini ottimizzate)
-     * - favicon.ico, sitemap.xml, robots.txt (file root)
+     * - file con estensioni tipiche da public/ come .png, .ico, .webmanifest
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|webmanifest|json)).*)',
   ],
 };
 
