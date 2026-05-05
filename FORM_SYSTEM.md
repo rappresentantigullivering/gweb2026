@@ -222,8 +222,8 @@ Il layout root legge l'header HTTP `host` lato server e **nasconde Navbar e Foot
 
 | Tipo | Nome | Target | Proxy |
 |---|---|---|---|
-| CNAME | `admin` | `gulliverancona.it` | ✅ Arancione (attivo) |
-| CNAME | `forms` | `gulliverancona.it` | ✅ Arancione (attivo) |
+| CNAME | `admin` | `gulliverancona.it` | Attivo (proxy arancione) |
+| CNAME | `forms` | `gulliverancona.it` | Attivo (proxy arancione) |
 
 > **Importante:** Le **Cloudflare Transform Rules** NON sono necessarie. Il routing è gestito interamente dal proxy Next.js (`src/proxy.ts`).
 
@@ -247,7 +247,7 @@ Entrambi i sottodomini devono essere aggiunti nella sezione **Domains** del prog
 | `UPSTASH_REDIS_REST_TOKEN` | `gQAAA...` | Upstash Console → REST API |
 | `ADMIN_PASSWORD` | password scelta da te | Impostala tu su Vercel |
 
-> ⚠️ **Sicurezza**: Non committare mai questi valori nel repository. Vanno impostati SOLO su Vercel.
+> **Attenzione:** Non committare mai questi valori nel repository. Vanno impostati SOLO su Vercel.
 
 ### Badge versione automatico
 Vercel inietta automaticamente `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` ad ogni deploy. I primi 7 caratteri vengono mostrati come badge versione nel pannello admin, senza nessuna configurazione aggiuntiva.
@@ -256,18 +256,18 @@ Vercel inietta automaticamente `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` ad ogni deplo
 
 ## 10. Analisi di sicurezza
 
-### ✅ Punti forti
+### Punti forti
 
 | Aspetto | Valutazione |
 |---|---|
-| Le credenziali Redis non sono nel codice | ✅ Solo in env vars Vercel |
-| La password admin è server-side | ✅ Mai esposta al client |
-| Il database è read-only per gli studenti | ✅ GET non richiede auth |
-| Nessun cookie/sessione persistente | ✅ La sessione muore con la pagina |
-| HTTPS forzato via Cloudflare | ✅ |
-| Slug riservati bloccati dall'API | ✅ Aggiunto come protezione |
+| Le credenziali Redis non sono nel codice | Solo in env vars Vercel |
+| La password admin è server-side | Mai esposta al client |
+| Il database è read-only per gli studenti | GET non richiede auth |
+| Nessun cookie/sessione persistente | La sessione muore con la pagina |
+| HTTPS forzato via Cloudflare | Si |
+| Slug riservati bloccati dall'API | Aggiunto come protezione |
 
-### ⚠️ Rischi residui e mitigazioni
+### Rischi residui e mitigazioni
 
 #### 1. Nessun rate limiting sull'API
 **Rischio:** Un attaccante potrebbe tentare migliaia di password in breve tempo (brute force).
@@ -290,7 +290,7 @@ Vercel inietta automaticamente `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` ad ogni deplo
 #### 5. La password non ha requisiti minimi
 **Raccomandazione:** Usare una password di almeno 16 caratteri con lettere, numeri e simboli. Non usare `gulliver2026` o simili.
 
-### 🔒 Vettori di attacco NON applicabili
+### Vettori di attacco non applicabili
 
 | Attacco | Perché non si applica |
 |---|---|

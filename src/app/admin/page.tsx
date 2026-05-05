@@ -6,26 +6,23 @@ type FormStatus = 'active' | 'suspended';
 type FormData = { tallyId: string; title: string; status: FormStatus };
 
 const API_BASE = '/api/forms/';
-// Vercel inietta automaticamente l'hash del commit — primi 7 caratteri = versione leggibile
 const VERSION = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? 'local';
 
 const COLORS = {
   bg: '#080810',
-  surface: 'rgba(255,255,255,0.04)',
-  surfaceHover: 'rgba(255,255,255,0.07)',
-  border: 'rgba(255,255,255,0.08)',
-  borderHover: 'rgba(255,255,255,0.16)',
+  surface: 'rgba(255,255,255,0.06)',
+  border: 'rgba(255,255,255,0.12)',
   accent: '#e40329',
   accentGlow: 'rgba(228,3,41,0.25)',
   textPrimary: '#ffffff',
-  textSecondary: 'rgba(255,255,255,0.5)',
-  textMuted: 'rgba(255,255,255,0.25)',
-  green: '#00d97e',
-  greenBg: 'rgba(0,217,126,0.1)',
-  greenBorder: 'rgba(0,217,126,0.25)',
-  red: '#ff4560',
-  redBg: 'rgba(255,69,96,0.1)',
-  redBorder: 'rgba(255,69,96,0.25)',
+  textSecondary: 'rgba(255,255,255,0.7)',
+  textMuted: 'rgba(255,255,255,0.45)',
+  green: '#4ade80',
+  greenBg: 'rgba(74,222,128,0.12)',
+  greenBorder: 'rgba(74,222,128,0.3)',
+  red: '#f87171',
+  redBg: 'rgba(248,113,113,0.12)',
+  redBorder: 'rgba(248,113,113,0.3)',
 };
 
 export default function AdminPage() {
@@ -69,7 +66,6 @@ export default function AdminPage() {
     setLoginLoading(true);
     setLoginError('');
     try {
-      // Verifica la password contro l'API senza toccare il database
       const res = await fetch('/api/forms/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
@@ -109,9 +105,9 @@ export default function AdminPage() {
       if (res.ok) {
         setNewSlug(''); setNewTallyId(''); setNewTitle('');
         await fetchForms();
-        notify('Form creato con successo!', 'ok');
+        notify('Form creato con successo.', 'ok');
       } else {
-        notify('Password errata o errore di salvataggio.', 'err');
+        notify('Errore di salvataggio. Controlla la password.', 'err');
       }
     } finally {
       setLoading(false);
@@ -140,14 +136,13 @@ export default function AdminPage() {
     else notify('Errore di autorizzazione.', 'err');
   };
 
-  // ─── LOGIN SCREEN ─────────────────────────────────────────────────────────
+  // LOGIN
   if (!authenticated) {
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: COLORS.bg, fontFamily: '"Inter", system-ui, sans-serif', position: 'relative', overflow: 'hidden',
       }}>
-        {/* Background glow */}
         <div style={{
           position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%,-50%)',
           width: '600px', height: '400px', borderRadius: '50%',
@@ -156,7 +151,7 @@ export default function AdminPage() {
         }} />
         <form onSubmit={handleLogin} style={{
           position: 'relative', zIndex: 1,
-          background: COLORS.surface, border: `1px solid ${COLORS.border}`,
+          background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
           padding: '3rem 2.5rem', borderRadius: '24px',
           backdropFilter: 'blur(40px)',
           width: '100%', maxWidth: '380px',
@@ -164,12 +159,11 @@ export default function AdminPage() {
         }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
             <div style={{
-              width: '56px', height: '56px', borderRadius: '16px',
-              background: `linear-gradient(135deg, ${COLORS.accent}, #ff6b35)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.5rem', margin: '0 auto 1.25rem',
+              width: '48px', height: '48px', borderRadius: '14px',
+              background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
+              margin: '0 auto 1.25rem',
               boxShadow: `0 8px 24px ${COLORS.accentGlow}`,
-            }}>🛡</div>
+            }} />
             <h1 style={{ color: COLORS.textPrimary, fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Admin Portal</h1>
             <p style={{ color: COLORS.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>Gulliver Form Manager</p>
             <div style={{
@@ -190,7 +184,7 @@ export default function AdminPage() {
             autoFocus
             style={{
               width: '100%', padding: '0.9rem 1rem', marginBottom: '0.75rem',
-              background: loginError ? 'rgba(255,69,96,0.08)' : 'rgba(255,255,255,0.06)',
+              background: loginError ? 'rgba(248,113,113,0.08)' : 'rgba(255,255,255,0.07)',
               border: `1px solid ${loginError ? COLORS.redBorder : COLORS.border}`,
               borderRadius: '12px', color: COLORS.textPrimary, fontSize: '1rem',
               outline: 'none', boxSizing: 'border-box',
@@ -208,14 +202,14 @@ export default function AdminPage() {
             fontWeight: 700, fontSize: '1rem', cursor: loginLoading ? 'not-allowed' : 'pointer',
             boxShadow: `0 4px 20px ${COLORS.accentGlow}`,
           }}>
-            {loginLoading ? '⏳ Verifica...' : 'Accedi →'}
+            {loginLoading ? 'Verifica in corso...' : 'Accedi'}
           </button>
         </form>
       </div>
     );
   }
 
-  // ─── DASHBOARD ────────────────────────────────────────────────────────────
+  // DASHBOARD
   return (
     <div style={{
       minHeight: '100vh', background: COLORS.bg,
@@ -224,7 +218,7 @@ export default function AdminPage() {
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-      {/* Toast notification */}
+      {/* Toast */}
       {notification && (
         <div style={{
           position: 'fixed', top: '1.5rem', right: '1.5rem', zIndex: 999,
@@ -237,7 +231,7 @@ export default function AdminPage() {
           backdropFilter: 'blur(20px)',
           animation: 'fadeIn 0.3s ease',
         }}>
-          {notification.type === 'ok' ? '✓ ' : '✕ '}{notification.msg}
+          {notification.msg}
         </div>
       )}
 
@@ -248,17 +242,16 @@ export default function AdminPage() {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         backdropFilter: 'blur(20px)',
         position: 'sticky', top: 0, zIndex: 10,
-        background: 'rgba(8,8,16,0.8)',
+        background: 'rgba(8,8,16,0.85)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
-            width: '36px', height: '36px', borderRadius: '10px',
+            width: '32px', height: '32px', borderRadius: '9px',
             background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1rem', boxShadow: `0 4px 12px ${COLORS.accentGlow}`,
-          }}>⚡</div>
+            boxShadow: `0 4px 12px ${COLORS.accentGlow}`,
+          }} />
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Gulliver Form Manager</div>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: COLORS.textPrimary }}>Gulliver Form Manager</div>
             <div style={{ fontSize: '0.72rem', color: COLORS.textMuted, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <span>admin.gulliverancona.it</span>
               <span style={{
@@ -269,50 +262,40 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={() => setAuthenticated(false)} style={{
-            background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-            color: COLORS.textSecondary, padding: '0.4rem 1rem',
-            borderRadius: '99px', cursor: 'pointer', fontSize: '0.85rem',
-          }}>
-            Esci
-          </button>
-        </div>
+        <button onClick={() => setAuthenticated(false)} style={{
+          background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+          color: COLORS.textSecondary, padding: '0.4rem 1rem',
+          borderRadius: '99px', cursor: 'pointer', fontSize: '0.85rem',
+        }}>
+          Esci
+        </button>
       </header>
 
       <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
 
-        {/* Stats row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
           {[
-            { label: 'Form Totali', value: Object.keys(forms).length, icon: '📋' },
-            { label: 'Attivi', value: Object.values(forms).filter(f => f.status === 'active').length, icon: '✅' },
-            { label: 'Sospesi', value: Object.values(forms).filter(f => f.status === 'suspended').length, icon: '⏸' },
+            { label: 'Form Totali', value: Object.keys(forms).length },
+            { label: 'Attivi', value: Object.values(forms).filter(f => f.status === 'active').length },
+            { label: 'Sospesi', value: Object.values(forms).filter(f => f.status === 'suspended').length },
           ].map(stat => (
             <div key={stat.label} style={{
               background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-              borderRadius: '16px', padding: '1.25rem 1.5rem',
+              borderRadius: '16px', padding: '1.5rem',
             }}>
-              <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{stat.icon}</div>
-              <div style={{ fontSize: '2rem', fontWeight: 800 }}>{stat.value}</div>
-              <div style={{ fontSize: '0.8rem', color: COLORS.textSecondary, marginTop: '0.25rem' }}>{stat.label}</div>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: COLORS.textPrimary }}>{stat.value}</div>
+              <div style={{ fontSize: '0.85rem', color: COLORS.textSecondary, marginTop: '0.25rem' }}>{stat.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Add Form Panel */}
+        {/* Nuovo Form */}
         <div style={{
           background: COLORS.surface, border: `1px solid ${COLORS.border}`,
           borderRadius: '20px', padding: '2rem', marginBottom: '2rem',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-            <div style={{
-              width: '32px', height: '32px', borderRadius: '8px',
-              background: 'rgba(228,3,41,0.15)', border: '1px solid rgba(228,3,41,0.3)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem',
-            }}>＋</div>
-            <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>Nuovo Form</h2>
-          </div>
+          <h2 style={{ margin: '0 0 1.5rem', fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Nuovo Form</h2>
           <form onSubmit={handleCreate}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
               {[
@@ -331,7 +314,7 @@ export default function AdminPage() {
                     placeholder={field.placeholder}
                     style={{
                       width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
-                      background: 'rgba(255,255,255,0.04)', border: `1px solid ${COLORS.border}`,
+                      background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
                       borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
                     }}
                   />
@@ -341,9 +324,9 @@ export default function AdminPage() {
             <div style={{
               background: 'rgba(255,255,255,0.03)', border: `1px solid ${COLORS.border}`,
               borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '1.25rem',
-              fontSize: '0.82rem', color: COLORS.textMuted, fontFamily: 'monospace',
+              fontSize: '0.82rem', color: COLORS.textSecondary, fontFamily: 'monospace',
             }}>
-              🔗 forms.gulliverancona.it/<span style={{ color: COLORS.textSecondary }}>{newSlug || 'slug'}</span>
+              forms.gulliverancona.it/<span style={{ color: COLORS.textPrimary }}>{newSlug || 'slug'}</span>
             </div>
             <button disabled={loading} type="submit" style={{
               padding: '0.75rem 2rem',
@@ -353,31 +336,30 @@ export default function AdminPage() {
               boxShadow: loading ? 'none' : `0 4px 16px ${COLORS.accentGlow}`,
               transition: 'all 0.2s',
             }}>
-              {loading ? '⏳ Salvataggio...' : '✓ Crea Link'}
+              {loading ? 'Salvataggio...' : 'Crea Link'}
             </button>
           </form>
         </div>
 
-        {/* Forms Table */}
+        {/* Tabella Form */}
         <div style={{
           background: COLORS.surface, border: `1px solid ${COLORS.border}`,
           borderRadius: '20px', overflow: 'hidden',
         }}>
           <div style={{ padding: '1.5rem 2rem', borderBottom: `1px solid ${COLORS.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>Form Attivi</h2>
+            <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Form</h2>
             <button onClick={fetchForms} style={{
-              background: COLORS.surface, border: `1px solid ${COLORS.border}`,
+              background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
               color: COLORS.textSecondary, padding: '0.4rem 0.9rem',
               borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem',
             }}>
-              {fetchLoading ? '⏳' : '↻'} Aggiorna
+              {fetchLoading ? 'Caricamento...' : 'Aggiorna'}
             </button>
           </div>
 
           {Object.keys(forms).length === 0 ? (
             <div style={{ padding: '4rem', textAlign: 'center', color: COLORS.textMuted }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
-              <p style={{ margin: 0 }}>Nessun form creato. Aggiungine uno sopra!</p>
+              <p style={{ margin: 0 }}>Nessun form creato. Aggiungine uno sopra.</p>
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
@@ -400,13 +382,13 @@ export default function AdminPage() {
                         <a href={`https://forms.gulliverancona.it/${slug}`} target="_blank" rel="noopener noreferrer" style={{
                           color: COLORS.accent, fontWeight: 600, textDecoration: 'none',
                           fontSize: '0.9rem', fontFamily: 'monospace',
-                        }}>/{slug} ↗</a>
+                        }}>/{slug}</a>
                       </td>
                       <td style={{ padding: '1rem 1.25rem', color: COLORS.textPrimary, fontSize: '0.9rem' }}>{form.title}</td>
                       <td style={{ padding: '1rem 1.25rem' }}>
                         <span style={{
                           fontFamily: 'monospace', fontSize: '0.82rem',
-                          color: COLORS.textMuted, background: 'rgba(255,255,255,0.05)',
+                          color: COLORS.textSecondary, background: 'rgba(255,255,255,0.06)',
                           padding: '0.25rem 0.6rem', borderRadius: '6px',
                         }}>{form.tallyId}</span>
                       </td>
@@ -422,8 +404,8 @@ export default function AdminPage() {
                             fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', outline: 'none',
                           }}
                         >
-                          <option value="active">● Attivo</option>
-                          <option value="suspended">⏸ Sospeso</option>
+                          <option value="active">Attivo</option>
+                          <option value="suspended">Sospeso</option>
                         </select>
                       </td>
                       <td style={{ padding: '1rem 1.25rem' }}>
@@ -446,7 +428,7 @@ export default function AdminPage() {
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-        input::placeholder { color: rgba(255,255,255,0.2); }
+        input::placeholder { color: rgba(255,255,255,0.25); }
         select option { background: #1a1a2e; color: white; }
       `}</style>
     </div>
