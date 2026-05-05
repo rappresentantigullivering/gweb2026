@@ -14,7 +14,7 @@ export type Appunto = {
   annoAccademico: string;
   descrizione: string;
   qualita: string;
-  disponibile: boolean;
+  watermark: boolean;
   link: string;
 };
 
@@ -78,7 +78,7 @@ export async function GET(request: Request) {
         annoAccademico: cols[8]?.trim() || '',
         descrizione: cols[9]?.trim() || '',
         qualita: cols[10]?.trim() || '',
-        disponibile: cols[11]?.trim().toUpperCase() === 'S',
+        watermark: cols[11]?.trim().toUpperCase() === 'S',
         link: cols[12]?.trim() || '',
       });
     }

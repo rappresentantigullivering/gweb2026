@@ -13,7 +13,7 @@ type Appunto = {
   annoAccademico: string;
   descrizione: string;
   qualita: string;
-  disponibile: boolean;
+  watermark: boolean;
   link: string;
 };
 
@@ -41,7 +41,7 @@ export default function AppuntiTab() {
   const [search, setSearch] = useState('');
   const [filterFacolta, setFilterFacolta] = useState('');
   const [filterAnno, setFilterAnno] = useState('');
-  const [filterDisponibile, setFilterDisponibile] = useState('');
+  const [filterWatermark, setFilterWatermark] = useState('');
   const [sheetType, setSheetType] = useState<'digitali' | 'cartacei'>('digitali');
 
   useEffect(() => {
@@ -71,12 +71,12 @@ export default function AppuntiTab() {
     return appunti.filter(a => {
       if (filterFacolta && a.facolta !== filterFacolta) return false;
       if (filterAnno && a.anno !== filterAnno) return false;
-      if (filterDisponibile === 'si' && !a.disponibile) return false;
-      if (filterDisponibile === 'no' && a.disponibile) return false;
+      if (filterWatermark === 'si' && !a.watermark) return false;
+      if (filterWatermark === 'no' && a.watermark) return false;
       if (q && ![a.materia, a.professore, a.descrizione, a.facolta].join(' ').toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [appunti, search, filterFacolta, filterAnno, filterDisponibile]);
+  }, [appunti, search, filterFacolta, filterAnno, filterWatermark]);
 
   const inputStyle: React.CSSProperties = {
     padding: '0.5rem 0.85rem', borderRadius: '8px',
@@ -148,12 +148,12 @@ export default function AppuntiTab() {
           </select>
         </div>
         <div>
-          <label style={labelStyle}>Disponibile</label>
+          <label style={labelStyle}>Watermark</label>
           <select style={{ ...inputStyle, width: '100%', boxSizing: 'border-box', cursor: 'pointer' }}
-            value={filterDisponibile} onChange={e => setFilterDisponibile(e.target.value)}>
+            value={filterWatermark} onChange={e => setFilterWatermark(e.target.value)}>
             <option value="">Tutti</option>
-            <option value="si">Solo disponibili</option>
-            <option value="no">Solo non disponibili</option>
+            <option value="si">Solo con watermark</option>
+            <option value="no">Solo senza</option>
           </select>
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function AppuntiTab() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                {['Facolta', 'Anno', 'Materia', 'Professore', 'Tipo', 'Qualita', 'Disp.', 'Link'].map(h => (
+                {['Facolta', 'Anno', 'Materia', 'Professore', 'Tipo', 'Qualita', 'Watermark', 'Azioni'].map(h => (
                   <th key={h} style={{
                     padding: '0.75rem 1rem', textAlign: 'left',
                     fontSize: '0.72rem', color: COLORS.textMuted,
@@ -208,18 +208,34 @@ export default function AppuntiTab() {
                     <span style={{
                       display: 'inline-block', padding: '0.2rem 0.55rem', borderRadius: '99px',
                       fontSize: '0.72rem', fontWeight: 700,
-                      background: a.disponibile ? COLORS.greenBg : COLORS.redBg,
-                      border: `1px solid ${a.disponibile ? COLORS.greenBorder : COLORS.redBorder}`,
-                      color: a.disponibile ? COLORS.green : COLORS.red,
+                      background: a.watermark ? COLORS.greenBg : 'rgba(255,255,255,0.05)',
+                      border: `1px solid ${a.watermark ? COLORS.greenBorder : 'rgba(255,255,255,0.1)'}`,
+                      color: a.watermark ? COLORS.green : COLORS.textMuted,
                     }}>
-                      {a.disponibile ? 'Si' : 'No'}
+                      {a.watermark ? 'Si' : 'No'}
                     </span>
                   </td>
                   <td style={{ padding: '0.75rem 1rem' }}>
                     {a.link ? (
-                      <a href={a.link} target="_blank" rel="noopener noreferrer" style={{
-                        color: COLORS.accent, textDecoration: 'none', fontSize: '0.82rem', fontWeight: 600,
-                      }}>Apri</a>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <a href={a.link} target="_blank" rel="noopener noreferrer" style={{
+                          color: COLORS.accent, textDecoration: 'none', fontSize: '0.82rem', fontWeight: 600,
+                          padding: '0.3rem 0.6rem', borderRadius: '6px', background: 'rgba(228,3,41,0.1)',
+                          border: `1px solid ${COLORS.accentGlow}`
+                        }}>Apri</a>
+                        <button 
+                          onClick={() => {
+                            navigator.clipboard.writeText(a.link);
+                            alert('Link copiato!');
+                          }}
+                          style={{
+                            color: COLORS.textSecondary, background: 'rgba(255,255,255,0.06)',
+                            border: `1px solid ${COLORS.border}`, borderRadius: '6px',
+                            padding: '0.3rem 0.6rem', fontSize: '0.82rem', fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                        >Copia</button>
+                      </div>
                     ) : '—'}
                   </td>
                 </tr>
