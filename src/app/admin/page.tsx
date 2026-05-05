@@ -18,7 +18,7 @@ export default function AdminPage() {
 
   const fetchForms = async () => {
     try {
-      const res = await fetch('/api/forms');
+      const res = await fetch('/api/forms/');
       const data = await res.json();
       setForms(data);
     } catch (e) {
@@ -39,7 +39,7 @@ export default function AdminPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/forms', {
+      const res = await fetch('/api/forms/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export default function AdminPage() {
   const handleUpdateStatus = async (slug: string, newStatus: FormStatus) => {
     const form = forms[slug];
     try {
-      const res = await fetch('/api/forms', {
+      const res = await fetch('/api/forms/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
         body: JSON.stringify({ action: 'update', slug, tallyId: form.tallyId, title: form.title, status: newStatus })
@@ -82,7 +82,7 @@ export default function AdminPage() {
   const handleDelete = async (slug: string) => {
     if (!window.confirm(`Sicuro di voler eliminare il form "${slug}"?`)) return;
     try {
-      const res = await fetch('/api/forms', {
+      const res = await fetch('/api/forms/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
         body: JSON.stringify({ action: 'delete', slug })
