@@ -69,22 +69,16 @@ export default function AdminPage() {
     setLoginLoading(true);
     setLoginError('');
     try {
-      // Verifica la password realmente contro l'API prima di concedere l'accesso
+      // Verifica la password contro l'API senza toccare il database
       const res = await fetch('/api/forms/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
-        body: JSON.stringify({ action: 'create', slug: '__ping__', tallyId: '__ping__', title: '__ping__' }),
+        body: JSON.stringify({ action: 'verify' }),
       });
       if (res.status === 401) {
         setLoginError('Password errata. Riprova.');
       } else {
         setAuthenticated(true);
-        // Puliamo il ping immediatamente
-        await fetch('/api/forms/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
-          body: JSON.stringify({ action: 'delete', slug: '__ping__' }),
-        });
       }
     } catch {
       setLoginError('Errore di rete. Riprova.');
