@@ -1,0 +1,124 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{geometry}
+
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\title{Documentazione Tecnica: Gulliver Web 2026}
+\author{Antigravity AI (per Gulliver UNIVPM)}
+\date{Maggio 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduzione}
+Questa documentazione descrive l'architettura, la configurazione e il funzionamento del nuovo sito web del Gulliver (\texttt{gulliverancona.it}). Il progetto è stato concepito per essere scalabile, sicuro e facilmente manutenibile da studenti senza competenze sistemistiche avanzate.
+
+\section{Stack Tecnologico}
+Il sito è una \textbf{Full-Stack Web Application} basata su:
+\begin{itemize}
+    \item \textbf{Framework}: Next.js 15 (App Router).
+    \item \textbf{Linguaggio}: TypeScript.
+    \item \textbf{Stile}: Vanilla CSS (per massime performance e controllo).
+    \item \textbf{Database}: Upstash Redis (Serverless, latency-free).
+    \item \textbf{Hosting}: Vercel / Netlify (Build statico e serverless functions).
+\end{itemize}
+
+\section{Infrastruttura di Rete e DNS}
+Il sito utilizza \textbf{Cloudflare} come gestore DNS e Proxy.
+
+\subsection{Domini e Sottodomini}
+\begin{itemize}
+    \item \texttt{gulliverancona.it}: Sito principale (Landing, Countdown, Programma).
+    \item \texttt{admin.gulliverancona.it}: Portale amministrativo per la gestione form e consultazione appunti.
+    \item \texttt{forms.gulliverancona.it}: Dominio dedicato ai redirect dei moduli (short links).
+\end{itemize}
+
+\subsection{Configurazione SSL/Proxy}
+\textbf{IMPORTANTE}: Su Cloudflare, l'impostazione SSL/TLS deve essere impostata su \textbf{"Full"} o \textbf{"Full (Strict)"}. 
+\textbf{NON usare "Flexible"}, altrimenti si genererà un loop di redirect infinito dovuto alla configurazione di sicurezza forzata di Vercel.
+
+\section{Sistema di Gestione Form}
+Il cuore del sistema admin è la gestione dei link brevi.
+
+\subsection{Architettura}
+Quando un utente visita \texttt{forms.gulliverancona.it/slug}, la richiesta viene catturata da una \textbf{Middleware} o da una \textbf{Dynamic Route} (\texttt{app/f/[slug]/page.tsx}).
+Il sistema interroga Redis per trovare l'ID del modulo Tally associato allo \texttt{slug}.
+\begin{itemize}
+    \item Se lo stato è \texttt{"active"}, l'utente viene reindirizzato a Tally (\texttt{tally.so/r/ID}).
+    \item Se lo stato è \texttt{"suspended"}, viene mostrata una pagina di avviso.
+    \item Se lo slug non esiste, viene mostrata una 404 personalizzata.
+\end{itemize}
+
+\subsection{Sicurezza del Portale Admin}
+Il portale \texttt{admin} è protetto da una password statica (\texttt{ADMIN\_PASSWORD}). L'autenticazione è gestita tramite cookie di sessione. Le operazioni di scrittura (Crea, Elimina, Cambia Stato) richiedono l'invio della password nell'header \texttt{Authorization} per ogni chiamata API.
+
+\section{Sistema Archivio Appunti}
+Il sistema legge i dati direttamente da un Google Sheet pubblico tramite export CSV.
+
+\subsection{Google Sheets Integration}
+Il foglio è identificato dalla variabile d'ambiente \texttt{NEXT\_PUBLIC\_APPUNTI\_SHEET\_ID}.
+Il backend (\texttt{api/appunti/route.ts}) esegue il parsing del CSV gestendo due fogli diversi tramite parametri \texttt{gid}:
+\begin{itemize}
+    \item \texttt{digitali} (GID 0).
+    \item \texttt{cartacei} (GID 1603948657).
+\end{itemize}
+
+\subsection{Caching}
+Le chiamate al Google Sheet sono cachate per 60 secondi (\texttt{next: \{ revalidate: 60 \}}) per evitare di saturare i limiti di Google e velocizzare il caricamento della tabella.
+
+\section{Variabili d'Ambiente}
+Tutte le configurazioni sensibili devono essere caricate su Vercel:
+\begin{lstlisting}[language=bash]
+UPSTASH_REDIS_REST_URL      # URL REST del database Redis
+UPSTASH_REDIS_REST_TOKEN    # Token di autenticazione Redis
+ADMIN_PASSWORD              # Password del portale admin
+NEXT_PUBLIC_APPUNTI_SHEET_ID # ID del foglio Google
+\end{lstlisting}
+
+\section{Sviluppo e Manutenzione}
+Per modificare il sito localmente:
+\begin{enumerate}
+    \item Clonare il repository.
+    \item Copiare il file \texttt{.env} (già configurato nel folder root).
+    \item Eseguire \texttt{npm install} e poi \texttt{npm run dev}.
+\end{enumerate}
+
+\section{Contatti e Supporto}
+In caso di problemi tecnici critici, fare riferimento alla repository GitHub o contattare il responsabile tecnico indicato nel footer del sito.
+
+\end{document}
