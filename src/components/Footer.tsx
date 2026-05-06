@@ -93,7 +93,7 @@ export default function Footer() {
             <span>·</span>
             <Link href="/trasparenza">Trasparenza</Link>
             <span>·</span>
-            <a href="https://www.udu.it" target="_blank" rel="noopener noreferrer">UDU Nazionale</a>
+            <a href="https://www.unionedegliuniversitari.it" target="_blank" rel="noopener noreferrer">UDU Nazionale</a>
           </div>
         </div>
       </div>
