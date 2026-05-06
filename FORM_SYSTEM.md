@@ -246,6 +246,7 @@ Entrambi i sottodomini devono essere aggiunti nella sezione **Domains** del prog
 | `UPSTASH_REDIS_REST_URL` | `https://tight-martin-....upstash.io` | Upstash Console → REST API |
 | `UPSTASH_REDIS_REST_TOKEN` | `gQAAA...` | Upstash Console → REST API |
 | `ADMIN_PASSWORD` | password scelta da noi | Impostala tu su Vercel |
+| `NEXT_PUBLIC_APPUNTI_SHEET_ID` | `1bz-tBt6pjk8Z9zadctHX2INiCUl9RC5beigbYjIRfDo` | ID del foglio Google Appunti |
 
 > **Attenzione:** Non committare mai questi valori nel repository. Vanno impostati SOLO su Vercel.
 

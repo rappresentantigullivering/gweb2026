@@ -251,7 +251,7 @@ export default function AppuntiTab() {
       {/* Bottone Google Sheets */}
       <div style={{ marginTop: '2rem', textAlign: 'center' }}>
         <a 
-          href="https://docs.google.com/spreadsheets/d/1bz-tBt6pjk8Z9zadctHX2INiCUl9RC5beigbYjIRfDo/edit?usp=sharing"
+          href={`https://docs.google.com/spreadsheets/d/${process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID || '1bz-tBt6pjk8Z9zadctHX2INiCUl9RC5beigbYjIRfDo'}/edit`}
           target="_blank" 
           rel="noopener noreferrer"
           style={{
