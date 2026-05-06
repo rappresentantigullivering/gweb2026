@@ -245,7 +245,7 @@ Entrambi i sottodomini devono essere aggiunti nella sezione **Domains** del prog
 |---|---|---|
 | `UPSTASH_REDIS_REST_URL` | `https://tight-martin-....upstash.io` | Upstash Console → REST API |
 | `UPSTASH_REDIS_REST_TOKEN` | `gQAAA...` | Upstash Console → REST API |
-| `ADMIN_PASSWORD` | password scelta da te | Impostala tu su Vercel |
+| `ADMIN_PASSWORD` | password scelta da noi | Impostala tu su Vercel |
 
 > **Attenzione:** Non committare mai questi valori nel repository. Vanno impostati SOLO su Vercel.
 
@@ -286,9 +286,6 @@ Vercel inietta automaticamente `NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA` ad ogni deplo
 #### 4. Nessun log degli accessi
 **Rischio:** Non si sa chi ha fatto cosa e quando.
 **Nota:** Vercel registra automaticamente tutte le richieste API nella sezione "Logs" del progetto con timestamp, IP, status code. Sufficienti per un audit base.
-
-#### 5. La password non ha requisiti minimi
-**Raccomandazione:** Usare una password di almeno 16 caratteri con lettere, numeri e simboli. Non usare `gulliver2026` o simili.
 
 ### Vettori di attacco non applicabili
 
