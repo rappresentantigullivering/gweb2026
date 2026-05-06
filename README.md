@@ -36,7 +36,7 @@ Come contribuire:
 1. Fai un **Fork** del repository.
 2. Crea un **Branch** per la tua funzionalità (`git checkout -b feature/nuova-idea`).
 3. Effettua un **Commit** delle tue modifiche.
-4. Apri una **Pull Request**!
+4. Apri una **Pull Request**! (Come Hammon)
 
 Ogni contributo, dalla correzione di un typo all'aggiunta di una nuova sezione, è prezioso.
 
