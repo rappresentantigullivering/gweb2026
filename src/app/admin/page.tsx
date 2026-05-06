@@ -180,7 +180,7 @@ export default function AdminPage() {
               fontFamily: 'monospace', fontSize: '0.72rem', color: COLORS.textMuted,
               letterSpacing: '0.05em',
             }}>
-              v {VERSION}
+              v {VERSION} · <a href="https://github.com/rappresentantigullivering/gweb2026" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.accent, textDecoration: 'none' }}>GitHub</a>
             </div>
           </div>
           <input
@@ -273,8 +273,10 @@ export default function AdminPage() {
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '0.95rem', color: COLORS.textPrimary }}>Gulliver Admin</div>
-            <div style={{ fontSize: '0.72rem', color: COLORS.textMuted }}>
-              {view === 'landing' ? 'Area Riservata' : view === 'form' ? 'Gestione Form' : 'Archivio Appunti'}
+            <div style={{ fontSize: '0.72rem', color: COLORS.textMuted, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <span>{view === 'landing' ? 'Area Riservata' : view === 'form' ? 'Gestione Form' : 'Archivio Appunti'}</span>
+              <span>·</span>
+              <a href="https://github.com/rappresentantigullivering/gweb2026" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.accent, textDecoration: 'none' }}>v {VERSION}</a>
             </div>
           </div>
         </div>
