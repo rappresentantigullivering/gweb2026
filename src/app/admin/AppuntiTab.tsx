@@ -250,10 +250,11 @@ export default function AppuntiTab() {
 
       {/* Bottone Google Sheets */}
       <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-        <a 
-          href={`https://docs.google.com/spreadsheets/d/${process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID || '1bz-tBt6pjk8Z9zadctHX2INiCUl9RC5beigbYjIRfDo'}/edit`}
-          target="_blank" 
-          rel="noopener noreferrer"
+        {process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID ? (
+          <a 
+            href={`https://docs.google.com/spreadsheets/d/${process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID}/edit`}
+            target="_blank" 
+            rel="noopener noreferrer"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '0.75rem',
             padding: '0.85rem 1.75rem', borderRadius: '12px',
@@ -270,6 +271,7 @@ export default function AppuntiTab() {
           </svg>
           Consulta il file completo
         </a>
+        ) : null}
       </div>
     </div>
   );

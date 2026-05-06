@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[11pt,a4paper,oneside]{book}
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
 \usepackage{hyperref}
@@ -6,13 +6,17 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
 
-\geometry{margin=2.5cm}
+\geometry{margin=2.5cm, headheight=15pt}
 
+% Stili per il codice
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
 
 \lstdefinestyle{mystyle}{
     backgroundcolor=\color{backcolour},   
@@ -32,93 +36,161 @@
     showtabs=false,                  
     tabsize=2
 }
-
 \lstset{style=mystyle}
 
-\title{Documentazione Tecnica: Gulliver Web 2026}
-\author{Antigravity AI (per Gulliver UNIVPM)}
+% Intestazioni e piè di pagina
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Documentazione Tecnica Gulliver 2026}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Confidenziale - Solo per uso interno}
+
+\title{
+    \vspace{2cm}
+    \textbf{\Huge Documentazione Tecnica Estesa}\\
+    \vspace{0.5cm}
+    \Large Sistema Web Integrato: Gulliver Web 2026\\
+    \vspace{2cm}
+    \includegraphics[width=0.3\textwidth]{logo-example} % Se vuoi puoi aggiungere il logo
+}
+\author{\textbf{Sviluppato da Antigravity AI}}
 \date{Maggio 2026}
 
 \begin{document}
 
 \maketitle
+\newpage
 \tableofcontents
 \newpage
 
-\section{Introduzione}
-Questa documentazione descrive l'architettura, la configurazione e il funzionamento del nuovo sito web del Gulliver (\texttt{gulliverancona.it}). Il progetto è stato concepito per essere scalabile, sicuro e facilmente manutenibile da studenti senza competenze sistemistiche avanzate.
-
-\section{Stack Tecnologico}
-Il sito è una \textbf{Full-Stack Web Application} basata su:
+\chapter{Introduzione al Progetto}
+\section{Obiettivi}
+Il progetto "Gulliver Web 2026" nasce dall'esigenza di modernizzare l'infrastruttura digitale della lista studentesca Gulliver UNIVPM. Gli obiettivi principali sono:
 \begin{itemize}
-    \item \textbf{Framework}: Next.js 15 (App Router).
-    \item \textbf{Linguaggio}: TypeScript.
-    \item \textbf{Stile}: Vanilla CSS (per massime performance e controllo).
-    \item \textbf{Database}: Upstash Redis (Serverless, latency-free).
-    \item \textbf{Hosting}: Vercel / Netlify (Build statico e serverless functions).
+    \item Centralizzare la gestione dei form esterni (Tally, Google Forms).
+    \item Fornire un accesso rapido e strutturato all'archivio appunti.
+    \item Garantire un'esperienza utente premium e responsive su ogni dispositivo.
+    \item Semplificare il passaggio di consegne tecnico tra le generazioni di studenti.
 \end{itemize}
 
-\section{Infrastruttura di Rete e DNS}
-Il sito utilizza \textbf{Cloudflare} come gestore DNS e Proxy.
+\section{Filosofia Tecnica}
+Il sito adotta una filosofia \textbf{Serverless First}. Non esiste un server fisico o una VPS da gestire; tutto gira su infrastruttura gestita (Vercel) e database edge (Upstash). Questo annulla i costi di manutenzione sistemistica e garantisce uptime elevatissimo.
 
-\subsection{Domini e Sottodomini}
+\chapter{Architettura Software (Next.js 15)}
+\section{Il Framework}
+Next.js 15 è il framework React più avanzato al mondo. Utilizza il paradigma dell'\textbf{App Router}.
+\subsection{Server Components vs Client Components}
+La maggior parte delle pagine sono \textbf{Server Components}, il che significa che vengono renderizzate sul server e inviate all'utente già pronte. I \textbf{Client Components} (indicati con \texttt{'use client'}) vengono usati solo dove serve interattività (es. pulsanti, filtri di ricerca, notifiche).
+
+\section{Struttura delle Cartelle}
 \begin{itemize}
-    \item \texttt{gulliverancona.it}: Sito principale (Landing, Countdown, Programma).
-    \item \texttt{admin.gulliverancona.it}: Portale amministrativo per la gestione form e consultazione appunti.
-    \item \texttt{forms.gulliverancona.it}: Dominio dedicato ai redirect dei moduli (short links).
+    \item \texttt{/src/app}: Contiene tutte le rotte (pagine) del sito.
+    \item \texttt{/src/app/admin}: Logica del pannello di controllo.
+    \item \texttt{/src/app/api}: Endpoint serverless per Redis e Google Sheets.
+    \item \texttt{/src/components}: Elementi riutilizzabili (Header, Footer, Cards).
+    \item \texttt{/public}: Asset statici (immagini, loghi, PDF).
 \end{itemize}
 
-\subsection{Configurazione SSL/Proxy}
-\textbf{IMPORTANTE}: Su Cloudflare, l'impostazione SSL/TLS deve essere impostata su \textbf{"Full"} o \textbf{"Full (Strict)"}. 
-\textbf{NON usare "Flexible"}, altrimenti si genererà un loop di redirect infinito dovuto alla configurazione di sicurezza forzata di Vercel.
+\chapter{Infrastruttura di Rete e DNS}
+\section{Configurazione Cloudflare}
+Cloudflare agisce come scudo (WAF) e come gestore DNS.
+\subsection{Configurazione SSL/TLS (Critico)}
+È \textbf{fondamentale} che la modalità SSL sia impostata su \textbf{Full} o \textbf{Full (Strict)}. 
+\textbf{Perché?} Vercel richiede HTTPS. Se Cloudflare è su "Flexible", proverà a connettersi a Vercel in HTTP; Vercel risponderà con un redirect a HTTPS, creando un ciclo infinito (Infinite Redirect Loop) che rende il sito inaccessibile.
 
-\section{Sistema di Gestione Form}
-Il cuore del sistema admin è la gestione dei link brevi.
-
-\subsection{Architettura}
-Quando un utente visita \texttt{forms.gulliverancona.it/slug}, la richiesta viene catturata da una \textbf{Middleware} o da una \textbf{Dynamic Route} (\texttt{app/f/[slug]/page.tsx}).
-Il sistema interroga Redis per trovare l'ID del modulo Tally associato allo \texttt{slug}.
+\section{Gestione dei Sottodomini}
 \begin{itemize}
-    \item Se lo stato è \texttt{"active"}, l'utente viene reindirizzato a Tally (\texttt{tally.so/r/ID}).
-    \item Se lo stato è \texttt{"suspended"}, viene mostrata una pagina di avviso.
-    \item Se lo slug non esiste, viene mostrata una 404 personalizzata.
+    \item \textbf{forms.gulliverancona.it}: Gestisce i reindirizzamenti.
+    \item \textbf{admin.gulliverancona.it}: Porta al pannello di controllo.
+    \item \textbf{www.gulliverancona.it}: Il sito principale.
 \end{itemize}
 
-\subsection{Sicurezza del Portale Admin}
-Il portale \texttt{admin} è protetto da una password statica (\texttt{ADMIN\_PASSWORD}). L'autenticazione è gestita tramite cookie di sessione. Le operazioni di scrittura (Crea, Elimina, Cambia Stato) richiedono l'invio della password nell'header \texttt{Authorization} per ogni chiamata API.
-
-\section{Sistema Archivio Appunti}
-Il sistema legge i dati direttamente da un Google Sheet pubblico tramite export CSV.
-
-\subsection{Google Sheets Integration}
-Il foglio è identificato dalla variabile d'ambiente \texttt{NEXT\_PUBLIC\_APPUNTI\_SHEET\_ID}.
-Il backend (\texttt{api/appunti/route.ts}) esegue il parsing del CSV gestendo due fogli diversi tramite parametri \texttt{gid}:
-\begin{itemize}
-    \item \texttt{digitali} (GID 0).
-    \item \texttt{cartacei} (GID 1603948657).
-\end{itemize}
-
-\subsection{Caching}
-Le chiamate al Google Sheet sono cachate per 60 secondi (\texttt{next: \{ revalidate: 60 \}}) per evitare di saturare i limiti di Google e velocizzare il caricamento della tabella.
-
-\section{Variabili d'Ambiente}
-Tutte le configurazioni sensibili devono essere caricate su Vercel:
-\begin{lstlisting}[language=bash]
-UPSTASH_REDIS_REST_URL      # URL REST del database Redis
-UPSTASH_REDIS_REST_TOKEN    # Token di autenticazione Redis
-ADMIN_PASSWORD              # Password del portale admin
-NEXT_PUBLIC_APPUNTI_SHEET_ID # ID del foglio Google
-\end{lstlisting}
-
-\section{Sviluppo e Manutenzione}
-Per modificare il sito localmente:
+\chapter{Gestione dei Form e Redirect}
+\section{Il Flusso di Redirect}
+Quando un utente accede a \texttt{forms.gulliverancona.it/slug}, la rotta dinamica \texttt{/f/[slug]} intercetta la richiesta.
 \begin{enumerate}
-    \item Clonare il repository.
-    \item Copiare il file \texttt{.env} (già configurato nel folder root).
-    \item Eseguire \texttt{npm install} e poi \texttt{npm run dev}.
+    \item Viene estratto lo \texttt{slug} dall'URL.
+    \item Si effettua una chiamata \texttt{GET} a Redis per la chiave \texttt{form:slug}.
+    \item Se trovata, si verifica lo stato:
+    \begin{itemize}
+        \item \texttt{active}: Redirect 302 a Tally.
+        \item \texttt{suspended}: Mostra pagina di errore custom.
+    \end{itemize}
 \end{enumerate}
 
-\section{Contatti e Supporto}
-In caso di problemi tecnici critici, fare riferimento alla repository GitHub o contattare il responsabile tecnico indicato nel footer del sito.
+\section{Database Redis (Upstash)}
+Usiamo Redis perché è istantaneo (chiave-valore). La struttura dati è semplice JSON salvato sotto chiavi univoche. Questo permette di gestire migliaia di redirect con latenza vicina allo zero.
+
+\chapter{Sistema Archivio Appunti}
+\section{Integrazione Google Sheets}
+Il sistema non salva gli appunti nel proprio database, ma li legge "al volo" da un Google Sheet. Questo permette ai responsabili appunti di continuare a usare Excel/Sheets senza dover imparare un nuovo software.
+
+\section{Logica di Parsing CSV}
+L'endpoint \texttt{/api/appunti} scarica il foglio in formato CSV. Poiché il CSV può contenere virgole all'interno dei campi (es. nomi professori o descrizioni), abbiamo implementato un parser custom (\texttt{parseCsvLine}) che gestisce correttamente le virgolette.
+
+\chapter{Sicurezza e Autenticazione}
+\section{Portale Admin}
+L'accesso all'admin è protetto da una password salvata in \texttt{ADMIN\_PASSWORD}. 
+\textbf{Nota di sicurezza}: Non vengono salvati utenti singoli. La password è globale per la lista. Al login viene creato un cookie di sessione criptato.
+
+\section{Variabili d'Ambiente (.env)}
+Le variabili sensibili non sono nel codice. Devono essere impostate nel pannello Vercel (Settings -> Environment Variables).
+\begin{itemize}
+    \item \texttt{UPSTASH\_REDIS\_REST\_URL}
+    \item \texttt{UPSTASH\_REDIS_REST\_TOKEN}
+    \item \texttt{ADMIN\_PASSWORD}
+    \item \texttt{NEXT\_PUBLIC\_APPUNTI\_SHEET\_ID}
+\end{itemize}
+
+\chapter{Design e UI/UX}
+\section{Il Sistema di Design}
+Il sito usa un tema \textbf{Dark Premium} basato su:
+\begin{itemize}
+    \item \textbf{Glassmorphism}: Effetto vetro sfocato (\texttt{backdrop-filter: blur}).
+    \item \textbf{Aesthetics}: Colori vibranti ma desaturati per non affaticare la vista.
+    \item \textbf{Micro-animations}: Transizioni fluide su ogni hover e click.
+\end{itemize}
+
+\chapter{Guida alla Manutenzione}
+\section{Aggiornare il Sito}
+Ogni volta che fai un \texttt{git push} sul branch \texttt{main}, Vercel avvia automaticamente un nuovo deploy. Se la build ha successo, il sito si aggiorna in 1-2 minuti.
+
+\section{Cosa fare se il sito non carica?}
+\begin{enumerate}
+    \item Controlla i log su Vercel.
+    \item Verifica che le credenziali Redis su Upstash non siano scadute.
+    \item Assicurati che il Google Sheet degli appunti sia ancora "Pubblico su Web" (chiunque abbia il link può visualizzare).
+\end{enumerate}
+
+\appendix
+\chapter{Codice Sorgente Rilevante}
+In questa sezione riportiamo frammenti di codice critici per la comprensione del sistema.
+\section{Parser CSV Custom}
+\begin{lstlisting}[language=javascript]
+function parseCsvLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') inQuotes = !inQuotes;
+    else if (ch === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else current += ch;
+  }
+  result.push(current.trim());
+  return result;
+}
+\end{lstlisting}
+
+\chapter{Contatti e Passaggio di Consegne}
+Il responsabile tecnico attuale è Lorenzo Califano (\texttt{cali@gulliverancona.it}). In caso di successione, assicurarsi che il nuovo responsabile abbia accesso a:
+\begin{itemize}
+    \item Account GitHub (Organization: rappresentantigullivering).
+    \item Pannello Vercel/Netlify.
+    \item Console Upstash.
+    \item Pannello DNS Cloudflare.
+\end{itemize}
 
 \end{document}

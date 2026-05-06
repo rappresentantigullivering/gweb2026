@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
-const SHEET_ID = process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID || '1bz-tBt6pjk8Z9zadctHX2INiCUl9RC5beigbYjIRfDo';
+const SHEET_ID = process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID;
+if (!SHEET_ID) {
+  console.warn('ATTENZIONE: NEXT_PUBLIC_APPUNTI_SHEET_ID non definita nelle variabili d\'ambiente.');
+}
 const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
 export type Appunto = {
