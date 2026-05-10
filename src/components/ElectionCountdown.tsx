@@ -5,9 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 // ── DATE CHIAVE ──────────────────────────────────────────
-const SILENZIO_DATE = new Date('2026-05-11T00:00:00+02:00').getTime(); // Inizio silenzio
 const START_DATE    = new Date('2026-05-12T08:00:00+02:00').getTime(); // Apertura votazioni
-const END_DATE      = new Date('2026-05-14T19:00:00+02:00').getTime(); // Chiusura votazioni
+const END_DATE      = new Date('2026-05-14T17:00:00+02:00').getTime(); // Chiusura votazioni
 
 type Phase = 'CAMPAIGN' | 'SILENCE' | 'VOTING' | 'ENDED';
 
@@ -16,10 +15,9 @@ interface TimeLeft {
 }
 
 function getPhaseAndTarget(now: number): { phase: Phase; target: number } {
-  if (now >= END_DATE)      return { phase: 'ENDED',    target: 0 };
-  if (now >= START_DATE)    return { phase: 'VOTING',   target: END_DATE };
-  if (now >= SILENZIO_DATE) return { phase: 'SILENCE',  target: START_DATE };
-  return                           { phase: 'CAMPAIGN', target: START_DATE };
+  if (now >= END_DATE)   return { phase: 'ENDED',    target: 0 };
+  if (now >= START_DATE) return { phase: 'VOTING',   target: END_DATE };
+  return                        { phase: 'CAMPAIGN', target: START_DATE };
 }
 
 function calcTimeLeft(distance: number): TimeLeft {
@@ -68,13 +66,18 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
       }}>
         <p style={{
           fontFamily: 'var(--font-heading)', fontWeight: 700,
-          fontSize: '0.78rem', textTransform: 'uppercase',
-          letterSpacing: '0.12em', color: 'rgba(255,255,255,0.75)',
+          fontSize: '0.78rem',
+          letterSpacing: '0.05em', color: 'rgba(255,255,255,0.75)',
         }}>
-          {phase === 'CAMPAIGN' && 'Vota Gulliver · Lista 1 ·  le votazioni iniziano tra:'}
-          {phase === 'SILENCE'  && 'Elezioni studentesche tra:'}
-          {phase === 'VOTING'   && '🗳 VOTA ADESSO — le elezioni chiudono tra:'}
-          {phase === 'ENDED'    && 'Elezioni concluse · grazie!'}
+          {phase === 'ENDED' ? 'Elezioni concluse' : 'Vota Gulliver, Lista 1.'}
+        </p>
+        <p style={{
+          fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)',
+          textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '-0.3rem'
+        }}>
+          {phase === 'CAMPAIGN' && 'Le votazioni iniziano tra:'}
+          {phase === 'VOTING'   && 'Le votazioni chiudono tra:'}
+          {phase === 'ENDED'    && 'GRAZIE.'}
         </p>
         {phase !== 'ENDED' && (
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
@@ -101,10 +104,10 @@ export default function ElectionCountdown({ variant = 'banner' }: ElectionCountd
 
   // ── EPIC VARIANT (pagina /countdown) ────────────────────
   const phaseLabel = {
-    CAMPAIGN: { eyebrow: 'Elezioni Studentesche UNIVPM 2026', headline: 'Vota Gulliver\nLista 1', sub: 'Le votazioni online iniziano tra:' },
-    SILENCE:  { eyebrow: 'Silenzio Elettorale', headline: 'Elezioni\nstudenteschein corso', sub: 'Le urne aprono tra:' },
-    VOTING:   { eyebrow: '🗳 URNE APERTE — VOTA ORA', headline: 'Le elezioni\nchiudono tra:', sub: 'Vai su Esse3 e vota Gulliver, Lista 1' },
-    ENDED:    { eyebrow: 'Elezioni concluse', headline: 'Grazie per\naver votato', sub: '' },
+    CAMPAIGN: { eyebrow: 'Elezioni Studentesche UNIVPM 2026', headline: 'Vota Gulliver,\nLista 1.', sub: 'Le votazioni online iniziano tra:' },
+    SILENCE:  { eyebrow: 'Elezioni Studentesche UNIVPM 2026', headline: 'Vota Gulliver,\nLista 1.', sub: 'Le votazioni online iniziano tra:' },
+    VOTING:   { eyebrow: 'Elezioni Studentesche UNIVPM 2026', headline: 'Vota Gulliver,\nLista 1.', sub: 'Le votazioni online chiudono tra:' },
+    ENDED:    { eyebrow: 'Elezioni concluse', headline: 'GRAZIE.', sub: '' },
   }[phase];
 
   return (

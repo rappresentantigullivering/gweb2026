@@ -45,7 +45,7 @@ export default function ScienzePage() {
                 Leggi la proposta integrale scaricando il documento PDF ufficiale.
               </p>
               <a 
-                href="/docs/programmi/PROGRAMMA DI SCIENZE 2026.pdf" 
+                href="/docs/programmi/PROGRAMMA%20DI%20SCIENZE%202026.pdf" 
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"

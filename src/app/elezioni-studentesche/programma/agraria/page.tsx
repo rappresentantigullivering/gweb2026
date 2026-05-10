@@ -43,7 +43,7 @@ export default function AgrariaPage() {
                 Leggi la proposta integrale per Agraria scaricando il PDF ufficiale.
               </p>
               <a 
-                href="/docs/programmi/PROGRAMMA DI AGRARIA 2026.pdf" 
+                href="/docs/programmi/PROGRAMMA%20DI%20AGRARIA%202026.pdf" 
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"
