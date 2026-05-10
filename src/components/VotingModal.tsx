@@ -121,23 +121,24 @@ export default function VotingModal() {
         <div style={{ position: 'relative' }}>
           <h2 style={{
             fontFamily: 'var(--font-heading)',
-            fontSize: '2.6rem',
+            fontSize: '2.8rem',
             fontWeight: 900,
             color: '#fff',
-            marginBottom: '0.5rem',
+            marginBottom: '1.5rem',
             letterSpacing: '-0.03em'
           }}>
-            Hai ancora tempo!
+            Hai votato?
           </h2>
           
           <p style={{
-            color: 'rgba(255, 255, 255, 0.4)',
-            fontSize: '0.85rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.2em',
-            marginBottom: '2rem'
+            color: 'rgba(255, 255, 255, 0.6)',
+            fontSize: '1.1rem',
+            fontWeight: 400,
+            marginBottom: '2.5rem',
+            lineHeight: 1.5
           }}>
-            Le votazioni chiudono tra:
+            Hai ancora tempo,<br />
+            le votazioni chiudono tra:
           </p>
 
           {/* Mini Countdown Interno */}
