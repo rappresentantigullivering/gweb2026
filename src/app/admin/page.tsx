@@ -29,7 +29,9 @@ const COLORS = {
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
-  const [view, setView] = useState<'landing' | 'form' | 'appunti'>('landing');
+  const [view, setView] = useState<'landing' | 'form' | 'appunti' | 'popup'>('landing');
+  const [popupActive, setPopupActive] = useState(false);
+  const [settingsLoading, setSettingsLoading] = useState(false);
   const [forms, setForms] = useState<Record<string, FormData>>({});
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -58,8 +60,21 @@ export default function AdminPage() {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      const data = await res.json();
+      setPopupActive(data.popupActive);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
-    if (authenticated) fetchForms();
+    if (authenticated) {
+      fetchForms();
+      fetchSettings();
+    }
   }, [authenticated]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -128,15 +143,23 @@ export default function AdminPage() {
     else notify('Errore di autorizzazione.', 'err');
   };
 
-  const handleDelete = async (slug: string) => {
-    if (!window.confirm(`Eliminare definitivamente "${slug}"?`)) return;
-    const res = await fetch(API_BASE, {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ action: 'delete', slug }),
-    });
-    if (res.ok) { fetchForms(); notify('Form eliminato.', 'ok'); }
-    else notify('Errore di autorizzazione.', 'err');
+  const handleTogglePopup = async (val: boolean) => {
+    setSettingsLoading(true);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({ action: 'updatePopup', popupActive: val }),
+      });
+      if (res.ok) {
+        setPopupActive(val);
+        notify(val ? 'Pop-up attivato.' : 'Pop-up disattivato.', 'ok');
+      } else {
+        notify('Errore aggiornamento.', 'err');
+      }
+    } finally {
+      setSettingsLoading(false);
+    }
   };
 
   // LOGIN
@@ -274,7 +297,7 @@ export default function AdminPage() {
           <div>
             <div style={{ fontWeight: 700, fontSize: '0.95rem', color: COLORS.textPrimary }}>Gulliver Admin</div>
             <div style={{ fontSize: '0.72rem', color: COLORS.textMuted, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <span>{view === 'landing' ? 'Area Riservata' : view === 'form' ? 'Gestione Form' : 'Archivio Appunti'}</span>
+              <span>{view === 'landing' ? 'Area Riservata' : view === 'form' ? 'Gestione Form' : view === 'popup' ? 'Gestione Pop-up' : 'Archivio Appunti'}</span>
               <span>·</span>
               <a href="https://github.com/rappresentantigullivering/gweb2026" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.accent, textDecoration: 'none' }}>v {VERSION}</a>
             </div>
@@ -320,6 +343,13 @@ export default function AdminPage() {
                   desc: 'Visualizza e cerca tra gli appunti digitali e cartacei registrati.',
                   color: 'rgba(16, 185, 129, 0.12)',
                   borderColor: 'rgba(16, 185, 129, 0.3)'
+                },
+                {
+                  id: 'popup',
+                  title: 'Ho bisogno di gestire il pop-up voto',
+                  desc: 'Attiva o disattiva il promemoria "Hai votato?" sul sito.',
+                  color: 'rgba(139, 92, 246, 0.12)',
+                  borderColor: 'rgba(139, 92, 246, 0.3)'
                 }
               ].map(option => (
                 <button
@@ -369,6 +399,58 @@ export default function AdminPage() {
           </div>
         ) : view === 'appunti' ? (
           <AppuntiTab />
+        ) : view === 'popup' ? (
+          <div style={{ maxWidth: '600px', margin: '0 auto', animation: 'fadeIn 0.5s ease-out' }}>
+            <div style={{
+              background: COLORS.surface, border: `1px solid ${COLORS.border}`,
+              borderRadius: '24px', padding: '3rem 2rem', textAlign: 'center'
+            }}>
+              <div style={{ 
+                width: '64px', height: '64px', borderRadius: '20px', 
+                background: 'rgba(139, 92, 246, 0.2)', color: '#8b5cf6',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 1.5rem', fontSize: '2rem'
+              }}>
+                🔔
+              </div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem' }}>Gestione Pop-up</h2>
+              <p style={{ color: COLORS.textSecondary, marginBottom: '2.5rem', lineHeight: 1.6 }}>
+                Controlla la visibilità del pop-up "Hai votato?" sulla homepage del sito principale.
+              </p>
+
+              <div style={{
+                background: 'rgba(255,255,255,0.03)', border: `1px solid ${COLORS.border}`,
+                borderRadius: '16px', padding: '1.5rem',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+              }}>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontWeight: 600, fontSize: '1rem' }}>Stato del Pop-up</div>
+                  <div style={{ fontSize: '0.85rem', color: popupActive ? COLORS.green : COLORS.red, marginTop: '0.2rem' }}>
+                    {popupActive ? '● Attivo e visibile' : '○ Disattivato'}
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => handleTogglePopup(!popupActive)}
+                  disabled={settingsLoading}
+                  style={{
+                    width: '60px', height: '32px', borderRadius: '99px',
+                    background: popupActive ? COLORS.green : 'rgba(255,255,255,0.1)',
+                    border: 'none', position: 'relative', cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <div style={{
+                    width: '24px', height: '24px', borderRadius: '50%',
+                    background: 'white', position: 'absolute', top: '4px',
+                    left: popupActive ? '32px' : '4px',
+                    transition: 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
+                  }} />
+                </button>
+              </div>
+            </div>
+          </div>
         ) : (<>
 
           {/* Stats */}

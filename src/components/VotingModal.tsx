@@ -15,17 +15,31 @@ function getTarget(now: number) {
 
 export default function VotingModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isEnded, setIsEnded] = useState(false);
 
   useEffect(() => {
-    // Controlla se l'utente ha già interagito con il popup
-    const hasInteracted = localStorage.getItem('gulliver_vote_interacted');
-    if (!hasInteracted) {
-      // Mostra il popup dopo un breve delay per effetto
-      const timer = setTimeout(() => setIsOpen(true), 1500);
-      return () => clearTimeout(timer);
-    }
+    // 1. Controlla se il popup è attivo globalmente via API
+    const checkStatus = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        setIsActive(data.popupActive);
+        
+        // 2. Se è attivo, controlla se l'utente ha già interagito localmente
+        if (data.popupActive) {
+          const hasInteracted = localStorage.getItem('gulliver_vote_interacted');
+          if (!hasInteracted) {
+            const timer = setTimeout(() => setIsOpen(true), 1500);
+            return () => clearTimeout(timer);
+          }
+        }
+      } catch (e) {
+        console.error('Settings fetch error:', e);
+      }
+    };
+    checkStatus();
   }, []);
 
   useEffect(() => {
@@ -57,8 +71,8 @@ export default function VotingModal() {
     localStorage.setItem('gulliver_vote_interacted', 'true');
   };
 
-  // Se le elezioni sono finite o il modal è chiuso, non mostrare nulla
-  if (!isOpen || isEnded) return null;
+  // Se le elezioni sono finite, il modal è chiuso o non è attivo globalmente, non mostrare nulla
+  if (!isOpen || isEnded || !isActive) return null;
 
   return (
     <div style={{
