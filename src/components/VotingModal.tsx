@@ -13,13 +13,22 @@ function getTarget(now: number) {
   return START_DATE;
 }
 
-export default function VotingModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+interface VotingModalProps {
+  forceShow?: boolean;
+}
+
+export default function VotingModal({ forceShow = false }: VotingModalProps) {
+  const [isOpen, setIsOpen] = useState(forceShow);
+  const [isActive, setIsActive] = useState(forceShow);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isEnded, setIsEnded] = useState(false);
 
   useEffect(() => {
+    if (forceShow) {
+      setIsOpen(true);
+      setIsActive(true);
+      return;
+    }
     // 1. Controlla se il popup è attivo globalmente via API
     const checkStatus = async () => {
       try {

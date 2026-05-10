@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import AppuntiTab from './AppuntiTab';
+import VotingModal from '@/components/VotingModal';
 
 type FormStatus = 'active' | 'suspended';
 type FormData = { tallyId: string; title: string; status: FormStatus };
@@ -32,6 +33,7 @@ export default function AdminPage() {
   const [view, setView] = useState<'landing' | 'form' | 'appunti' | 'popup'>('landing');
   const [popupActive, setPopupActive] = useState(false);
   const [settingsLoading, setSettingsLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [forms, setForms] = useState<Record<string, FormData>>({});
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -460,7 +462,43 @@ export default function AdminPage() {
                   }} />
                 </button>
               </div>
+
+              <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                <button 
+                  onClick={() => {
+                    setShowPreview(false);
+                    setTimeout(() => setShowPreview(true), 10);
+                  }}
+                  style={{
+                    background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+                    color: COLORS.textPrimary, padding: '0.8rem 1.5rem', borderRadius: '12px',
+                    cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
+                    transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                >
+                  👁️ Anteprima Pop-up
+                </button>
+              </div>
             </div>
+
+            {showPreview && (
+              <div key={Date.now()}>
+                <VotingModal forceShow={true} />
+                <button 
+                  onClick={() => setShowPreview(false)}
+                  style={{
+                    position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
+                    zIndex: 10000, background: '#fff', color: '#000',
+                    padding: '0.6rem 1.2rem', borderRadius: '99px', fontWeight: 700,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)', cursor: 'pointer', border: 'none'
+                  }}
+                >
+                  Chiudi Anteprima
+                </button>
+              </div>
+            )}
           </div>
         ) : (<>
 
