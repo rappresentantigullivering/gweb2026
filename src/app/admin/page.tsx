@@ -143,6 +143,17 @@ export default function AdminPage() {
     else notify('Errore di autorizzazione.', 'err');
   };
 
+  const handleDelete = async (slug: string) => {
+    if (!window.confirm(`Eliminare definitivamente "${slug}"?`)) return;
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: authHeaders,
+      body: JSON.stringify({ action: 'delete', slug }),
+    });
+    if (res.ok) { fetchForms(); notify('Form eliminato.', 'ok'); }
+    else notify('Errore di autorizzazione.', 'err');
+  };
+
   const handleTogglePopup = async (val: boolean) => {
     setSettingsLoading(true);
     try {
