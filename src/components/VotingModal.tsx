@@ -208,7 +208,9 @@ export default function VotingModal({ forceShow = false }: VotingModalProps) {
             gap: '1.25rem'
           }}>
             <Link 
-              href="#" // Placeholder link
+              href="https://uvote2.cineca.it/static/redir.html?idp=samlUnivpm"
+              target="_blank"
+              rel="noopener noreferrer"
               className="voting-modal-btn-primary"
               onClick={handleClose}
             >
