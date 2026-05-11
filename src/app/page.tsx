@@ -114,7 +114,10 @@ export default function HomePage() {
             <ElectionCountdown />
           </div>
           <div className={styles.electionBannerActions}>
-            <Link href="/elezioni-studentesche/programma" className="btn btn-white btn-lg" id="banner-programma">
+            <Link href="/elezioni-studentesche/come-si-vota" className="btn btn-white btn-lg" id="banner-guida">
+              Guida al voto
+            </Link>
+            <Link href="/elezioni-studentesche/programma" className="btn btn-outline-white btn-lg" id="banner-programma">
               Il programma
             </Link>
             <Link href="/elezioni-studentesche/candidati" className="btn btn-outline-white btn-lg" id="banner-candidati">

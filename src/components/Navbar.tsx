@@ -13,6 +13,7 @@ const NAV_ITEMS = [
     children: [
       { label: 'Scopri i candidati', href: '/elezioni-studentesche/candidati' },
       { label: 'Programma elettorale', href: '/elezioni-studentesche/programma' },
+      { label: 'Come si vota', href: '/elezioni-studentesche/come-si-vota' },
       { label: 'Gioca a Gulliver46', href: '/elezioni-studentesche/gulliver46' },
     ],
   },
