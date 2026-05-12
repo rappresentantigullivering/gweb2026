@@ -124,7 +124,7 @@ export default function HomePage() {
               I candidati
             </Link>
             <Link href="/countdown" className="btn btn-outline-white btn-lg" id="banner-countdown">
-              ⏱ Countdown
+              Countdown
             </Link>
           </div>
         </div>
