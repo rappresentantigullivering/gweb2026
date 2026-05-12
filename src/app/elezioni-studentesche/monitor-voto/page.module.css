@@ -1,74 +1,89 @@
 .root {
-  min-height: 100vh;
-  background: #05050a;
-  padding: 120px 0 60px;
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: 'Inter', sans-serif;
+  overflow-y: auto;
 }
 
-.pageTitle {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 3rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.container {
+  width: 100%;
+  max-width: 800px;
+  padding: 2rem;
 }
 
 .grid {
-  max-width: 600px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 32px;
+  padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .dayLabel {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.15em;
+  font-size: 1rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.2em;
 }
 
 .timer {
-  font-size: 4rem;
+  font-size: 6rem;
   font-weight: 900;
   font-family: 'Monaco', 'Courier New', monospace;
   color: #fff;
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .statusLabel {
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-size: 0.85rem;
+  font-weight: 900;
   color: #e40329;
-  letter-spacing: 0.1em;
-  margin-top: 0.5rem;
+  letter-spacing: 0.15em;
+  margin-top: 1rem;
 }
 
 .flashing {
-  animation: flash 1.5s infinite;
+  animation: aggressiveFlash 1s infinite alternate cubic-bezier(0.4, 0, 0.6, 1);
+  border-width: 2px;
 }
 
-@keyframes flash {
-  0%, 100% { opacity: 1; border-color: rgba(255, 255, 255, 0.08); }
-  50% { opacity: 0.6; border-color: rgba(228, 3, 41, 0.3); }
+@keyframes aggressiveFlash {
+  from { 
+    opacity: 1; 
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1);
+  }
+  to { 
+    opacity: 0.5; 
+    background: rgba(228, 3, 41, 0.1);
+    border-color: rgba(228, 3, 41, 0.6);
+    transform: scale(0.98);
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .timer {
-    font-size: 3rem;
+    font-size: clamp(3rem, 15vw, 5rem);
+  }
+  .card {
+    padding: 2rem 1rem;
   }
 }

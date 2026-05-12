@@ -54,8 +54,7 @@ function CountdownCard({ day, start, end, duration }: { day: string, start: stri
 export default function MonitorVotoPage() {
   return (
     <div className={styles.root}>
-      <div className="container">
-        <h1 className={styles.pageTitle}>Election Monitor</h1>
+      <div className={styles.container}>
         <div className={styles.grid}>
           {VOTING_DAYS.map(d => (
             <CountdownCard key={d.day} {...d} />
