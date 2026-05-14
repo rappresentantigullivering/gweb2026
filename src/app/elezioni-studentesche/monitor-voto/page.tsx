@@ -41,7 +41,7 @@ function CountdownCard({ day, start, end, duration }: { day: string, start: stri
   }, [start, end, duration]);
 
   return (
-    <div className={`${styles.card} ${status !== 'active' ? styles.flashing : ''} ${status === 'active' && timeLeft.startsWith('00:') ? styles.critical : ''}`}>
+    <div className={`${styles.card} ${status !== 'active' ? styles.flashing : ''} ${status === 'active' && timeLeft.startsWith('00:0') && parseInt(timeLeft.split(':')[1]) < 3 ? styles.critical : ''}`}>
       <div className={styles.dayLabel}>{day}</div>
       <div className={styles.timerContainer}>
         {status === 'ended' ? (
