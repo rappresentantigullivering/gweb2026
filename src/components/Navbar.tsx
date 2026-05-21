@@ -6,17 +6,8 @@ import Image from 'next/image';
 import styles from './Navbar.module.css';
 
 const NAV_ITEMS = [
+  { label: 'Gulliver Rock', href: '/associazione-culturale/gulliver-rock', highlighted: true },
   { label: 'Chi siamo', href: '/chi-siamo' },
-  {
-    label: 'Elezioni Studentesche',
-    href: '/elezioni-studentesche',
-    children: [
-      { label: 'Scopri i candidati', href: '/elezioni-studentesche/candidati' },
-      { label: 'Programma elettorale', href: '/elezioni-studentesche/programma' },
-      { label: 'Come si vota', href: '/elezioni-studentesche/come-si-vota' },
-      { label: 'Gioca a Gulliver46', href: '/elezioni-studentesche/gulliver46' },
-    ],
-  },
   {
     label: 'Associazione Culturale',
     href: '/associazione-culturale',
@@ -26,6 +17,15 @@ const NAV_ITEMS = [
     ],
   },
   { label: 'Rappresentanza', href: '/rappresentanza' },
+  {
+    label: 'Elezioni Studentesche',
+    href: '/elezioni-studentesche',
+    children: [
+      { label: 'Scopri i candidati', href: '/elezioni-studentesche/candidati' },
+      { label: 'Programma elettorale', href: '/elezioni-studentesche/programma' },
+      { label: 'Gioca a Gulliver46', href: '/elezioni-studentesche/gulliver46' },
+    ],
+  },
   {
     label: 'Matricole',
     href: '/matricole',
@@ -108,7 +108,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   href={item.href}
-                  className={`${styles.navLink} ${item.children ? styles.hasDropdown : ''}`}
+                  className={`${styles.navLink} ${item.children ? styles.hasDropdown : ''} ${'highlighted' in item && item.highlighted ? styles.navLinkHighlighted : ''}`}
                 >
                   {item.label}
                   {item.children && (
@@ -167,7 +167,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href={item.href}
-                className={styles.mobileNavLink}
+                className={`${styles.mobileNavLink} ${'highlighted' in item && item.highlighted ? styles.mobileNavLinkHighlighted : ''}`}
                 onClick={() => setMobileOpen(false)}
               >
                 {item.label}

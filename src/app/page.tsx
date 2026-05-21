@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import styles from "./page.module.css";
-import ElectionCountdown from "@/components/ElectionCountdown";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -22,7 +22,10 @@ export default function HomePage() {
           <div className={styles.heroBg} />
           <div className={styles.heroOverlay} />
           <div className={`container ${styles.heroContent}`}>
-            <p className={styles.heroTag}>Dal 1987 · UNIVPM</p>
+            <Link href="/associazione-culturale/gulliver-rock" className={styles.heroRockAlert}>
+              <span className={styles.heroRockBadge}>Questo Sabato</span>
+              <span className={styles.heroRockText}>Gulliver Rock 2026 · Ancona</span>
+            </Link>
             <h1 className={styles.heroSlogan}>
               Essere studenti significa avere dei diritti.
               <br />
@@ -31,8 +34,8 @@ export default function HomePage() {
               </span>
             </h1>
             <div className={styles.heroActions}>
-              <Link href="/elezioni-studentesche" className="btn btn-primary btn-lg" id="hero-elezioni">
-                Elezioni Studentesche
+              <Link href="/associazione-culturale/gulliver-rock" className="btn btn-primary btn-lg" id="hero-gulliver-rock" style={{ background: 'var(--red-primary)', border: 'none', boxShadow: '0 0 15px rgba(255, 77, 109, 0.5)' }}>
+                Gulliver Rock
               </Link>
               <Link href="/chi-siamo" className="btn btn-outline-white btn-lg" id="hero-chi-siamo">
                 Chi siamo
@@ -105,26 +108,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={styles.electionBanner} id="elezioni-banner">
-        <div className={`container ${styles.electionBannerInner}`}>
-          <div className={styles.electionBannerText}>
-            <span className="section-tag section-tag-white">12 · 13 · 14 Maggio 2026</span>
-            <h2>Elezioni Studentesche 2026</h2>
-            <p>Il momento in cui la tua voce conta davvero. Vota Gulliver, Lista 1.</p>
-            <ElectionCountdown />
+      <section className={styles.rockBanner} id="rock-banner">
+        <div className={`container ${styles.rockBannerInner}`}>
+          <div className={styles.rockBannerText}>
+            <span className="section-tag section-tag-white">Sabato 23 Maggio 2026 · Piazza Roma</span>
+            <h2>Gulliver Rock XXXIII Edizione</h2>
+            <p>
+              Torna lo storico festival musicale gratuito organizzato interamente dalla nostra associazione. 
+              Una serata all&apos;insegna di grande musica dal vivo, socialità e area food & drink. Non mancare!
+            </p>
+            <div className={styles.rockBannerActions} style={{ marginTop: '1rem' }}>
+              <Link href="/associazione-culturale/gulliver-rock" className="btn btn-white btn-lg" id="banner-gulliver-rock-info">
+                Scopri il festival & lineup
+              </Link>
+              <Link href="/associazione-culturale/gulliver-rock#edizioni" className="btn btn-outline-white btn-lg" id="banner-gulliver-rock-history">
+                Edizioni passate
+              </Link>
+            </div>
           </div>
-          <div className={styles.electionBannerActions}>
-            <Link href="/elezioni-studentesche/come-si-vota" className="btn btn-white btn-lg" id="banner-guida">
-              Guida al voto
-            </Link>
-            <Link href="/elezioni-studentesche/programma" className="btn btn-outline-white btn-lg" id="banner-programma">
-              Il programma
-            </Link>
-            <Link href="/elezioni-studentesche/candidati" className="btn btn-outline-white btn-lg" id="banner-candidati">
-              I candidati
-            </Link>
-            <Link href="/countdown" className="btn btn-outline-white btn-lg" id="banner-countdown">
-              Countdown
+          <div className={styles.rockBannerPoster}>
+            <Link href="/associazione-culturale/gulliver-rock">
+              <Image
+                src="/locandina-elea.png"
+                alt="Locandina Gulliver Rock 2026"
+                width={520}
+                height={730}
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+                priority
+              />
             </Link>
           </div>
         </div>
@@ -150,6 +161,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+
 
       {/* ── CTA FINALE ── */}
       <section className={`section text-center ${styles.ctaSection}`} id="cta-finale">

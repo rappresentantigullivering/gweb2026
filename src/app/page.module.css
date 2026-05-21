@@ -428,3 +428,174 @@
     flex-direction: column;
   }
 }
+
+/* ══ GULLIVER ROCK HERO ALERT ══ */
+.heroRockAlert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 77, 109, 0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 77, 109, 0.4);
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 2rem;
+  box-shadow: 0 0 20px rgba(255, 77, 109, 0.15);
+  text-decoration: none;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.heroRockAlert:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 77, 109, 0.8);
+  box-shadow: 0 4px 25px rgba(255, 77, 109, 0.25);
+}
+
+.heroRockBadge {
+  background: #ff4d6d;
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.heroRockText {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+}
+
+/* ══ GULLIVER ROCK CONCERT BANNER ══ */
+.rockBanner {
+  background: linear-gradient(135deg, #070103 0%, #150308 50%, #25050f 100%);
+  padding: 5rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 77, 109, 0.15);
+  border-bottom: 1px solid rgba(255, 77, 109, 0.15);
+}
+
+.rockBanner::before {
+  content: 'ROCK';
+  position: absolute;
+  right: -5%;
+  bottom: -5%;
+  font-size: 16rem;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  color: rgba(255, 77, 109, 0.03);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.rockBannerInner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+}
+
+.rockBannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.rockBannerText h2 {
+  color: var(--white);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-family: var(--font-heading);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(to right, #ffffff 40%, #ff4d6d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rockBannerText p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.rockBannerPoster {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  justify-self: center;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 15px 45px rgba(255, 77, 109, 0.18), 0 5px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.rockBannerPoster:hover {
+  transform: scale(1.02) rotate(0.5deg);
+  box-shadow: 0 20px 50px rgba(255, 77, 109, 0.25), 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+.rockBannerActions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+/* ══ DE-EMPHASIZED ELECTIONS SECTION ══ */
+.deEmphasizedElections {
+  padding: 5rem 1.5rem;
+  background: var(--off-white);
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+  text-align: center;
+}
+
+.deEmphasizedElections h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 0.5rem;
+}
+
+.deEmphasizedElections p {
+  color: var(--gray-600);
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.electionLinkGrid {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* RESPONSIVE FOR NEW BANNER */
+@media (max-width: 900px) {
+  .rockBannerInner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+  .rockBannerText {
+    align-items: center;
+  }
+  .rockBannerPoster {
+    max-width: 420px;
+    order: -1; /* Place poster on top on mobile */
+  }
+  .rockBannerActions {
+    justify-content: center;
+  }
+}
+
