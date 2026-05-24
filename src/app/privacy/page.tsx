@@ -13,11 +13,28 @@ export default function PrivacyPage() {
         <div className="divider-red" style={{ marginBottom: '2rem', marginTop: '1rem' }} />
         <p>Questa pagina descrive le pratiche di raccolta e utilizzo dei dati del sito gullivernacona.it</p>
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Titolare del trattamento</h2>
-        <p style={{ marginTop: '0.75rem' }}>Gulliver – Lista di Rappresentanza UNIVPM<br />Università Politecnica delle Marche, Ancona</p>
-        <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Dati raccolti</h2>
-        <p style={{ marginTop: '0.75rem' }}>Il sito non raccoglie dati personali.</p>
-        <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Cookie</h2>
-        <p style={{ marginTop: '0.75rem' }}>Il sito non utilizza cookie di profilazione o di terze parti.</p>
+        <p style={{ marginTop: '0.75rem' }}>
+          Associazione Culturale Gulliver – Lista di Rappresentanza UNIVPM<br />
+          Università Politecnica delle Marche, Ancona<br />
+          Contatto email: <a href="mailto:acugulliver@gmail.com" style={{ color: 'var(--red-primary)' }}>acugulliver@gmail.com</a>
+        </p>
+
+
+        <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Dati raccolti e modalità del trattamento</h2>
+        <p style={{ marginTop: '0.75rem' }}>
+          La navigazione sul sito principale non comporta l'acquisizione diretta di dati personali identificativi dell'utente. Tuttavia, il trattamento può riguardare:
+        </p>
+        <ul style={{ marginTop: '0.75rem', paddingLeft: '1.5rem' }}>
+          <li style={{ marginBottom: '0.5rem', lineHeight: '1.6' }}>
+            <strong>Dati forniti volontariamente:</strong> qualora l'utente decida di compilare i moduli di contatto, iscrizione o partecipazione accessibili tramite il dominio <code>forms.gulliverancona.it</code>, i dati saranno gestiti tramite la piattaforma terza <strong>Tally.so</strong>. Ti invitiamo a consultare la relativa informativa privacy sul loro sito web prima dell'invio.
+          </li>
+          <li style={{ marginBottom: '0.5rem', lineHeight: '1.6' }}>
+            <strong>Dati di navigazione e tecnici:</strong> i sistemi informatici acquisiscono informazioni statistiche in forma strettamente anonima (tramite Vercel Analytics) e dati tecnici di instradamento del traffico necessari alla fornitura del servizio (tramite Cloudflare e Netlify).
+          </li>
+          <li style={{ lineHeight: '1.6' }}>
+            <strong>Uso del LocalStorage tecnico:</strong> per evitare di mostrare ripetutamente il pop-up informativo di voto agli utenti che lo hanno già chiuso, viene salvato sul browser un valore tecnico temporaneo (<code>gulliver_vote_interacted_version</code>). Questa informazione risiede esclusivamente sul dispositivo dell'utente e non viene usata per attività di tracciamento o profilazione.
+          </li>
+        </ul>
 
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Statistiche anonime (Web Analytics)</h2>
         <p style={{ marginTop: '0.75rem' }}>
