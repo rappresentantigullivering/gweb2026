@@ -37,7 +37,7 @@ export default function GulliverRockPage() {
     { year: "2023", artists: "Marlene Kuntz, Uochi Toki" },
     { year: "2024", artists: "Emma Nolde, Quercia" },
     { year: "2025", artists: "Little Pieces of Marmelade, La Municipàl, Rumba de Bodas" },
-    { year: "2026", artists: "Ele A, La Chance Su Marte, GRUVE" },
+    { year: "2026", artists: "Ele A" },
   ];
 
   return (
