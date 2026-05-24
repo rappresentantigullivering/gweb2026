@@ -235,18 +235,12 @@ export default function GulliverRockPage() {
                 
                 <div className={styles.openerItem}>
                   <div className={styles.openerBullet} />
-                  <div>
-                    <strong>La Chance Su Marte</strong>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--gray-700)' }}>Pop rock alternativo e indie pop universitario.</p>
-                  </div>
+                  <strong>La Chance Su Marte</strong>
                 </div>
                 
                 <div className={styles.openerItem} style={{ marginTop: '1.25rem' }}>
                   <div className={styles.openerBullet} />
-                  <div>
-                    <strong>GRUVE</strong>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--gray-700)' }}>Sonorità funk, rock e pop con ritmi travolgenti.</p>
-                  </div>
+                  <strong>GRUVE</strong>
                 </div>
               </div>
             </div>
