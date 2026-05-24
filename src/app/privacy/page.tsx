@@ -31,8 +31,11 @@ export default function PrivacyPage() {
           <li style={{ marginBottom: '0.5rem', lineHeight: '1.6' }}>
             <strong>Dati di navigazione e tecnici:</strong> i sistemi informatici acquisiscono informazioni statistiche in forma strettamente anonima (tramite Vercel Analytics) e dati tecnici di instradamento del traffico necessari alla fornitura del servizio (tramite Cloudflare e Netlify).
           </li>
-          <li style={{ lineHeight: '1.6' }}>
+          <li style={{ marginBottom: '0.5rem', lineHeight: '1.6' }}>
             <strong>Uso del LocalStorage tecnico:</strong> per evitare di mostrare ripetutamente il pop-up informativo di voto agli utenti che lo hanno già chiuso, viene salvato sul browser un valore tecnico temporaneo (<code>gulliver_vote_interacted_version</code>). Questa informazione risiede esclusivamente sul dispositivo dell'utente e non viene usata per attività di tracciamento o profilazione.
+          </li>
+          <li style={{ lineHeight: '1.6' }}>
+            <strong>Cookie tecnici di sessione:</strong> esclusivamente per gli utenti amministratori che effettuano l'accesso al pannello di controllo (<code>admin.gulliverancona.it</code>), viene utilizzato un cookie tecnico di sessione denominato <code>gweb-admin-session</code>. Questo cookie ha la finalità esclusiva di mantenere attiva e sicura la sessione dell'utente, non viene utilizzato per attività di profilazione o tracciamento ed è rimosso alla chiusura del browser o al momento del logout.
           </li>
         </ul>
 
