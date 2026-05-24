@@ -30,6 +30,7 @@ const COLORS = {
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [view, setView] = useState<'landing' | 'form' | 'appunti' | 'popup'>('landing');
   const [popupActive, setPopupActive] = useState(false);
   const [popupTitle, setPopupTitle] = useState('');
@@ -77,6 +78,24 @@ export default function AdminPage() {
     }
   };
 
+  // Verifica la sessione all'avvio
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/auth/check');
+        if (res.ok) {
+          setAuthenticated(true);
+          setView('landing');
+        }
+      } catch (e) {
+        console.error('Session check failed:', e);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+    checkSession();
+  }, []);
+
   useEffect(() => {
     if (authenticated) {
       fetchForms();
@@ -90,16 +109,18 @@ export default function AdminPage() {
     setLoginLoading(true);
     setLoginError('');
     try {
-      const res = await fetch('/api/forms/', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${password}` },
-        body: JSON.stringify({ action: 'verify' }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
       });
-      if (res.status === 401) {
-        setLoginError('Password errata. Riprova.');
-      } else {
+      if (res.ok) {
         setAuthenticated(true);
         setView('landing');
+        setPassword('');
+      } else {
+        const data = await res.json();
+        setLoginError(data.error || 'Password errata. Riprova.');
       }
     } catch {
       setLoginError('Errore di rete. Riprova.');
@@ -108,9 +129,18 @@ export default function AdminPage() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.error('Logout failed:', e);
+    }
+    setAuthenticated(false);
+    setView('landing');
+  };
+
   const authHeaders = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${password}`,
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -132,7 +162,7 @@ export default function AdminPage() {
         await fetchForms();
         notify('Form creato con successo.', 'ok');
       } else {
-        notify('Errore di salvataggio. Controlla la password.', 'err');
+        notify('Errore di salvataggio. Controlla i permessi.', 'err');
       }
     } finally {
       setLoading(false);
@@ -204,79 +234,193 @@ export default function AdminPage() {
     }
   };
 
-  // LOGIN
+  // LOADING INIZIALE VERIFICA SESSIONE
+  if (initialLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: '#040408', fontFamily: '"Inter", system-ui, sans-serif', color: 'rgba(255,255,255,0.7)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.1)',
+            borderTopColor: '#e40329', borderRadius: '50%', animation: 'spin 1s linear infinite',
+            margin: '0 auto 1.25rem'
+          }} />
+          <div style={{ fontSize: '0.95rem', fontWeight: 500, letterSpacing: '0.02em' }}>Verifica sessione in corso...</div>
+          <style>{`
+            @keyframes spin { to { transform: rotate(360deg); } }
+          `}</style>
+        </div>
+      </div>
+    );
+  }
+
+  // LOGIN PAGE
   if (!authenticated) {
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: COLORS.bg, fontFamily: '"Inter", system-ui, sans-serif', position: 'relative', overflow: 'hidden',
+        background: '#040408', fontFamily: '"Inter", system-ui, sans-serif', position: 'relative', overflow: 'hidden',
       }}>
+        {/* Floating background glowing bubbles */}
         <div style={{
-          position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%,-50%)',
-          width: '600px', height: '400px', borderRadius: '50%',
-          background: `radial-gradient(ellipse, ${COLORS.accentGlow} 0%, transparent 70%)`,
-          pointerEvents: 'none',
+          position: 'absolute', top: '20%', left: '15%',
+          width: '350px', height: '350px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(228,3,41,0.12) 0%, transparent 70%)',
+          filter: 'blur(40px)', pointerEvents: 'none',
+          animation: 'floatBubble 15s ease-in-out infinite alternate',
         }} />
+        <div style={{
+          position: 'absolute', bottom: '15%', right: '10%',
+          width: '400px', height: '400px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)',
+          filter: 'blur(50px)', pointerEvents: 'none',
+          animation: 'floatBubble 20s ease-in-out infinite alternate-reverse',
+        }} />
+
         <form onSubmit={handleLogin} style={{
           position: 'relative', zIndex: 1,
-          background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
-          padding: '3rem 2.5rem', borderRadius: '24px',
-          backdropFilter: 'blur(40px)',
-          width: '100%', maxWidth: '380px',
-          boxShadow: `0 0 80px ${COLORS.accentGlow}`,
+          background: 'rgba(255, 255, 255, 0.02)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '3.5rem 2.5rem', borderRadius: '32px',
+          backdropFilter: 'blur(30px)',
+          width: '100%', maxWidth: '400px',
+          boxShadow: '0 30px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+          animation: 'cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) both',
+          boxSizing: 'border-box',
         }}>
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            {/* Pulsing Admin Logo Badge */}
             <div style={{
-              width: '48px', height: '48px', borderRadius: '14px',
-              background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
-              margin: '0 auto 1.25rem',
-              boxShadow: `0 8px 24px ${COLORS.accentGlow}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
+              width: '64px', height: '64px', borderRadius: '20px',
+              background: 'linear-gradient(135deg, #e40329, #ff4444)',
+              margin: '0 auto 1.5rem',
+              boxShadow: '0 12px 32px rgba(228, 3, 41, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              animation: 'logoPulse 3s ease-in-out infinite',
             }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
                 <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
               </svg>
             </div>
-            <h1 style={{ color: COLORS.textPrimary, fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Portale Admin</h1>
+            
+            <h1 style={{ 
+              color: '#ffffff', 
+              fontWeight: 900, 
+              fontSize: '1.75rem', 
+              margin: 0,
+              letterSpacing: '-0.02em',
+              textShadow: '0 2px 10px rgba(0,0,0,0.5)'
+            }}>
+              Portale Admin
+            </h1>
+            
+            <p style={{
+              color: 'rgba(255,255,255,0.4)',
+              fontSize: '0.85rem',
+              marginTop: '0.5rem',
+              marginBottom: 0
+            }}>
+              Gulliver Associazione Universitaria
+            </p>
+
             <div style={{
-              display: 'inline-block', marginTop: '0.75rem',
-              padding: '0.2rem 0.6rem', borderRadius: '6px',
-              background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-              fontFamily: 'monospace', fontSize: '0.72rem', color: COLORS.textMuted,
+              display: 'inline-block', marginTop: '1.25rem',
+              padding: '0.25rem 0.75rem', borderRadius: '99px',
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+              fontFamily: 'monospace', fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)',
               letterSpacing: '0.05em',
             }}>
-              v {VERSION} · <a href="https://github.com/rappresentantigullivering/gweb2026" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.accent, textDecoration: 'none' }}>GitHub</a>
+              v {VERSION} · <a href="https://github.com/rappresentantigullivering/gweb2026" target="_blank" rel="noopener noreferrer" style={{ color: '#e40329', textDecoration: 'none', fontWeight: 600 }}>GitHub</a>
             </div>
           </div>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => { setPassword(e.target.value); setLoginError(''); }}
-            autoFocus
-            style={{
-              width: '100%', padding: '0.9rem 1rem', marginBottom: '0.75rem',
-              background: loginError ? 'rgba(248,113,113,0.08)' : 'rgba(255,255,255,0.07)',
-              border: `1px solid ${loginError ? COLORS.redBorder : COLORS.border}`,
-              borderRadius: '12px', color: COLORS.textPrimary, fontSize: '1rem',
-              outline: 'none', boxSizing: 'border-box',
-            }}
-          />
+
+          <div style={{ position: 'relative', marginBottom: '1.25rem' }}>
+            <input
+              type="password"
+              placeholder="Password di amministrazione"
+              value={password}
+              onChange={e => { setPassword(e.target.value); setLoginError(''); }}
+              autoFocus
+              className="login-input"
+              style={{
+                width: '100%', padding: '1.1rem 1.25rem',
+                background: loginError ? 'rgba(248,113,113,0.04)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${loginError ? 'rgba(248,113,113,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                borderRadius: '16px', color: '#ffffff', fontSize: '0.95rem',
+                outline: 'none', boxSizing: 'border-box',
+                transition: 'all 0.3s ease',
+              }}
+            />
+          </div>
+
           {loginError && (
-            <div style={{ color: COLORS.red, fontSize: '0.82rem', marginBottom: '0.75rem', textAlign: 'center' }}>
-              {loginError}
+            <div style={{ 
+              color: '#f87171', 
+              fontSize: '0.85rem', 
+              marginBottom: '1.25rem', 
+              textAlign: 'center',
+              background: 'rgba(248,113,113,0.08)',
+              padding: '0.6rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(248,113,113,0.15)',
+              animation: 'shake 0.4s ease'
+            }}>
+              ⚠️ {loginError}
             </div>
           )}
-          <button type="submit" disabled={loginLoading} style={{
-            width: '100%', padding: '0.9rem',
-            background: loginLoading ? 'rgba(228,3,41,0.4)' : `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
-            border: 'none', borderRadius: '12px', color: 'white',
-            fontWeight: 700, fontSize: '1rem', cursor: loginLoading ? 'not-allowed' : 'pointer',
-            boxShadow: `0 4px 20px ${COLORS.accentGlow}`,
-          }}>
-            {loginLoading ? 'Verifica in corso...' : 'Accedi'}
+
+          <button 
+            type="submit" 
+            disabled={loginLoading} 
+            className="login-btn"
+            style={{
+              width: '100%', padding: '1.1rem',
+              background: loginLoading ? 'rgba(228,3,41,0.4)' : 'linear-gradient(135deg, #e40329, #ff4444)',
+              border: 'none', borderRadius: '16px', color: 'white',
+              fontWeight: 800, fontSize: '1rem', cursor: loginLoading ? 'not-allowed' : 'pointer',
+              boxShadow: '0 8px 30px rgba(228, 3, 41, 0.3)',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
+          >
+            {loginLoading ? 'Verifica in corso...' : 'Accedi al Portale'}
           </button>
         </form>
+
+        <style>{`
+          @keyframes cardEnter {
+            from { opacity: 0; transform: scale(0.96) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+          }
+          @keyframes logoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 12px 32px rgba(228, 3, 41, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 16px 40px rgba(228, 3, 41, 0.6); }
+          }
+          @keyframes floatBubble {
+            from { transform: translateY(0px) rotate(0deg); }
+            to { transform: translateY(-30px) rotate(15deg); }
+          }
+          @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
+          }
+          .login-input:focus {
+            background: rgba(255,255,255,0.06) !important;
+            border-color: rgba(228, 3, 41, 0.6) !important;
+            box-shadow: 0 0 20px rgba(228, 3, 41, 0.15) !important;
+          }
+          .login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(228, 3, 41, 0.5);
+            background: linear-gradient(135deg, #ff0f3a, #ff5c5c);
+          }
+          .login-btn:active:not(:disabled) {
+            transform: translateY(0);
+          }
+        `}</style>
       </div>
     );
   }
@@ -346,7 +490,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <button onClick={() => setAuthenticated(false)} style={{
+        <button onClick={handleLogout} style={{
           background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
           color: COLORS.textSecondary, padding: '0.4rem 1rem',
           borderRadius: '99px', cursor: 'pointer', fontSize: '0.85rem',

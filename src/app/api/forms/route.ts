@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
+import { cookies } from 'next/headers';
+import { verifySession } from '@/lib/auth';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL || '',
@@ -9,7 +11,14 @@ const redis = new Redis({
 const DB_KEY = 'gulliver:forms';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
 
-function isAuthorized(request: Request) {
+async function isAuthorized(request: Request) {
+  // 1. Controlla prima il cookie HTTP-Only (sessione sicura)
+  const cookieStore = await cookies();
+  const token = cookieStore.get('gulliver_session')?.value;
+  if (token && await verifySession(token, ADMIN_PASSWORD)) {
+    return true;
+  }
+  // 2. Fallback all'header di autorizzazione originale per compatibilità
   const authHeader = request.headers.get('authorization');
   return authHeader === `Bearer ${ADMIN_PASSWORD}`;
 }
@@ -26,7 +35,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  if (!isAuthorized(request)) {
+  if (!(await isAuthorized(request))) {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
   }
 

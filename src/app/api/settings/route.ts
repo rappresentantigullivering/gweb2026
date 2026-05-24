@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
+import { cookies } from 'next/headers';
+import { verifySession } from '@/lib/auth';
 
 const redis = Redis.fromEnv();
 const SETTINGS_KEY = 'gulliver:settings';
@@ -16,10 +18,22 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const authHeader = req.headers.get('Authorization');
-    const password = authHeader?.replace('Bearer ', '');
+    const cookieStore = await cookies();
+    const token = cookieStore.get('gulliver_session')?.value;
+    const adminPassword = process.env.ADMIN_PASSWORD || 'gulliver2026';
+    let authorized = false;
 
-    if (password !== process.env.ADMIN_PASSWORD) {
+    if (token && await verifySession(token, adminPassword)) {
+      authorized = true;
+    } else {
+      const authHeader = req.headers.get('Authorization');
+      const password = authHeader?.replace('Bearer ', '');
+      if (password === adminPassword) {
+        authorized = true;
+      }
+    }
+
+    if (!authorized) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
