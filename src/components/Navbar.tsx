@@ -6,7 +6,7 @@ import Image from 'next/image';
 import styles from './Navbar.module.css';
 
 const NAV_ITEMS = [
-  { label: 'Gulliver Rock', href: '/associazione-culturale/gulliver-rock', highlighted: true },
+  { label: 'Gulliver Rock', href: '/associazione-culturale/gulliver-rock' },
   { label: 'Chi siamo', href: '/chi-siamo' },
   {
     label: 'Associazione Culturale',

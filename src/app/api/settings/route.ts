@@ -23,11 +23,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, popupActive } = await req.json();
+    const { action, popupActive, popupTitle, popupText } = await req.json();
 
     if (action === 'updatePopup') {
       const currentSettings: any = (await redis.get(SETTINGS_KEY)) || {};
-      const newSettings = { ...currentSettings, popupActive };
+      
+      // Controlla se il titolo o il testo sono cambiati rispetto a quelli salvati
+      const isTitleChanged = popupTitle !== undefined && popupTitle !== currentSettings.popupTitle;
+      const isTextChanged = popupText !== undefined && popupText !== currentSettings.popupText;
+      
+      // Se sono cambiati, o se la versione non esiste ancora, generiamo un nuovo timestamp (versione)
+      const popupVersion = (isTitleChanged || isTextChanged || !currentSettings.popupVersion)
+        ? Date.now().toString()
+        : currentSettings.popupVersion;
+
+      const newSettings = { 
+        ...currentSettings, 
+        popupActive: popupActive !== undefined ? popupActive : currentSettings.popupActive,
+        popupTitle: popupTitle !== undefined ? popupTitle : currentSettings.popupTitle,
+        popupText: popupText !== undefined ? popupText : currentSettings.popupText,
+        popupVersion
+      };
+      
       await redis.set(SETTINGS_KEY, newSettings);
       return NextResponse.json({ success: true, settings: newSettings });
     }

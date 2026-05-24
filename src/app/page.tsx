@@ -20,11 +20,10 @@ export default function HomePage() {
         {/* Foto con slogan */}
         <div className={styles.heroPhoto}>
           <div className={styles.heroBg} />
-          <div className={styles.heroOverlay} />
           <div className={`container ${styles.heroContent}`}>
             <Link href="/associazione-culturale/gulliver-rock" className={styles.heroRockAlert}>
-              <span className={styles.heroRockBadge}>Questo Sabato</span>
-              <span className={styles.heroRockText}>Gulliver Rock 2026 · Ancona</span>
+              <span className={styles.heroRockBadge}>Foto in arrivo</span>
+              <span className={styles.heroRockText}>Gulliver Rock 2026 · Le foto dell'evento saranno pubblicate a breve!</span>
             </Link>
             <h1 className={styles.heroSlogan}>
               Essere studenti significa avere dei diritti.
@@ -111,15 +110,14 @@ export default function HomePage() {
       <section className={styles.rockBanner} id="rock-banner">
         <div className={`container ${styles.rockBannerInner}`}>
           <div className={styles.rockBannerText}>
-            <span className="section-tag section-tag-white">Sabato 23 Maggio 2026 · Piazza Roma</span>
-            <h2>Gulliver Rock XXXIII Edizione</h2>
+            <span className="section-tag section-tag-white">Foto in arrivo!</span>
+            <h2>Gulliver Rock: Che Serata!</h2>
             <p>
-              Torna lo storico festival musicale gratuito organizzato interamente dalla nostra associazione. 
-              Una serata all&apos;insegna di grande musica dal vivo, socialità e area food & drink. Non mancare!
+              Il festival è passato, grazie a tuttɜ per aver partecipato! Stiamo preparando le foto ufficiali dell&apos;evento: a brevissimo le caricheremo sul sito. Resta sintonizzatɜ!
             </p>
             <div className={styles.rockBannerActions} style={{ marginTop: '1rem' }}>
               <Link href="/associazione-culturale/gulliver-rock" className="btn btn-white btn-lg" id="banner-gulliver-rock-info">
-                Scopri il festival & lineup
+                Scopri lo storico del festival
               </Link>
               <Link href="/associazione-culturale/gulliver-rock#edizioni" className="btn btn-outline-white btn-lg" id="banner-gulliver-rock-history">
                 Edizioni passate

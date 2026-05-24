@@ -6,7 +6,7 @@ import PastEditions from './PastEditions';
 
 export const metadata: Metadata = {
   title: 'Gulliver Rock | Gulliver UNIVPM',
-  description: 'Gulliver Rock è il festival musicale gratuito organizzato ogni anno dalla nostra associazione. XXXIII edizione: 23 maggio 2026, Piazza Roma, Ancona.',
+  description: 'Gulliver Rock è lo storico festival musicale gratuito organizzato ogni anno dalla nostra associazione. Le foto dell\'edizione 2026 con Ele A saranno caricate a breve.',
 };
 
 export default function GulliverRockPage() {
@@ -37,6 +37,7 @@ export default function GulliverRockPage() {
     { year: "2023", artists: "Marlene Kuntz, Uochi Toki" },
     { year: "2024", artists: "Emma Nolde, Quercia" },
     { year: "2025", artists: "Little Pieces of Marmelade, La Municipàl, Rumba de Bodas" },
+    { year: "2026", artists: "Ele A, La Chance Su Marte, GRUVE" },
   ];
 
   return (
@@ -56,9 +57,10 @@ export default function GulliverRockPage() {
           <div className={styles.heroCtas}>
             <a href="#edizione-2026" className={`${styles.glowBtn} ${styles.glowBtnPrimary}`}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3" />
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
               </svg>
-              Edizione 2026
+              Foto & Report 2026
             </a>
             <a href="#edizioni" className={`${styles.glowBtn} ${styles.glowBtnOutline}`}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -107,7 +109,7 @@ export default function GulliverRockPage() {
       <section className={styles.eventSection} id="edizione-2026">
         <div className="container">
           <div className={styles.sectionHeader}>
-            <span className={styles.stageTag}>Il Programma</span>
+            <span className={styles.stageTag}>Edizione Conclusa</span>
             <h2 className={styles.sectionTitle}>XXXIII Edizione - 2026</h2>
             <div className={styles.neonDividerCenter} />
           </div>
@@ -128,7 +130,7 @@ export default function GulliverRockPage() {
 
             {/* Event Info & Timetable */}
             <div className={styles.eventInfo}>
-              <div className={styles.editionBadge}>SABATO 23 MAGGIO 2026</div>
+              <div className={styles.editionBadge}>EDIZIONE CONCLUSA · FOTO IN ARRIVO</div>
               <h3 className={styles.eventTitle}>Gulliver Rock 2026</h3>
               
               <div className={styles.eventDetails}>

@@ -15,11 +15,16 @@ function getTarget(now: number) {
 
 interface VotingModalProps {
   forceShow?: boolean;
+  previewTitle?: string;
+  previewText?: string;
 }
 
-export default function VotingModal({ forceShow = false }: VotingModalProps) {
+export default function VotingModal({ forceShow = false, previewTitle = '', previewText = '' }: VotingModalProps) {
   const [isOpen, setIsOpen] = useState(forceShow);
   const [isActive, setIsActive] = useState(forceShow);
+  const [title, setTitle] = useState(previewTitle || 'Hai votato?');
+  const [text, setText] = useState(previewText || 'Hai ancora tempo, le votazioni chiudono tra:');
+  const [currentVersion, setCurrentVersion] = useState('');
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isEnded, setIsEnded] = useState(false);
 
@@ -35,11 +40,15 @@ export default function VotingModal({ forceShow = false }: VotingModalProps) {
         const res = await fetch('/api/settings');
         const data = await res.json();
         setIsActive(data.popupActive);
+        if (data.popupTitle) setTitle(data.popupTitle);
+        if (data.popupText) setText(data.popupText);
+        if (data.popupVersion) setCurrentVersion(data.popupVersion);
         
-        // 2. Se è attivo, controlla se l'utente ha già interagito localmente
+        // 2. Se è attivo, controlla se l'utente ha già interagito con questa specifica versione
         if (data.popupActive) {
-          const hasInteracted = localStorage.getItem('gulliver_vote_interacted');
-          if (!hasInteracted) {
+          const savedVersion = localStorage.getItem('gulliver_vote_interacted_version');
+          if (savedVersion !== data.popupVersion) {
+            // Se le versioni differiscono o non esiste, il pop-up si resetta e riappare
             const timer = setTimeout(() => setIsOpen(true), 1500);
             return () => clearTimeout(timer);
           }
@@ -77,11 +86,13 @@ export default function VotingModal({ forceShow = false }: VotingModalProps) {
 
   const handleClose = () => {
     setIsOpen(false);
-    localStorage.setItem('gulliver_vote_interacted', 'true');
+    if (currentVersion) {
+      localStorage.setItem('gulliver_vote_interacted_version', currentVersion);
+    }
   };
 
-  // Se le elezioni sono finite, il modal è chiuso o non è attivo globalmente, non mostrare nulla
-  if (!isOpen || isEnded || !isActive) return null;
+  // Se il modal è chiuso o non è attivo globalmente, non mostrare nulla
+  if (!isOpen || !isActive) return null;
 
   return (
     <div style={{
@@ -148,9 +159,10 @@ export default function VotingModal({ forceShow = false }: VotingModalProps) {
             fontWeight: 900,
             color: '#fff',
             marginBottom: '1.5rem',
-            letterSpacing: '-0.03em'
+            letterSpacing: '-0.03em',
+            whiteSpace: 'pre-wrap'
           }}>
-            Hai votato?
+            {title}
           </h2>
           
           <p style={{
@@ -158,49 +170,51 @@ export default function VotingModal({ forceShow = false }: VotingModalProps) {
             fontSize: '1.1rem',
             fontWeight: 400,
             marginBottom: '2.5rem',
-            lineHeight: 1.5
+            lineHeight: 1.5,
+            whiteSpace: 'pre-wrap'
           }}>
-            Hai ancora tempo,<br />
-            le votazioni chiudono tra:
+            {text}
           </p>
 
-          {/* Mini Countdown Interno */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '0.8rem',
-            marginBottom: '3rem',
-            alignItems: 'baseline'
-          }}>
-            {[
-              { val: timeLeft.days, label: 'gg' },
-              { val: timeLeft.hours, label: 'hh' },
-              { val: timeLeft.minutes, label: 'mm' },
-              { val: timeLeft.seconds, label: 'ss' }
-            ].map((item, i) => (
-              <div key={item.label} style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                {i > 0 && <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.5rem', fontWeight: 300 }}>:</span>}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                   <span style={{ 
-                     fontSize: '2.4rem', 
-                     fontWeight: 950, 
-                     color: item.label === 'ss' ? '#e40329' : '#fff',
-                     fontVariantNumeric: 'tabular-nums',
-                     lineHeight: 1
-                   }}>
-                     {String(item.val).padStart(2, '0')}
-                   </span>
-                   <span style={{ 
-                     fontSize: '0.65rem', 
-                     color: 'rgba(255,255,255,0.3)', 
-                     textTransform: 'uppercase',
-                     marginTop: '0.4rem',
-                     fontWeight: 700
-                   }}>{item.label}</span>
+          {/* Mini Countdown Interno (mostrato solo se non terminato) */}
+          {!isEnded && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '0.8rem',
+              marginBottom: '3rem',
+              alignItems: 'baseline'
+            }}>
+              {[
+                { val: timeLeft.days, label: 'gg' },
+                { val: timeLeft.hours, label: 'hh' },
+                { val: timeLeft.minutes, label: 'mm' },
+                { val: timeLeft.seconds, label: 'ss' }
+              ].map((item, i) => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
+                  {i > 0 && <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.5rem', fontWeight: 300 }}>:</span>}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                     <span style={{ 
+                       fontSize: '2.4rem', 
+                       fontWeight: 950, 
+                       color: item.label === 'ss' ? '#e40329' : '#fff',
+                       fontVariantNumeric: 'tabular-nums',
+                       lineHeight: 1
+                     }}>
+                       {String(item.val).padStart(2, '0')}
+                     </span>
+                     <span style={{ 
+                       fontSize: '0.65rem', 
+                       color: 'rgba(255,255,255,0.3)', 
+                       textTransform: 'uppercase',
+                       marginTop: '0.4rem',
+                       fontWeight: 700
+                     }}>{item.label}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           <div style={{
             display: 'flex',

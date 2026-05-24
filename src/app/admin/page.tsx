@@ -32,6 +32,9 @@ export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [view, setView] = useState<'landing' | 'form' | 'appunti' | 'popup'>('landing');
   const [popupActive, setPopupActive] = useState(false);
+  const [popupTitle, setPopupTitle] = useState('');
+  const [popupText, setPopupText] = useState('');
+  const [showPopupEdit, setShowPopupEdit] = useState(false);
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [forms, setForms] = useState<Record<string, FormData>>({});
@@ -67,6 +70,8 @@ export default function AdminPage() {
       const res = await fetch('/api/settings');
       const data = await res.json();
       setPopupActive(data.popupActive);
+      setPopupTitle(data.popupTitle || 'Hai votato?');
+      setPopupText(data.popupText || 'Hai ancora tempo, le votazioni chiudono tra:');
     } catch (e) {
       console.error(e);
     }
@@ -169,6 +174,30 @@ export default function AdminPage() {
         notify(val ? 'Pop-up attivato.' : 'Pop-up disattivato.', 'ok');
       } else {
         notify('Errore aggiornamento.', 'err');
+      }
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  const handleSavePopupSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSettingsLoading(true);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({
+          action: 'updatePopup',
+          popupActive,
+          popupTitle,
+          popupText,
+        }),
+      });
+      if (res.ok) {
+        notify('Impostazioni pop-up salvate con successo.', 'ok');
+      } else {
+        notify('Errore salvataggio impostazioni.', 'err');
       }
     } finally {
       setSettingsLoading(false);
@@ -463,7 +492,110 @@ export default function AdminPage() {
                 </button>
               </div>
 
-              <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+                <button 
+                  onClick={() => setShowPopupEdit(!showPopupEdit)}
+                  style={{
+                    background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
+                    color: COLORS.textPrimary, padding: '0.8rem 1.5rem', borderRadius: '12px',
+                    cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
+                    transition: 'all 0.2s', width: '100%', maxWidth: '300px'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                >
+                  ✏️ Voglio modificare il pop-up
+                </button>
+
+                {showPopupEdit && (
+                  <form onSubmit={handleSavePopupSettings} style={{
+                    width: '100%', textAlign: 'left', marginTop: '1.5rem',
+                    background: 'rgba(255,255,255,0.02)', border: `1px solid ${COLORS.border}`,
+                    borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem'
+                  }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.78rem', color: COLORS.textMuted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Titolo Pop-up
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        value={popupTitle}
+                        onChange={e => setPopupTitle(e.target.value)}
+                        placeholder="es. Hai votato?"
+                        style={{
+                          width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
+                          background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
+                          borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.78rem', color: COLORS.textMuted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Testo Pop-up
+                      </label>
+                      <textarea
+                        required
+                        rows={3}
+                        value={popupText}
+                        onChange={e => setPopupText(e.target.value)}
+                        placeholder="es. Hai ancora tempo, le votazioni chiudono tra:"
+                        style={{
+                          width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
+                          background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
+                          borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
+                          resize: 'vertical', fontFamily: 'inherit'
+                        }}
+                      />
+                    </div>
+
+                    <div style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      background: 'rgba(255,255,255,0.02)', padding: '0.75rem 1rem', borderRadius: '10px',
+                      border: `1px solid ${COLORS.border}`
+                    }}>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>Mostra il Pop-up</div>
+                        <div style={{ fontSize: '0.75rem', color: COLORS.textMuted }}>Attiva la visibilità sul sito</div>
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={() => setPopupActive(!popupActive)}
+                        style={{
+                          width: '50px', height: '26px', borderRadius: '99px',
+                          background: popupActive ? COLORS.green : 'rgba(255,255,255,0.1)',
+                          border: 'none', position: 'relative', cursor: 'pointer',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <div style={{
+                          width: '20px', height: '20px', borderRadius: '50%',
+                          background: 'white', position: 'absolute', top: '3px',
+                          left: popupActive ? '27px' : '3px',
+                          transition: 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)',
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.3)'
+                        }} />
+                      </button>
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      disabled={settingsLoading}
+                      style={{
+                        padding: '0.75rem',
+                        background: settingsLoading ? 'rgba(228,3,41,0.3)' : `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
+                        border: 'none', borderRadius: '10px', color: 'white',
+                        fontWeight: 700, fontSize: '0.9rem', cursor: settingsLoading ? 'not-allowed' : 'pointer',
+                        boxShadow: settingsLoading ? 'none' : `0 4px 16px ${COLORS.accentGlow}`,
+                        transition: 'all 0.2s', width: '100%', marginTop: '0.5rem'
+                      }}
+                    >
+                      {settingsLoading ? 'Salvataggio...' : 'Salva Impostazioni'}
+                    </button>
+                  </form>
+                )}
+
                 <button 
                   onClick={() => {
                     setShowPreview(false);
@@ -473,7 +605,8 @@ export default function AdminPage() {
                     background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
                     color: COLORS.textPrimary, padding: '0.8rem 1.5rem', borderRadius: '12px',
                     cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-                    transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem'
+                    transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem',
+                    width: '100%', maxWidth: '300px', justifyContent: 'center'
                   }}
                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
@@ -485,7 +618,7 @@ export default function AdminPage() {
 
             {showPreview && (
               <div key={Date.now()}>
-                <VotingModal forceShow={true} />
+                <VotingModal forceShow={true} previewTitle={popupTitle} previewText={popupText} />
                 <button 
                   onClick={() => setShowPreview(false)}
                   style={{
