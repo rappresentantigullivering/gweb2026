@@ -111,9 +111,9 @@ export default function HomePage() {
         <div className={`container ${styles.rockBannerInner}`}>
           <div className={styles.rockBannerText}>
             <span className="section-tag section-tag-white">Foto in arrivo!</span>
-            <h2>Gulliver Rock: Che Serata!</h2>
+            <h2>Gulliver Rock</h2>
             <p>
-              Il festival è passato, grazie a tuttɜ per aver partecipato! Stiamo preparando le foto ufficiali dell&apos;evento: a brevissimo le caricheremo sul sito. Resta sintonizzatɜ!
+              La XXXIII edizione è da poco conclusa, grazie a tuttɜ per aver partecipato! Stiamo preparando le foto ufficiali dell&apos;evento: a brevissimo le caricheremo sul sito e sull&apos;instagram ufficiale @acu_gulliver. Resta sintonizzatɜ!
             </p>
             <div className={styles.rockBannerActions} style={{ marginTop: '1rem' }}>
               <Link href="/associazione-culturale/gulliver-rock" className="btn btn-white btn-lg" id="banner-gulliver-rock-info">
