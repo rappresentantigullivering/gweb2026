@@ -411,7 +411,7 @@ const DATA = [
     "organ": "CONSIGLI UNIFICATI E CONSIGLI DI CORSO DI STUDIO (C.U.C.S E C.C.S.)",
     "sub_organ": "C.U.C.S. INGEGNERIA MECCANICA",
     "type": "Ordinari",
-    "count": "12",
+    "count": "11",
     "candidates": [
       "Rebecca Vittorini detta Puce",
       "Umberto D'Aurelio detto Pasti",
@@ -421,7 +421,6 @@ const DATA = [
       "Ludovica Capitanio",
       "Nicolò Bresciani",
       "Alessandro Boccanera",
-      "Antonio Lo Scocco",
       "Christian Edorh",
       "Luigi Di Bartolomeo",
       "Michele Santecchia"
