@@ -85,15 +85,18 @@ export default async function RootLayout({
 }>) {
   const headersList = await headers();
   const host = headersList.get("host") || "";
-  // Nasconde navbar e footer per sottodomini admin e forms
-  const isAdminOrForms = host.startsWith("admin.") || host.startsWith("forms.");
+  // Nasconde navbar, footer e modal per sottodomini di servizio
+  const isServiceSubdomain = 
+    host.startsWith("admin.") || 
+    host.startsWith("forms.") || 
+    host.startsWith("comunicazione.");
 
   return (
     <html lang="it">
       <body>
-        {!isAdminOrForms && <Navbar />}
+        {!isServiceSubdomain && <Navbar />}
         <main>{children}</main>
-        {!isAdminOrForms && (
+        {!isServiceSubdomain && (
           <>
             <Footer />
             <VotingModal />

@@ -43,5 +43,16 @@ export function proxy(req: NextRequest) {
     }
   }
 
+  // 3. Gestione Area Comunicazione
+  if (hostname.includes('comunicazione.gulliverancona.it') || hostname.includes('comunicazione.localhost')) {
+    if (url.pathname.startsWith('/api') || url.pathname.startsWith('/_next')) {
+      return NextResponse.next();
+    }
+    if (!url.pathname.startsWith('/comunicazione')) {
+      url.pathname = `/comunicazione${url.pathname === '/' ? '' : url.pathname}`;
+      return NextResponse.rewrite(url);
+    }
+  }
+
   return NextResponse.next();
 }
