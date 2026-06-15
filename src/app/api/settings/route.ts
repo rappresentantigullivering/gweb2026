@@ -31,7 +31,14 @@ export async function POST(req: Request) {
         payload.roles.includes('direttivo') ||
         payload.roles.includes('admin')
       )) {
-        authorized = true;
+        if (payload.sessionId) {
+          const isActive = await redis.exists(`gulliver:session:${payload.sessionId}`);
+          if (isActive) {
+            authorized = true;
+          }
+        } else {
+          authorized = true;
+        }
       }
     } else {
       const authHeader = req.headers.get('Authorization');

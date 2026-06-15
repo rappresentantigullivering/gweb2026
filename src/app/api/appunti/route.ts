@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyAndDecodeSession } from '@/lib/auth';
+import { Redis } from '@upstash/redis';
 
 const SHEET_ID = process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID;
 if (!SHEET_ID) {
@@ -54,6 +55,14 @@ export async function GET(request: Request) {
     const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
     if (!payload || !(payload.roles.includes('appunti') || payload.roles.includes('admin'))) {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
+    }
+
+    if (payload.sessionId) {
+      const redis = Redis.fromEnv();
+      const isActive = await redis.exists(`gulliver:session:${payload.sessionId}`);
+      if (!isActive) {
+        return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
+      }
     }
 
     const { searchParams } = new URL(request.url);

@@ -17,6 +17,12 @@ async function isAuthorized() {
   if (!token) return false;
   const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
   if (!payload) return false;
+
+  if (payload.sessionId) {
+    const isActive = await redis.exists(`gulliver:session:${payload.sessionId}`);
+    if (!isActive) return false;
+  }
+
   return payload.roles.includes('comunicazione') || payload.roles.includes('admin');
 }
 

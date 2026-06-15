@@ -18,6 +18,11 @@ async function getAdminUser() {
   if (!payload || !payload.roles.includes('admin')) {
     return null;
   }
+
+  if (payload.sessionId) {
+    const isActive = await redis.exists(`gulliver:session:${payload.sessionId}`);
+    if (!isActive) return null;
+  }
   return payload;
 }
 

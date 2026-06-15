@@ -30,6 +30,7 @@ export interface SessionPayload {
   username: string;
   roles: string[];
   expires: number;
+  sessionId?: string;
 }
 
 /**

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyAndDecodeSession } from './lib/auth';
+import { Redis } from '@upstash/redis';
 
 const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
 
@@ -83,6 +84,13 @@ export async function proxy(req: NextRequest) {
 
   if (token) {
     userPayload = await verifyAndDecodeSession(token, SESSION_SECRET);
+    if (userPayload && userPayload.sessionId) {
+      const redis = Redis.fromEnv();
+      const isActive = await redis.exists(`gulliver:session:${userPayload.sessionId}`);
+      if (!isActive) {
+        userPayload = null;
+      }
+    }
   }
 
   const devPort = hostname.split(':')[1] || '3000';

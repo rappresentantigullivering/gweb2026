@@ -28,12 +28,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Password errata' }, { status: 401 });
     }
 
+    const sessionId = crypto.randomUUID();
+    const SESSION_TTL = 7 * 24 * 60 * 60; // 7 days in seconds
+    await redis.set(`gulliver:session:${sessionId}`, { username: user.username }, { ex: SESSION_TTL });
+
     // 7 days expiration
     const expires = Date.now() + 7 * 24 * 60 * 60 * 1000;
     const payload = {
       username: user.username,
       roles: user.roles,
       expires,
+      sessionId,
     };
 
     const token = await signSession(payload, SESSION_SECRET);

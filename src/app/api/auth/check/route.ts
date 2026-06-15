@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyAndDecodeSession } from '@/lib/auth';
+import { Redis } from '@upstash/redis';
 
 const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
+const redis = Redis.fromEnv();
 
 export async function GET() {
   try {
@@ -16,6 +18,13 @@ export async function GET() {
     const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
     if (!payload) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
+    }
+
+    if (payload.sessionId) {
+      const isActive = await redis.exists(`gulliver:session:${payload.sessionId}`);
+      if (!isActive) {
+        return NextResponse.json({ authenticated: false }, { status: 401 });
+      }
     }
 
     return NextResponse.json({

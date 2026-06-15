@@ -18,7 +18,12 @@ async function isAuthorized(request: Request) {
   if (token) {
     const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
     if (payload && (payload.roles.includes('forms') || payload.roles.includes('admin'))) {
-      return true;
+      if (payload.sessionId) {
+        const isActive = await redis.exists(`gulliver:session:${payload.sessionId}`);
+        if (isActive) return true;
+      } else {
+        return true;
+      }
     }
   }
   // 2. Fallback all'header di autorizzazione originale per compatibilità
