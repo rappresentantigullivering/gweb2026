@@ -9,13 +9,13 @@ const redis = new Redis({
 });
 
 const DB_KEY = 'gulliver:comunicazione:posts';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
 
 async function isAuthorized() {
   const cookieStore = await cookies();
   const token = cookieStore.get('gulliver_session')?.value;
   if (!token) return false;
-  const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+  const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
   if (!payload) return false;
   return payload.roles.includes('comunicazione') || payload.roles.includes('admin');
 }

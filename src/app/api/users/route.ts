@@ -5,7 +5,7 @@ import { verifyAndDecodeSession, hashPassword } from '@/lib/auth';
 
 const redis = Redis.fromEnv();
 const USERS_KEY = 'gulliver:users';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
 
 // Helper to check if the current user is an admin
 async function getAdminUser() {
@@ -13,37 +13,14 @@ async function getAdminUser() {
   const token = cookieStore.get('gulliver_session')?.value;
   if (!token) return null;
 
-  const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+  const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
   if (!payload || !payload.roles.includes('admin')) {
     return null;
   }
   return payload;
 }
 
-// Ensure the database has seeded admin users if empty
-async function ensureSeeded(usersMap: Record<string, any> | null) {
-  if (usersMap && Object.keys(usersMap).length > 0) {
-    return usersMap;
-  }
 
-  // Seed default admin accounts
-  const defaultPasswordHash = await hashPassword('linganguli');
-  const seededUsers = {
-    lorenzo: {
-      username: 'lorenzo',
-      passwordHash: defaultPasswordHash,
-      roles: ['admin', 'tesserato', 'appunti', 'popup', 'forms', 'comunicazione', 'direttivo'],
-    },
-    presidente: {
-      username: 'presidente',
-      passwordHash: defaultPasswordHash,
-      roles: ['admin', 'tesserato', 'appunti', 'popup', 'forms', 'comunicazione', 'direttivo'],
-    },
-  };
-
-  await redis.set(USERS_KEY, seededUsers);
-  return seededUsers;
-}
 
 export async function GET() {
   try {
@@ -52,8 +29,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
     }
 
-    let usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || null;
-    usersMap = await ensureSeeded(usersMap);
+    const usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || {};
 
     // Remove password hashes before sending
     const sanitizedUsers = Object.values(usersMap).map((user) => {
@@ -86,8 +62,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Username non valido' }, { status: 400 });
     }
 
-    let usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || null;
-    usersMap = await ensureSeeded(usersMap);
+    const usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || {};
 
     if (action === 'create') {
       if (usersMap[sanitizedUsername]) {

@@ -9,21 +9,21 @@ const redis = new Redis({
 });
 
 const DB_KEY = 'gulliver:forms';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
+const COMPATIBILITY_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.SESSION_SECRET || '';
 
 async function isAuthorized(request: Request) {
-  // 1. Controlla prima il cookie HTTP-Only (sessione sicura)
   const cookieStore = await cookies();
   const token = cookieStore.get('gulliver_session')?.value;
   if (token) {
-    const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+    const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
     if (payload && (payload.roles.includes('forms') || payload.roles.includes('admin'))) {
       return true;
     }
   }
   // 2. Fallback all'header di autorizzazione originale per compatibilità
   const authHeader = request.headers.get('authorization');
-  return authHeader === `Bearer ${ADMIN_PASSWORD}`;
+  return COMPATIBILITY_ADMIN_PASSWORD ? authHeader === `Bearer ${COMPATIBILITY_ADMIN_PASSWORD}` : false;
 }
 
 // GET — lista pubblica dei form (nessuna autenticazione richiesta)

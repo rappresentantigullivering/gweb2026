@@ -20,11 +20,12 @@ export async function POST(req: Request) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('gulliver_session')?.value;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'gulliver2026';
+    const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
+    const compatibilityPassword = process.env.ADMIN_PASSWORD || process.env.SESSION_SECRET || '';
     let authorized = false;
 
     if (token) {
-      const payload = await verifyAndDecodeSession(token, adminPassword);
+      const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
       if (payload && (
         payload.roles.includes('popup') ||
         payload.roles.includes('direttivo') ||
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
     } else {
       const authHeader = req.headers.get('Authorization');
       const password = authHeader?.replace('Bearer ', '');
-      if (password === adminPassword) {
+      if (compatibilityPassword && password === compatibilityPassword) {
         authorized = true;
       }
     }

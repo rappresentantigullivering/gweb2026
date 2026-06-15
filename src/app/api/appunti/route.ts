@@ -7,7 +7,7 @@ if (!SHEET_ID) {
   console.warn('ATTENZIONE: NEXT_PUBLIC_APPUNTI_SHEET_ID non definita nelle variabili d\'ambiente.');
 }
 const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
 
 export type Appunto = {
   id: string;
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
     if (!token) {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
     }
-    const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+    const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
     if (!payload || !(payload.roles.includes('appunti') || payload.roles.includes('admin'))) {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
     }

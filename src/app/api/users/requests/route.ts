@@ -6,7 +6,7 @@ import { verifyAndDecodeSession, hashPassword } from '@/lib/auth';
 const redis = Redis.fromEnv();
 const USERS_KEY = 'gulliver:users';
 const REQUESTS_KEY = 'gulliver:users:requests';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
 
 // Helper to check if current user is admin
 async function getAdminUser() {
@@ -14,7 +14,7 @@ async function getAdminUser() {
   const token = cookieStore.get('gulliver_session')?.value;
   if (!token) return null;
 
-  const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+  const payload = await verifyAndDecodeSession(token, SESSION_SECRET);
   if (!payload || !payload.roles.includes('admin')) {
     return null;
   }

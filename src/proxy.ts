@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyAndDecodeSession } from './lib/auth';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
 
 export const config = {
   matcher: [
@@ -82,7 +82,7 @@ export async function proxy(req: NextRequest) {
   let userPayload = null;
 
   if (token) {
-    userPayload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+    userPayload = await verifyAndDecodeSession(token, SESSION_SECRET);
   }
 
   const devPort = hostname.split(':')[1] || '3000';

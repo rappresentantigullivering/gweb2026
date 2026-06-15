@@ -5,29 +5,7 @@ import { signSession, verifyPassword, hashPassword } from '@/lib/auth';
 
 const redis = Redis.fromEnv();
 const USERS_KEY = 'gulliver:users';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
-
-// Seed default users if key is empty
-async function getSeededUsers() {
-  let usersMap = await redis.get<Record<string, any>>(USERS_KEY);
-  if (!usersMap || Object.keys(usersMap).length === 0) {
-    const defaultPasswordHash = await hashPassword('linganguli');
-    usersMap = {
-      lorenzo: {
-        username: 'lorenzo',
-        passwordHash: defaultPasswordHash,
-        roles: ['admin', 'tesserato', 'appunti', 'popup', 'forms', 'comunicazione', 'direttivo'],
-      },
-      presidente: {
-        username: 'presidente',
-        passwordHash: defaultPasswordHash,
-        roles: ['admin', 'tesserato', 'appunti', 'popup', 'forms', 'comunicazione', 'direttivo'],
-      },
-    };
-    await redis.set(USERS_KEY, usersMap);
-  }
-  return usersMap;
-}
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'gweb_sso_fallback_signing_secret_do_not_use_in_prod';
 
 export async function POST(req: Request) {
   try {
@@ -38,7 +16,7 @@ export async function POST(req: Request) {
     }
 
     const sanitizedUsername = username.trim().toLowerCase();
-    const usersMap = await getSeededUsers();
+    const usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || {};
     const user = usersMap[sanitizedUsername];
 
     if (!user) {
@@ -58,7 +36,7 @@ export async function POST(req: Request) {
       expires,
     };
 
-    const token = await signSession(payload, ADMIN_PASSWORD);
+    const token = await signSession(payload, SESSION_SECRET);
 
     const host = req.headers.get('host') || '';
     const domain = host.includes('gulliverancona.it') ? '.gulliverancona.it' : undefined;
