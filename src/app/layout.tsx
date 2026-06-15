@@ -85,11 +85,15 @@ export default async function RootLayout({
 }>) {
   const headersList = await headers();
   const host = headersList.get("host") || "";
-  // Nasconde navbar, footer e modal per sottodomini di servizio
+  // Nasconde navbar, footer e modal per tutti i sottodomini di servizio
   const isServiceSubdomain = 
     host.startsWith("admin.") || 
     host.startsWith("forms.") || 
-    host.startsWith("comunicazione.");
+    host.startsWith("comunicazione.") ||
+    host.startsWith("tesserati.") ||
+    host.startsWith("appunti.") ||
+    host.startsWith("popup.") ||
+    host.startsWith("direttivo.");
 
   return (
     <html lang="it">

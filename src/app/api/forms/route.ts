@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { cookies } from 'next/headers';
-import { verifySession } from '@/lib/auth';
+import { verifyAndDecodeSession } from '@/lib/auth';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL || '',
@@ -15,8 +15,11 @@ async function isAuthorized(request: Request) {
   // 1. Controlla prima il cookie HTTP-Only (sessione sicura)
   const cookieStore = await cookies();
   const token = cookieStore.get('gulliver_session')?.value;
-  if (token && await verifySession(token, ADMIN_PASSWORD)) {
-    return true;
+  if (token) {
+    const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+    if (payload && (payload.roles.includes('forms') || payload.roles.includes('admin'))) {
+      return true;
+    }
   }
   // 2. Fallback all'header di autorizzazione originale per compatibilità
   const authHeader = request.headers.get('authorization');

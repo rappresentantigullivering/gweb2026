@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { verifyAndDecodeSession } from '@/lib/auth';
 
 const SHEET_ID = process.env.NEXT_PUBLIC_APPUNTI_SHEET_ID;
 if (!SHEET_ID) {
   console.warn('ATTENZIONE: NEXT_PUBLIC_APPUNTI_SHEET_ID non definita nelle variabili d\'ambiente.');
 }
 const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
 
 export type Appunto = {
   id: string;
@@ -42,18 +45,28 @@ function parseCsvLine(line: string): string[] {
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const sheetType = searchParams.get('sheet') || 'digitali';
-  
-  const GIDS: Record<string, string> = {
-    digitali: '0',
-    cartacei: '1603948657'
-  };
-
-  const gid = GIDS[sheetType] || '0';
-  const url = `${SHEET_CSV_URL}&gid=${gid}`;
-
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('gulliver_session')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
+    }
+    const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+    if (!payload || !(payload.roles.includes('appunti') || payload.roles.includes('admin'))) {
+      return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const sheetType = searchParams.get('sheet') || 'digitali';
+    
+    const GIDS: Record<string, string> = {
+      digitali: '0',
+      cartacei: '1603948657'
+    };
+
+    const gid = GIDS[sheetType] || '0';
+    const url = `${SHEET_CSV_URL}&gid=${gid}`;
+
     const res = await fetch(url, { next: { revalidate: 60 } });
     if (!res.ok) throw new Error('Impossibile scaricare il foglio');
     const text = await res.text();

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { cookies } from 'next/headers';
-import { verifySession } from '@/lib/auth';
+import { verifyAndDecodeSession } from '@/lib/auth';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL || '',
@@ -14,10 +14,10 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gulliver2026';
 async function isAuthorized() {
   const cookieStore = await cookies();
   const token = cookieStore.get('gulliver_session')?.value;
-  if (token && await verifySession(token, ADMIN_PASSWORD)) {
-    return true;
-  }
-  return false;
+  if (!token) return false;
+  const payload = await verifyAndDecodeSession(token, ADMIN_PASSWORD);
+  if (!payload) return false;
+  return payload.roles.includes('comunicazione') || payload.roles.includes('admin');
 }
 
 export async function GET() {

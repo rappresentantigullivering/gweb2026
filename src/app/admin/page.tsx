@@ -1,942 +1,979 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import AppuntiTab from './AppuntiTab';
-import VotingModal from '@/components/VotingModal';
+import React, { useState, useEffect } from 'react';
 
-type FormStatus = 'active' | 'suspended';
-type FormData = { tallyId: string; title: string; status: FormStatus };
+interface User {
+  username: string;
+  roles: string[];
+}
 
-const API_BASE = '/api/forms/';
-const VERSION = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? 'local';
-
-const COLORS = {
-  bg: '#080810',
-  surface: 'rgba(255,255,255,0.06)',
-  border: 'rgba(255,255,255,0.12)',
-  accent: '#e40329',
-  accentGlow: 'rgba(228,3,41,0.25)',
-  textPrimary: '#ffffff',
-  textSecondary: 'rgba(255,255,255,0.7)',
-  textMuted: 'rgba(255,255,255,0.45)',
-  green: '#4ade80',
-  greenBg: 'rgba(74,222,128,0.12)',
-  greenBorder: 'rgba(74,222,128,0.3)',
-  red: '#f87171',
-  redBg: 'rgba(248,113,113,0.12)',
-  redBorder: 'rgba(248,113,113,0.3)',
-};
+const AVAILABLE_ROLES = [
+  { id: 'admin', label: 'Admin', desc: 'Accesso completo e gestione utenti', color: '#e40329', bg: 'rgba(228, 3, 41, 0.12)', border: 'rgba(228, 3, 41, 0.3)' },
+  { id: 'tesserato', label: 'Tesserato', desc: 'Accesso base alla dashboard Cockpit', color: '#6b7280', bg: 'rgba(107, 114, 128, 0.12)', border: 'rgba(107, 114, 128, 0.3)' },
+  { id: 'appunti', label: 'Appunti', desc: 'Consultazione e download del database appunti', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)' },
+  { id: 'popup', label: 'Popup', desc: 'Gestione e attivazione del pop-up avvisi sul sito', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)' },
+  { id: 'forms', label: 'Forms', desc: 'Creazione e gestione moduli d\'iscrizione tally', color: '#10b981', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)' },
+  { id: 'comunicazione', label: 'Comunicazione', desc: 'Programmazione del calendario post social', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.12)', border: 'rgba(139, 92, 246, 0.3)' },
+  { id: 'direttivo', label: 'Direttivo', desc: 'Accesso ai documenti del portale Direttivo', color: '#ec4899', bg: 'rgba(236, 72, 153, 0.12)', border: 'rgba(236, 72, 153, 0.3)' },
+];
 
 export default function AdminPage() {
-  const [password, setPassword] = useState('');
-  const [authenticated, setAuthenticated] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [view, setView] = useState<'landing' | 'form' | 'appunti' | 'popup'>('landing');
-  const [popupActive, setPopupActive] = useState(false);
-  const [popupTitle, setPopupTitle] = useState('');
-  const [popupText, setPopupText] = useState('');
-  const [showPopupEdit, setShowPopupEdit] = useState(false);
-  const [settingsLoading, setSettingsLoading] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [forms, setForms] = useState<Record<string, FormData>>({});
-  const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(false);
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [loginError, setLoginError] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null);
-  const [newSlug, setNewSlug] = useState('');
-  const [newTallyId, setNewTallyId] = useState('');
-  const [newTitle, setNewTitle] = useState('');
+
+  // New user form states
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newRoles, setNewRoles] = useState<string[]>(['tesserato']);
+  const [creating, setCreating] = useState(false);
+
+  // Edit user modal states
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editRoles, setEditRoles] = useState<string[]>([]);
+  const [editPassword, setEditPassword] = useState('');
+  const [updating, setUpdating] = useState(false);
 
   const notify = (msg: string, type: 'ok' | 'err') => {
     setNotification({ msg, type });
     setTimeout(() => setNotification(null), 3500);
   };
 
-  const fetchForms = async () => {
-    setFetchLoading(true);
+  const fetchUsers = async () => {
     try {
-      const res = await fetch(API_BASE);
-      const data = await res.json();
-      setForms(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setFetchLoading(false);
-    }
-  };
-
-  const fetchSettings = async () => {
-    try {
-      const res = await fetch('/api/settings');
-      const data = await res.json();
-      setPopupActive(data.popupActive);
-      setPopupTitle(data.popupTitle || 'Hai votato?');
-      setPopupText(data.popupText || 'Hai ancora tempo, le votazioni chiudono tra:');
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  // Verifica la sessione all'avvio
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await fetch('/api/auth/check');
-        if (res.ok) {
-          setAuthenticated(true);
-          setView('landing');
-        }
-      } catch (e) {
-        console.error('Session check failed:', e);
-      } finally {
-        setInitialLoading(false);
+      const res = await fetch('/api/users');
+      if (!res.ok) {
+        throw new Error('Impossibile caricare gli utenti');
       }
-    };
-    checkSession();
-  }, []);
-
-  useEffect(() => {
-    if (authenticated) {
-      fetchForms();
-      fetchSettings();
+      const data = await res.json();
+      setUsers(data.users || []);
+    } catch (err: any) {
+      notify(err.message || 'Errore di connessione', 'err');
     }
-  }, [authenticated]);
+  };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!password) return;
-    setLoginLoading(true);
-    setLoginError('');
+  const checkAuth = async () => {
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
+      const res = await fetch('/api/auth/check');
       if (res.ok) {
-        setAuthenticated(true);
-        setView('landing');
-        setPassword('');
-      } else {
         const data = await res.json();
-        setLoginError(data.error || 'Password errata. Riprova.');
+        setCurrentUser(data.username);
+        await fetchUsers();
+      } else {
+        window.location.href = '/login';
       }
     } catch {
-      setLoginError('Errore di rete. Riprova.');
+      notify('Errore di verifica autenticazione', 'err');
     } finally {
-      setLoginLoading(false);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create',
+          username: newUsername,
+          password: newPassword,
+          roles: newRoles,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setUsers(data.users || []);
+        setNewUsername('');
+        setNewPassword('');
+        setNewRoles(['tesserato']);
+        notify('Utente registrato con successo!', 'ok');
+      } else {
+        notify(data.error || 'Errore durante la creazione', 'err');
+      }
+    } catch {
+      notify('Errore di rete', 'err');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    setUpdating(true);
+
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update',
+          username: editingUser.username,
+          roles: editRoles,
+          password: editPassword ? editPassword : undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setUsers(data.users || []);
+        setEditingUser(null);
+        setEditPassword('');
+        notify('Utente aggiornato con successo!', 'ok');
+      } else {
+        notify(data.error || 'Errore di aggiornamento', 'err');
+      }
+    } catch {
+      notify('Errore di rete', 'err');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleDeleteUser = async (username: string) => {
+    if (username === currentUser) {
+      notify('Non puoi eliminare te stesso!', 'err');
+      return;
+    }
+
+    if (!window.confirm(`Sei sicuro di voler eliminare definitivamente l'utente "${username}"?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete',
+          username,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setUsers(data.users || []);
+        notify('Utente eliminato.', 'ok');
+      } else {
+        notify(data.error || 'Errore di eliminazione', 'err');
+      }
+    } catch {
+      notify('Errore di rete', 'err');
+    }
+  };
+
+  const toggleNewRole = (roleId: string) => {
+    if (newRoles.includes(roleId)) {
+      setNewRoles(newRoles.filter(r => r !== roleId));
+    } else {
+      setNewRoles([...newRoles, roleId]);
+    }
+  };
+
+  const toggleEditRole = (roleId: string) => {
+    if (editRoles.includes(roleId)) {
+      setEditRoles(editRoles.filter(r => r !== roleId));
+    } else {
+      setEditRoles([...editRoles, roleId]);
+    }
+  };
+
+  const handleGoHome = () => {
+    const host = window.location.host;
+    const devPort = host.split(':')[1] || '3000';
+    if (host.includes('localhost')) {
+      window.location.href = `http://tesserati.localhost:${devPort}`;
+    } else {
+      window.location.href = 'https://tesserati.gulliverancona.it';
     }
   };
 
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-    } catch (e) {
-      console.error('Logout failed:', e);
-    }
-    setAuthenticated(false);
-    setView('landing');
-  };
-
-  const authHeaders = {
-    'Content-Type': 'application/json',
-  };
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await fetch(API_BASE, {
-        method: 'POST',
-        headers: authHeaders,
-        body: JSON.stringify({
-          action: 'create',
-          slug: newSlug.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase(),
-          tallyId: newTallyId,
-          title: newTitle,
-        }),
-      });
-      if (res.ok) {
-        setNewSlug(''); setNewTallyId(''); setNewTitle('');
-        await fetchForms();
-        notify('Form creato con successo.', 'ok');
-      } else {
-        notify('Errore di salvataggio. Controlla i permessi.', 'err');
-      }
-    } finally {
-      setLoading(false);
+      window.location.href = '/login';
+    } catch {
+      notify('Logout fallito', 'err');
     }
   };
 
-  const handleUpdateStatus = async (slug: string, newStatus: FormStatus) => {
-    const form = forms[slug];
-    const res = await fetch(API_BASE, {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ action: 'update', slug, tallyId: form.tallyId, title: form.title, status: newStatus }),
-    });
-    if (res.ok) { fetchForms(); notify('Stato aggiornato.', 'ok'); }
-    else notify('Errore di autorizzazione.', 'err');
+  const getRoleConfig = (roleId: string) => {
+    return AVAILABLE_ROLES.find(r => r.id === roleId) || {
+      label: roleId,
+      color: '#ffffff',
+      bg: 'rgba(255,255,255,0.06)',
+      border: 'rgba(255,255,255,0.1)'
+    };
   };
 
-  const handleDelete = async (slug: string) => {
-    if (!window.confirm(`Eliminare definitivamente "${slug}"?`)) return;
-    const res = await fetch(API_BASE, {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ action: 'delete', slug }),
-    });
-    if (res.ok) { fetchForms(); notify('Form eliminato.', 'ok'); }
-    else notify('Errore di autorizzazione.', 'err');
-  };
-
-  const handleTogglePopup = async (val: boolean) => {
-    setSettingsLoading(true);
-    try {
-      const res = await fetch('/api/settings', {
-        method: 'POST',
-        headers: authHeaders,
-        body: JSON.stringify({ action: 'updatePopup', popupActive: val }),
-      });
-      if (res.ok) {
-        setPopupActive(val);
-        notify(val ? 'Pop-up attivato.' : 'Pop-up disattivato.', 'ok');
-      } else {
-        notify('Errore aggiornamento.', 'err');
-      }
-    } finally {
-      setSettingsLoading(false);
-    }
-  };
-
-  const handleSavePopupSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSettingsLoading(true);
-    try {
-      const res = await fetch('/api/settings', {
-        method: 'POST',
-        headers: authHeaders,
-        body: JSON.stringify({
-          action: 'updatePopup',
-          popupActive,
-          popupTitle,
-          popupText,
-        }),
-      });
-      if (res.ok) {
-        notify('Impostazioni pop-up salvate con successo.', 'ok');
-      } else {
-        notify('Errore salvataggio impostazioni.', 'err');
-      }
-    } finally {
-      setSettingsLoading(false);
-    }
-  };
-
-  // LOADING INIZIALE VERIFICA SESSIONE
-  if (initialLoading) {
+  if (loading) {
     return (
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#040408', fontFamily: '"Inter", system-ui, sans-serif', color: 'rgba(255,255,255,0.7)'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.1)',
-            borderTopColor: '#e40329', borderRadius: '50%', animation: 'spin 1s linear infinite',
-            margin: '0 auto 1.25rem'
-          }} />
-          <div style={{ fontSize: '0.95rem', fontWeight: 500, letterSpacing: '0.02em' }}>Verifica sessione in corso...</div>
-          <style>{`
-            @keyframes spin { to { transform: rotate(360deg); } }
-          `}</style>
-        </div>
-      </div>
-    );
-  }
-
-  // LOGIN PAGE
-  if (!authenticated) {
-    return (
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#040408', fontFamily: '"Inter", system-ui, sans-serif', position: 'relative', overflow: 'hidden',
-      }}>
-        {/* Floating background glowing bubbles */}
-        <div style={{
-          position: 'absolute', top: '20%', left: '15%',
-          width: '350px', height: '350px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(228,3,41,0.12) 0%, transparent 70%)',
-          filter: 'blur(40px)', pointerEvents: 'none',
-          animation: 'floatBubble 15s ease-in-out infinite alternate',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '15%', right: '10%',
-          width: '400px', height: '400px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)',
-          filter: 'blur(50px)', pointerEvents: 'none',
-          animation: 'floatBubble 20s ease-in-out infinite alternate-reverse',
-        }} />
-
-        <form onSubmit={handleLogin} style={{
-          position: 'relative', zIndex: 1,
-          background: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          padding: '3.5rem 2.5rem', borderRadius: '32px',
-          backdropFilter: 'blur(30px)',
-          width: '100%', maxWidth: '400px',
-          boxShadow: '0 30px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-          animation: 'cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) both',
-          boxSizing: 'border-box',
-        }}>
-          
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            {/* Pulsing Admin Logo Badge */}
-            <div style={{
-              width: '64px', height: '64px', borderRadius: '20px',
-              background: 'linear-gradient(135deg, #e40329, #ff4444)',
-              margin: '0 auto 1.5rem',
-              boxShadow: '0 12px 32px rgba(228, 3, 41, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              animation: 'logoPulse 3s ease-in-out infinite',
-            }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
-              </svg>
-            </div>
-            
-            <h1 style={{ 
-              color: '#ffffff', 
-              fontWeight: 900, 
-              fontSize: '1.75rem', 
-              margin: 0,
-              letterSpacing: '-0.02em',
-              textShadow: '0 2px 10px rgba(0,0,0,0.5)'
-            }}>
-              Portale Admin
-            </h1>
-            
-            <p style={{
-              color: 'rgba(255,255,255,0.4)',
-              fontSize: '0.85rem',
-              marginTop: '0.5rem',
-              marginBottom: 0
-            }}>
-              Gulliver Associazione Universitaria
-            </p>
-
-            <div style={{
-              display: 'inline-block', marginTop: '1.25rem',
-              padding: '0.25rem 0.75rem', borderRadius: '99px',
-              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
-              fontFamily: 'monospace', fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)',
-              letterSpacing: '0.05em',
-            }}>
-              v {VERSION} · <a href="https://github.com/rappresentantigullivering/gweb2026" target="_blank" rel="noopener noreferrer" style={{ color: '#e40329', textDecoration: 'none', fontWeight: 600 }}>GitHub</a>
-            </div>
-          </div>
-
-          <div style={{ position: 'relative', marginBottom: '1.25rem' }}>
-            <input
-              type="password"
-              placeholder="Password di amministrazione"
-              value={password}
-              onChange={e => { setPassword(e.target.value); setLoginError(''); }}
-              autoFocus
-              className="login-input"
-              style={{
-                width: '100%', padding: '1.1rem 1.25rem',
-                background: loginError ? 'rgba(248,113,113,0.04)' : 'rgba(255,255,255,0.03)',
-                border: `1px solid ${loginError ? 'rgba(248,113,113,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: '16px', color: '#ffffff', fontSize: '0.95rem',
-                outline: 'none', boxSizing: 'border-box',
-                transition: 'all 0.3s ease',
-              }}
-            />
-          </div>
-
-          {loginError && (
-            <div style={{ 
-              color: '#f87171', 
-              fontSize: '0.85rem', 
-              marginBottom: '1.25rem', 
-              textAlign: 'center',
-              background: 'rgba(248,113,113,0.08)',
-              padding: '0.6rem',
-              borderRadius: '10px',
-              border: '1px solid rgba(248,113,113,0.15)',
-              animation: 'shake 0.4s ease'
-            }}>
-              ⚠️ {loginError}
-            </div>
-          )}
-
-          <button 
-            type="submit" 
-            disabled={loginLoading} 
-            className="login-btn"
-            style={{
-              width: '100%', padding: '1.1rem',
-              background: loginLoading ? 'rgba(228,3,41,0.4)' : 'linear-gradient(135deg, #e40329, #ff4444)',
-              border: 'none', borderRadius: '16px', color: 'white',
-              fontWeight: 800, fontSize: '1rem', cursor: loginLoading ? 'not-allowed' : 'pointer',
-              boxShadow: '0 8px 30px rgba(228, 3, 41, 0.3)',
-              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-          >
-            {loginLoading ? 'Verifica in corso...' : 'Accedi al Portale'}
-          </button>
-        </form>
-
-        <style>{`
-          @keyframes cardEnter {
-            from { opacity: 0; transform: scale(0.96) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+      <div className="admin-loading-container">
+        <span className="spinner"></span>
+        <p>Inizializzazione gestione utenti...</p>
+        <style jsx>{`
+          .admin-loading-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #080810;
+            color: #ffffff;
+            gap: 1rem;
           }
-          @keyframes logoPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 12px 32px rgba(228, 3, 41, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 16px 40px rgba(228, 3, 41, 0.6); }
+          .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #e40329;
+            animation: spin 0.8s linear infinite;
           }
-          @keyframes floatBubble {
-            from { transform: translateY(0px) rotate(0deg); }
-            to { transform: translateY(-30px) rotate(15deg); }
-          }
-          @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-4px); }
-            40%, 80% { transform: translateX(4px); }
-          }
-          .login-input:focus {
-            background: rgba(255,255,255,0.06) !important;
-            border-color: rgba(228, 3, 41, 0.6) !important;
-            box-shadow: 0 0 20px rgba(228, 3, 41, 0.15) !important;
-          }
-          .login-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(228, 3, 41, 0.5);
-            background: linear-gradient(135deg, #ff0f3a, #ff5c5c);
-          }
-          .login-btn:active:not(:disabled) {
-            transform: translateY(0);
-          }
+          @keyframes spin { to { transform: rotate(360deg); } }
         `}</style>
       </div>
     );
   }
 
-  // DASHBOARD
   return (
-    <div style={{
-      minHeight: '100vh', background: COLORS.bg,
-      fontFamily: '"Inter", system-ui, sans-serif', color: COLORS.textPrimary,
-    }}>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <div className="admin-container">
+      {/* Background decoration */}
+      <div className="bg-glow"></div>
 
-      {/* Toast */}
       {notification && (
-        <div style={{
-          position: 'fixed', top: '1.5rem', right: '1.5rem', zIndex: 999,
-          padding: '0.9rem 1.5rem', borderRadius: '12px',
-          background: notification.type === 'ok' ? COLORS.greenBg : COLORS.redBg,
-          border: `1px solid ${notification.type === 'ok' ? COLORS.greenBorder : COLORS.redBorder}`,
-          color: notification.type === 'ok' ? COLORS.green : COLORS.red,
-          fontWeight: 600, fontSize: '0.9rem',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-          backdropFilter: 'blur(20px)',
-          animation: 'fadeIn 0.3s ease',
-        }}>
+        <div className={`toast toast-${notification.type}`}>
           {notification.msg}
         </div>
       )}
 
       {/* Header */}
-      <header style={{
-        padding: '1.25rem 2rem',
-        borderBottom: `1px solid ${COLORS.border}`,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        background: COLORS.bg, position: 'sticky', top: 0, zIndex: 100,
-        backdropFilter: 'blur(10px)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {view !== 'landing' && (
-            <button onClick={() => setView('landing')} style={{
-              background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-              color: COLORS.textPrimary, padding: '0.4rem 0.8rem',
-              borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem',
-              display: 'flex', alignItems: 'center', gap: '0.4rem'
-            }}>
-              ← Indietro
-            </button>
-          )}
-          <div style={{
-            width: '32px', height: '32px', borderRadius: '9px',
-            background: `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
-            boxShadow: `0 4px 12px ${COLORS.accentGlow}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-              <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
-            </svg>
-          </div>
+      <header className="admin-header">
+        <div className="header-brand">
+          <button onClick={handleGoHome} className="btn-back">
+            ← Dashboard
+          </button>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: COLORS.textPrimary }}>Gulliver Admin</div>
-            <div style={{ fontSize: '0.72rem', color: COLORS.textMuted, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <span>{view === 'landing' ? 'Area Riservata' : view === 'form' ? 'Gestione Form' : view === 'popup' ? 'Gestione Pop-up' : 'Archivio Appunti'}</span>
-              <span>·</span>
-              <a href="https://github.com/rappresentantigullivering/gweb2026" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.accent, textDecoration: 'none' }}>v {VERSION}</a>
-            </div>
+            <h1>Gestione Utenti e Ruoli</h1>
+            <p className="admin-subtitle">Amministratore attivo: {currentUser}</p>
           </div>
         </div>
-
-        <button onClick={handleLogout} style={{
-          background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-          color: COLORS.textSecondary, padding: '0.4rem 1rem',
-          borderRadius: '99px', cursor: 'pointer', fontSize: '0.85rem',
-        }}>
-          Esci
-        </button>
+        
+        <div className="header-actions">
+          <span className="subdomain-badge">admin.gulliverancona.it</span>
+          <button onClick={handleLogout} className="btn-logout">Esci</button>
+        </div>
       </header>
 
-      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
-        {view === 'landing' ? (
-          <div style={{ padding: '3rem 0', animation: 'fadeIn 0.6s ease-out' }}>
-            <h1 style={{
-              fontSize: '3.5rem',
-              fontWeight: 900,
-              marginBottom: '3rem',
-              textAlign: 'center',
-              color: COLORS.textPrimary,
-              letterSpacing: '-0.02em',
-              textShadow: `0 0 40px ${COLORS.accentGlow}`,
-              fontFamily: "'Inter', sans-serif"
-            }}>
-              Che te serve?
-            </h1>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
-              {[
-                {
-                  id: 'form',
-                  title: 'Ho bisogno di creare un form',
-                  desc: 'Crea e gestisci i link brevi per i moduli Tally del Gulliver.',
-                  color: 'rgba(228, 3, 41, 0.12)',
-                  borderColor: 'rgba(228, 3, 41, 0.3)'
-                },
-                {
-                  id: 'appunti',
-                  title: 'Ho bisogno di consultare il drive appunti',
-                  desc: 'Visualizza e cerca tra gli appunti digitali e cartacei registrati.',
-                  color: 'rgba(16, 185, 129, 0.12)',
-                  borderColor: 'rgba(16, 185, 129, 0.3)'
-                },
-                {
-                  id: 'popup',
-                  title: 'Ho bisogno di gestire il pop-up voto',
-                  desc: 'Attiva o disattiva il promemoria "Hai votato?" sul sito.',
-                  color: 'rgba(139, 92, 246, 0.12)',
-                  borderColor: 'rgba(139, 92, 246, 0.3)'
-                }
-              ].map(option => (
-                <button
-                  key={option.id}
-                  onClick={() => setView(option.id as any)}
-                  style={{
-                    background: option.color,
-                    border: `1px solid ${option.borderColor}`,
-                    borderRadius: '24px', padding: '3rem 2.5rem', textAlign: 'left',
-                    cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                    display: 'flex', flexDirection: 'column', gap: '0.75rem',
-                    color: 'inherit',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-6px)';
-                    e.currentTarget.style.boxShadow = `0 20px 40px rgba(0,0,0,0.4), 0 0 20px ${option.borderColor}`;
-                    e.currentTarget.style.background = option.color.replace('0.12', '0.18');
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.background = option.color;
-                  }}
-                >
-                  {/* Effetto Grana */}
-                  <div style={{
-                    position: 'absolute', inset: 0, opacity: 0.08, pointerEvents: 'none',
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                  }} />
-
-                  <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: COLORS.textPrimary }}>{option.title}</div>
-                    <div style={{ fontSize: '0.9rem', color: COLORS.textSecondary, lineHeight: 1.6, marginTop: '0.5rem' }}>{option.desc}</div>
-                  </div>
-
-                  {/* Effetto decorativo angolare */}
-                  <div style={{
-                    position: 'absolute', top: '-20px', right: '-20px',
-                    width: '60px', height: '60px', borderRadius: '50%',
-                    background: option.borderColor, opacity: 0.2, filter: 'blur(20px)'
-                  }} />
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : view === 'appunti' ? (
-          <AppuntiTab />
-        ) : view === 'popup' ? (
-          <div style={{ maxWidth: '600px', margin: '0 auto', animation: 'fadeIn 0.5s ease-out' }}>
-            <div style={{
-              background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-              borderRadius: '24px', padding: '3rem 2rem', textAlign: 'center'
-            }}>
-              <div style={{ 
-                width: '64px', height: '64px', borderRadius: '20px', 
-                background: 'rgba(139, 92, 246, 0.2)', color: '#8b5cf6',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 1.5rem', fontSize: '2rem'
-              }}>
-                🔔
-              </div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem' }}>Gestione Pop-up</h2>
-              <p style={{ color: COLORS.textSecondary, marginBottom: '2.5rem', lineHeight: 1.6 }}>
-                Controlla la visibilità del pop-up "Hai votato?" sulla homepage del sito principale.
-              </p>
-
-              <div style={{
-                background: 'rgba(255,255,255,0.03)', border: `1px solid ${COLORS.border}`,
-                borderRadius: '16px', padding: '1.5rem',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-              }}>
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontWeight: 600, fontSize: '1rem' }}>Stato del Pop-up</div>
-                  <div style={{ fontSize: '0.85rem', color: popupActive ? COLORS.green : COLORS.red, marginTop: '0.2rem' }}>
-                    {popupActive ? '● Attivo e visibile' : '○ Disattivato'}
-                  </div>
-                </div>
-
-                <button 
-                  onClick={() => handleTogglePopup(!popupActive)}
-                  disabled={settingsLoading}
-                  style={{
-                    width: '60px', height: '32px', borderRadius: '99px',
-                    background: popupActive ? COLORS.green : 'rgba(255,255,255,0.1)',
-                    border: 'none', position: 'relative', cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  <div style={{
-                    width: '24px', height: '24px', borderRadius: '50%',
-                    background: 'white', position: 'absolute', top: '4px',
-                    left: popupActive ? '32px' : '4px',
-                    transition: 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
-                  }} />
-                </button>
-              </div>
-
-              <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-                <button 
-                  onClick={() => setShowPopupEdit(!showPopupEdit)}
-                  style={{
-                    background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-                    color: COLORS.textPrimary, padding: '0.8rem 1.5rem', borderRadius: '12px',
-                    cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-                    transition: 'all 0.2s', width: '100%', maxWidth: '300px'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-                >
-                  ✏️ Voglio modificare il pop-up
-                </button>
-
-                {showPopupEdit && (
-                  <form onSubmit={handleSavePopupSettings} style={{
-                    width: '100%', textAlign: 'left', marginTop: '1.5rem',
-                    background: 'rgba(255,255,255,0.02)', border: `1px solid ${COLORS.border}`,
-                    borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem'
-                  }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.78rem', color: COLORS.textMuted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        Titolo Pop-up
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        value={popupTitle}
-                        onChange={e => setPopupTitle(e.target.value)}
-                        placeholder="es. Hai votato?"
-                        style={{
-                          width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
-                          background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
-                          borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.78rem', color: COLORS.textMuted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        Testo Pop-up
-                      </label>
-                      <textarea
-                        required
-                        rows={3}
-                        value={popupText}
-                        onChange={e => setPopupText(e.target.value)}
-                        placeholder="es. Hai ancora tempo, le votazioni chiudono tra:"
-                        style={{
-                          width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
-                          background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
-                          borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
-                          resize: 'vertical', fontFamily: 'inherit'
-                        }}
-                      />
-                    </div>
-
-                    <div style={{
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      background: 'rgba(255,255,255,0.02)', padding: '0.75rem 1rem', borderRadius: '10px',
-                      border: `1px solid ${COLORS.border}`
-                    }}>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>Mostra il Pop-up</div>
-                        <div style={{ fontSize: '0.75rem', color: COLORS.textMuted }}>Attiva la visibilità sul sito</div>
+      {/* Main Content Layout */}
+      <main className="admin-main animate-fade-up">
+        <div className="admin-grid">
+          {/* User List Panel */}
+          <section className="admin-panel user-list-section">
+            <h2>Utenti Registrati</h2>
+            {users.length > 0 ? (
+              <div className="users-list">
+                {users.map((user) => (
+                  <div key={user.username} className={`user-item ${user.username === currentUser ? 'self-user' : ''}`}>
+                    <div className="user-info">
+                      <div className="username-row">
+                        <h3>{user.username}</h3>
+                        {user.username === currentUser && <span className="self-tag">Tu</span>}
                       </div>
-                      <button 
-                        type="button"
-                        onClick={() => setPopupActive(!popupActive)}
-                        style={{
-                          width: '50px', height: '26px', borderRadius: '99px',
-                          background: popupActive ? COLORS.green : 'rgba(255,255,255,0.1)',
-                          border: 'none', position: 'relative', cursor: 'pointer',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        <div style={{
-                          width: '20px', height: '20px', borderRadius: '50%',
-                          background: 'white', position: 'absolute', top: '3px',
-                          left: popupActive ? '27px' : '3px',
-                          transition: 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)',
-                          boxShadow: '0 2px 5px rgba(0,0,0,0.3)'
-                        }} />
-                      </button>
+                      <div className="roles-row">
+                        {user.roles.map((r) => {
+                          const config = getRoleConfig(r);
+                          return (
+                            <span 
+                              key={r} 
+                              className="role-badge"
+                              style={{ color: config.color, background: config.bg, borderColor: config.border }}
+                            >
+                              {config.label}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
 
-                    <button 
-                      type="submit" 
-                      disabled={settingsLoading}
-                      style={{
-                        padding: '0.75rem',
-                        background: settingsLoading ? 'rgba(228,3,41,0.3)' : `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
-                        border: 'none', borderRadius: '10px', color: 'white',
-                        fontWeight: 700, fontSize: '0.9rem', cursor: settingsLoading ? 'not-allowed' : 'pointer',
-                        boxShadow: settingsLoading ? 'none' : `0 4px 16px ${COLORS.accentGlow}`,
-                        transition: 'all 0.2s', width: '100%', marginTop: '0.5rem'
-                      }}
-                    >
-                      {settingsLoading ? 'Salvataggio...' : 'Salva Impostazioni'}
-                    </button>
-                  </form>
-                )}
-
-                <button 
-                  onClick={() => {
-                    setShowPreview(false);
-                    setTimeout(() => setShowPreview(true), 10);
-                  }}
-                  style={{
-                    background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-                    color: COLORS.textPrimary, padding: '0.8rem 1.5rem', borderRadius: '12px',
-                    cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-                    transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem',
-                    width: '100%', maxWidth: '300px', justifyContent: 'center'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-                >
-                  👁️ Anteprima Pop-up
-                </button>
-              </div>
-            </div>
-
-            {showPreview && (
-              <div key={Date.now()}>
-                <VotingModal forceShow={true} previewTitle={popupTitle} previewText={popupText} />
-                <button 
-                  onClick={() => setShowPreview(false)}
-                  style={{
-                    position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
-                    zIndex: 10000, background: '#fff', color: '#000',
-                    padding: '0.6rem 1.2rem', borderRadius: '99px', fontWeight: 700,
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)', cursor: 'pointer', border: 'none'
-                  }}
-                >
-                  Chiudi Anteprima
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (<>
-
-          {/* Stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
-            {[
-              { label: 'Form Totali', value: Object.keys(forms).length },
-              { label: 'Attivi', value: Object.values(forms).filter(f => f.status === 'active').length },
-              { label: 'Sospesi', value: Object.values(forms).filter(f => f.status === 'suspended').length },
-            ].map(stat => (
-              <div key={stat.label} style={{
-                background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-                borderRadius: '16px', padding: '1.5rem',
-              }}>
-                <div style={{ fontSize: '2rem', fontWeight: 800, color: COLORS.textPrimary }}>{stat.value}</div>
-                <div style={{ fontSize: '0.85rem', color: COLORS.textSecondary, marginTop: '0.25rem' }}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Nuovo Form */}
-          <div style={{
-            background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-            borderRadius: '20px', padding: '2rem', marginBottom: '2rem',
-          }}>
-            <h2 style={{ margin: '0 0 1.5rem', fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Nuovo Form</h2>
-            <form onSubmit={handleCreate}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
-                {[
-                  { label: 'URL Slug', placeholder: 'es. volontari', value: newSlug, set: setNewSlug },
-                  { label: 'ID Tally', placeholder: 'es. wA1B2c', value: newTallyId, set: setNewTallyId },
-                  { label: 'Titolo (interno)', placeholder: 'es. Diventa Volontario', value: newTitle, set: setNewTitle },
-                ].map(field => (
-                  <div key={field.label}>
-                    <label style={{ display: 'block', fontSize: '0.78rem', color: COLORS.textMuted, marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      {field.label}
-                    </label>
-                    <input
-                      required
-                      value={field.value}
-                      onChange={e => field.set(e.target.value)}
-                      placeholder={field.placeholder}
-                      style={{
-                        width: '100%', padding: '0.75rem 1rem', boxSizing: 'border-box',
-                        background: 'rgba(255,255,255,0.05)', border: `1px solid ${COLORS.border}`,
-                        borderRadius: '10px', color: COLORS.textPrimary, fontSize: '0.9rem', outline: 'none',
-                      }}
-                    />
+                    <div className="user-actions">
+                      <button 
+                        onClick={() => {
+                          setEditingUser(user);
+                          setEditRoles(user.roles);
+                        }}
+                        className="btn-user-action edit"
+                      >
+                        Modifica
+                      </button>
+                      
+                      {user.username !== currentUser && (
+                        <button 
+                          onClick={() => handleDeleteUser(user.username)}
+                          className="btn-user-action delete"
+                        >
+                          Elimina
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
-              <div style={{
-                background: 'rgba(255,255,255,0.03)', border: `1px solid ${COLORS.border}`,
-                borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '1.25rem',
-                fontSize: '0.82rem', color: COLORS.textSecondary, fontFamily: 'monospace',
-              }}>
-                forms.gulliverancona.it/<span style={{ color: COLORS.textPrimary }}>{newSlug || 'slug'}</span>
+            ) : (
+              <div className="empty-users">Nessun utente configurato.</div>
+            )}
+          </section>
+
+          {/* Add User Panel */}
+          <section className="admin-panel add-user-section">
+            <h2>Registra Nuovo Utente</h2>
+            <form onSubmit={handleCreateUser} className="create-user-form">
+              <div className="form-group">
+                <label htmlFor="new-username">Username</label>
+                <input
+                  id="new-username"
+                  type="text"
+                  required
+                  placeholder="Es. mario.rossi"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                />
               </div>
-              <button disabled={loading} type="submit" style={{
-                padding: '0.75rem 2rem',
-                background: loading ? 'rgba(228,3,41,0.3)' : `linear-gradient(135deg, ${COLORS.accent}, #ff4444)`,
-                border: 'none', borderRadius: '10px', color: 'white',
-                fontWeight: 700, fontSize: '0.9rem', cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: loading ? 'none' : `0 4px 16px ${COLORS.accentGlow}`,
-                transition: 'all 0.2s',
-              }}>
-                {loading ? 'Salvataggio...' : 'Crea Link'}
+
+              <div className="form-group">
+                <label htmlFor="new-password">Password Temporanea</label>
+                <input
+                  id="new-password"
+                  type="password"
+                  required
+                  placeholder="Password temporanea"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Seleziona Ruoli</label>
+                <div className="roles-selectors-grid">
+                  {AVAILABLE_ROLES.map((role) => (
+                    <button
+                      key={role.id}
+                      type="button"
+                      onClick={() => toggleNewRole(role.id)}
+                      className={`role-selector-card ${newRoles.includes(role.id) ? 'selected' : ''}`}
+                      style={{ '--role-color-glow': role.color } as React.CSSProperties}
+                    >
+                      <div className="selector-title-row">
+                        <span className="selector-checkbox"></span>
+                        <span className="selector-label">{role.label}</span>
+                      </div>
+                      <span className="selector-desc">{role.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button type="submit" disabled={creating} className="btn-create-submit">
+                {creating ? 'Registrazione in corso...' : 'Registra Utente'}
               </button>
             </form>
-          </div>
-
-          {/* Tabella Form */}
-          <div style={{
-            background: COLORS.surface, border: `1px solid ${COLORS.border}`,
-            borderRadius: '20px', overflow: 'hidden',
-          }}>
-            <div style={{ padding: '1.5rem 2rem', borderBottom: `1px solid ${COLORS.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: COLORS.textPrimary }}>Form</h2>
-              <button onClick={fetchForms} style={{
-                background: 'rgba(255,255,255,0.06)', border: `1px solid ${COLORS.border}`,
-                color: COLORS.textSecondary, padding: '0.4rem 0.9rem',
-                borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem',
-              }}>
-                {fetchLoading ? 'Caricamento...' : 'Aggiorna'}
-              </button>
-            </div>
-
-            {Object.keys(forms).length === 0 ? (
-              <div style={{ padding: '4rem', textAlign: 'center', color: COLORS.textMuted }}>
-                <p style={{ margin: 0 }}>Nessun form creato. Aggiungine uno sopra.</p>
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                      {['Link Pubblico', 'Titolo', 'ID Tally', 'Stato', 'Azioni'].map(h => (
-                        <th key={h} style={{
-                          padding: '0.9rem 1.25rem', textAlign: 'left',
-                          fontSize: '0.72rem', color: COLORS.textMuted,
-                          textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600,
-                        }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(forms).map(([slug, form]) => (
-                      <tr key={slug} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                        <td style={{ padding: '1rem 1.25rem' }}>
-                          <a href={`https://forms.gulliverancona.it/${slug}`} target="_blank" rel="noopener noreferrer" style={{
-                            color: COLORS.accent, fontWeight: 600, textDecoration: 'none',
-                            fontSize: '0.9rem', fontFamily: 'monospace',
-                          }}>/{slug}</a>
-                        </td>
-                        <td style={{ padding: '1rem 1.25rem', color: COLORS.textPrimary, fontSize: '0.9rem' }}>{form.title}</td>
-                        <td style={{ padding: '1rem 1.25rem' }}>
-                          <span style={{
-                            fontFamily: 'monospace', fontSize: '0.82rem',
-                            color: COLORS.textSecondary, background: 'rgba(255,255,255,0.06)',
-                            padding: '0.25rem 0.6rem', borderRadius: '6px',
-                          }}>{form.tallyId}</span>
-                        </td>
-                        <td style={{ padding: '1rem 1.25rem' }}>
-                          <select
-                            value={form.status}
-                            onChange={(e) => handleUpdateStatus(slug, e.target.value as FormStatus)}
-                            style={{
-                              padding: '0.4rem 0.75rem', borderRadius: '8px',
-                              border: `1px solid ${form.status === 'active' ? COLORS.greenBorder : COLORS.redBorder}`,
-                              background: form.status === 'active' ? COLORS.greenBg : COLORS.redBg,
-                              color: form.status === 'active' ? COLORS.green : COLORS.red,
-                              fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer', outline: 'none',
-                            }}
-                          >
-                            <option value="active">Attivo</option>
-                            <option value="suspended">Sospeso</option>
-                          </select>
-                        </td>
-                        <td style={{ padding: '1rem 1.25rem' }}>
-                          <button onClick={() => handleDelete(slug)} style={{
-                            background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}`,
-                            color: COLORS.red, padding: '0.4rem 0.9rem',
-                            borderRadius: '8px', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600,
-                          }}>
-                            Elimina
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </>)}
+          </section>
+        </div>
       </main>
 
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-        input::placeholder { color: rgba(255,255,255,0.25); }
-        select option { background: #1a1a2e; color: white; }
+      {/* Edit User Modal */}
+      {editingUser && (
+        <div className="modal-overlay">
+          <div className="modal-card animate-fade-up">
+            <h2>Modifica Utente: {editingUser.username}</h2>
+            <div className="divider-red"></div>
+
+            <form onSubmit={handleUpdateUser} className="modal-form">
+              <div className="form-group">
+                <label htmlFor="edit-password">Nuova Password (lascia vuoto per non cambiare)</label>
+                <input
+                  id="edit-password"
+                  type="password"
+                  placeholder="Cambia password"
+                  value={editPassword}
+                  onChange={(e) => setEditPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Configura Ruoli</label>
+                <div className="roles-selectors-grid">
+                  {AVAILABLE_ROLES.map((role) => (
+                    <button
+                      key={role.id}
+                      type="button"
+                      onClick={() => toggleEditRole(role.id)}
+                      className={`role-selector-card ${editRoles.includes(role.id) ? 'selected' : ''}`}
+                      style={{ '--role-color-glow': role.color } as React.CSSProperties}
+                    >
+                      <div className="selector-title-row">
+                        <span className="selector-checkbox"></span>
+                        <span className="selector-label">{role.label}</span>
+                      </div>
+                      <span className="selector-desc">{role.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setEditingUser(null);
+                    setEditPassword('');
+                  }}
+                  className="btn-modal cancel"
+                >
+                  Annulla
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={updating}
+                  className="btn-modal save"
+                >
+                  {updating ? 'Salvataggio...' : 'Salva Modifiche'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <style jsx global>{`
+        .admin-container {
+          min-height: 100vh;
+          background: #080810;
+          color: #ffffff;
+          font-family: 'Inter', sans-serif;
+          position: relative;
+          overflow: hidden;
+          padding: 2.5rem 1.5rem;
+        }
+
+        .bg-glow {
+          position: absolute;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, rgba(228, 3, 41, 0.05) 0%, transparent 70%);
+          filter: blur(100px);
+          top: -10%;
+          left: -10%;
+          pointer-events: none;
+        }
+
+        .toast {
+          position: fixed;
+          top: 1.5rem;
+          right: 1.5rem;
+          z-index: 9999;
+          padding: 0.9rem 1.5rem;
+          border-radius: var(--radius-md);
+          font-weight: 600;
+          font-size: 0.9rem;
+          box-shadow: var(--shadow-lg);
+          backdrop-filter: blur(20px);
+          animation: fadeIn 0.3s ease;
+        }
+
+        .toast-ok {
+          background: rgba(74,222,128,0.12);
+          border: 1px solid rgba(74,222,128,0.3);
+          color: #4ade80;
+        }
+
+        .toast-err {
+          background: rgba(248,113,113,0.12);
+          border: 1px solid rgba(248,113,113,0.3);
+          color: #f87171;
+        }
+
+        .admin-header {
+          max-width: var(--max-width);
+          margin: 0 auto 3rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid rgba(255,255,255,0.12);
+          padding-bottom: 1.5rem;
+        }
+
+        .header-brand {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+        }
+
+        .btn-back {
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.12);
+          color: #ffffff;
+          padding: 0.5rem 1rem;
+          border-radius: var(--radius-md);
+          font-weight: 500;
+          font-size: 0.85rem;
+          transition: all var(--transition-base);
+        }
+
+        .btn-back:hover {
+          background: rgba(255,255,255,0.1);
+        }
+
+        .admin-header h1 {
+          font-family: var(--font-heading);
+          font-size: 1.6rem;
+          font-weight: 800;
+          margin: 0;
+        }
+
+        .admin-subtitle {
+          font-size: 0.85rem;
+          color: rgba(255,255,255,0.45);
+          margin-top: 0.15rem;
+        }
+
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .subdomain-badge {
+          background: rgba(228, 3, 41, 0.08);
+          border: 1px solid rgba(228, 3, 41, 0.2);
+          color: #e40329;
+          font-family: var(--font-heading);
+          font-weight: 700;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding: 0.4rem 1rem;
+          border-radius: var(--radius-full);
+        }
+
+        .btn-logout {
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.12);
+          color: rgba(255,255,255,0.7);
+          padding: 0.4rem 1rem;
+          border-radius: var(--radius-full);
+          font-size: 0.85rem;
+          cursor: pointer;
+        }
+
+        .btn-logout:hover {
+          background: rgba(228, 3, 41, 0.1);
+          color: #ff4d6d;
+        }
+
+        .admin-main {
+          max-width: var(--max-width);
+          margin: 0 auto;
+        }
+
+        .admin-grid {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 2rem;
+        }
+
+        .admin-panel {
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: var(--radius-lg);
+          padding: 2.5rem;
+        }
+
+        .admin-panel h2 {
+          font-family: var(--font-heading);
+          font-size: 1.35rem;
+          font-weight: 700;
+          margin-bottom: 2rem;
+          border-left: 3px solid #e40329;
+          padding-left: 0.75rem;
+        }
+
+        .users-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .user-item {
+          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: var(--radius-md);
+          padding: 1.25rem 1.5rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          transition: all 0.2s ease;
+        }
+
+        .user-item.self-user {
+          border-color: rgba(228, 3, 41, 0.25);
+          background: rgba(228, 3, 41, 0.02);
+        }
+
+        .user-item:hover {
+          background: rgba(255,255,255,0.04);
+        }
+
+        .user-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.65rem;
+          flex: 1;
+        }
+
+        .username-row {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .username-row h3 {
+          font-size: 1.15rem;
+          font-weight: 700;
+          margin: 0;
+        }
+
+        .self-tag {
+          font-size: 0.65rem;
+          font-weight: 700;
+          background: rgba(228, 3, 41, 0.15);
+          color: #ff4d6d;
+          padding: 0.15rem 0.5rem;
+          border-radius: var(--radius-full);
+          text-transform: uppercase;
+        }
+
+        .roles-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+
+        .role-badge {
+          font-size: 0.72rem;
+          font-weight: 700;
+          padding: 0.2rem 0.55rem;
+          border-radius: var(--radius-full);
+          border: 1px solid transparent;
+        }
+
+        .user-actions {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .btn-user-action {
+          padding: 0.45rem 0.85rem;
+          border-radius: var(--radius-md);
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          border: 1px solid transparent;
+        }
+
+        .btn-user-action.edit {
+          background: rgba(255,255,255,0.05);
+          border-color: rgba(255,255,255,0.12);
+          color: rgba(255,255,255,0.85);
+        }
+
+        .btn-user-action.edit:hover {
+          background: rgba(255,255,255,0.12);
+        }
+
+        .btn-user-action.delete {
+          background: rgba(228, 3, 41, 0.05);
+          border-color: rgba(228, 3, 41, 0.15);
+          color: #f87171;
+        }
+
+        .btn-user-action.delete:hover {
+          background: rgba(228, 3, 41, 0.15);
+        }
+
+        .empty-users {
+          text-align: center;
+          padding: 2rem;
+          font-style: italic;
+          color: rgba(255,255,255,0.45);
+        }
+
+        .create-user-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .form-group label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: rgba(255,255,255,0.7);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .form-group input {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: var(--radius-md);
+          padding: 0.85rem 1.25rem;
+          color: #ffffff;
+          font-size: 0.95rem;
+          outline: none;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+          border-color: #e40329;
+          background: rgba(255,255,255,0.08);
+        }
+
+        .roles-selectors-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          max-height: 280px;
+          overflow-y: auto;
+          padding-right: 0.5rem;
+        }
+
+        /* Custom Scrollbar for Roles Grid */
+        .roles-selectors-grid::-webkit-scrollbar {
+          width: 6px;
+        }
+        .roles-selectors-grid::-webkit-scrollbar-track {
+          background: rgba(255,255,255,0.02);
+        }
+        .roles-selectors-grid::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.15);
+          border-radius: 3px;
+        }
+
+        .role-selector-card {
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: var(--radius-md);
+          padding: 0.75rem 1rem;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          width: 100%;
+        }
+
+        .role-selector-card:hover {
+          background: rgba(255, 255, 255, 0.05);
+          border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .role-selector-card.selected {
+          border-color: var(--role-color-glow);
+          background: rgba(255, 255, 255, 0.03);
+          box-shadow: inset 0 0 0 1px var(--role-color-glow);
+        }
+
+        .selector-title-row {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 0.2rem;
+        }
+
+        .selector-checkbox {
+          width: 14px;
+          height: 14px;
+          border-radius: 3px;
+          border: 1.5px solid rgba(255, 255, 255, 0.3);
+          display: inline-block;
+          position: relative;
+          transition: all 0.2s ease;
+        }
+
+        .role-selector-card.selected .selector-checkbox {
+          border-color: var(--role-color-glow);
+          background: var(--role-color-glow);
+        }
+
+        .role-selector-card.selected .selector-checkbox::after {
+          content: '✓';
+          color: white;
+          font-size: 10px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-weight: 700;
+        }
+
+        .selector-label {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #ffffff;
+        }
+
+        .selector-desc {
+          font-size: 0.78rem;
+          color: rgba(255, 255, 255, 0.45);
+          padding-left: 1.6rem;
+        }
+
+        .btn-create-submit {
+          background: linear-gradient(135deg, #e40329, #ff4444);
+          color: white;
+          border: none;
+          border-radius: var(--radius-md);
+          padding: 0.85rem;
+          font-family: var(--font-heading);
+          font-weight: 700;
+          font-size: 0.95rem;
+          cursor: pointer;
+          margin-top: 0.5rem;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 12px rgba(228, 3, 41, 0.25);
+        }
+
+        .btn-create-submit:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(228, 3, 41, 0.4);
+        }
+
+        /* Modal styling */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.75);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.5rem;
+        }
+
+        .modal-card {
+          background: #121217;
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: var(--radius-lg);
+          padding: 2.5rem;
+          width: 100%;
+          max-width: 500px;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+          position: relative;
+        }
+
+        .modal-card h2 {
+          font-family: var(--font-heading);
+          font-size: 1.5rem;
+          font-weight: 800;
+          margin: 0;
+        }
+
+        .divider-red {
+          width: 50px;
+          height: 3px;
+          background: #e40329;
+          border-radius: 99px;
+          margin: 0.75rem 0 1.5rem;
+        }
+
+        .modal-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .modal-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.75rem;
+          margin-top: 1.5rem;
+        }
+
+        .btn-modal {
+          padding: 0.75rem 1.5rem;
+          border-radius: var(--radius-md);
+          font-weight: 700;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .btn-modal.cancel {
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
+          color: rgba(255,255,255,0.7);
+        }
+
+        .btn-modal.cancel:hover {
+          background: rgba(255,255,255,0.1);
+        }
+
+        .btn-modal.save {
+          background: linear-gradient(135deg, #e40329, #ff4444);
+          color: white;
+          border: none;
+          box-shadow: 0 4px 12px rgba(228, 3, 41, 0.2);
+        }
+
+        .btn-modal.save:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(228, 3, 41, 0.35);
+        }
+
+        @media (max-width: 900px) {
+          .admin-grid {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.25rem;
+          }
+          .header-actions {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .admin-panel {
+            padding: 1.5rem;
+          }
+        }
       `}</style>
     </div>
   );

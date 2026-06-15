@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { cookies } from 'next/headers';
-import { verifySession } from '@/lib/auth';
+import { verifyAndDecodeSession } from '@/lib/auth';
 
 const redis = Redis.fromEnv();
 const SETTINGS_KEY = 'gulliver:settings';
@@ -23,8 +23,15 @@ export async function POST(req: Request) {
     const adminPassword = process.env.ADMIN_PASSWORD || 'gulliver2026';
     let authorized = false;
 
-    if (token && await verifySession(token, adminPassword)) {
-      authorized = true;
+    if (token) {
+      const payload = await verifyAndDecodeSession(token, adminPassword);
+      if (payload && (
+        payload.roles.includes('popup') ||
+        payload.roles.includes('direttivo') ||
+        payload.roles.includes('admin')
+      )) {
+        authorized = true;
+      }
     } else {
       const authHeader = req.headers.get('Authorization');
       const password = authHeader?.replace('Bearer ', '');
