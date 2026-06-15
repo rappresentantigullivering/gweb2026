@@ -286,6 +286,19 @@ export default function AppuntiPage() {
           padding: 2.5rem 1.5rem;
         }
 
+        .appunti-container h1,
+        .appunti-container h2,
+        .appunti-container h3,
+        .appunti-container h4,
+        .appunti-container h5,
+        .appunti-container h6 {
+          color: ${COLORS.textPrimary} !important;
+        }
+
+        .appunti-container p {
+          color: ${COLORS.textSecondary} !important;
+        }
+
         .bg-glow {
           position: absolute;
           width: 600px;

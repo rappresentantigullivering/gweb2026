@@ -57,6 +57,19 @@ export default function UnauthorizedPage() {
           text-align: center;
         }
 
+        .unauth-container h1,
+        .unauth-container h2,
+        .unauth-container h3,
+        .unauth-container h4,
+        .unauth-container h5,
+        .unauth-container h6 {
+          color: var(--white) !important;
+        }
+
+        .unauth-container p {
+          color: var(--gray-400) !important;
+        }
+
         .bg-glow-red {
           position: absolute;
           width: 500px;

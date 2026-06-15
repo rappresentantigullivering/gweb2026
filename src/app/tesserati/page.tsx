@@ -272,6 +272,19 @@ export default function CockpitPage() {
           overflow: hidden;
         }
 
+        .cockpit-container h1,
+        .cockpit-container h2,
+        .cockpit-container h3,
+        .cockpit-container h4,
+        .cockpit-container h5,
+        .cockpit-container h6 {
+          color: var(--white) !important;
+        }
+
+        .cockpit-container p {
+          color: var(--gray-400) !important;
+        }
+
         .bg-glow {
           position: absolute;
           width: 600px;

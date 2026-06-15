@@ -61,6 +61,19 @@ export default function DirettivoPage() {
           font-family: 'Inter', sans-serif;
         }
 
+        .wip-container h1,
+        .wip-container h2,
+        .wip-container h3,
+        .wip-container h4,
+        .wip-container h5,
+        .wip-container h6 {
+          color: var(--white) !important;
+        }
+
+        .wip-container p {
+          color: var(--gray-400) !important;
+        }
+
         .bg-glow-pink {
           position: absolute;
           width: 500px;

@@ -146,6 +146,19 @@ export default function LoginPage() {
           color: var(--white);
         }
 
+        .login-container h1,
+        .login-container h2,
+        .login-container h3,
+        .login-container h4,
+        .login-container h5,
+        .login-container h6 {
+          color: var(--white) !important;
+        }
+
+        .login-container p {
+          color: var(--gray-400) !important;
+        }
+
         .bg-glow {
           position: absolute;
           width: 500px;

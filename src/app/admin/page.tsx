@@ -465,6 +465,19 @@ export default function AdminPage() {
           padding: 2.5rem 1.5rem;
         }
 
+        .admin-container h1,
+        .admin-container h2,
+        .admin-container h3,
+        .admin-container h4,
+        .admin-container h5,
+        .admin-container h6 {
+          color: #ffffff !important;
+        }
+
+        .admin-container p {
+          color: rgba(255, 255, 255, 0.7) !important;
+        }
+
         .bg-glow {
           position: absolute;
           width: 500px;

@@ -251,6 +251,19 @@ export default function PopupPage() {
           padding: 2.5rem 1.5rem;
         }
 
+        .popup-container h1,
+        .popup-container h2,
+        .popup-container h3,
+        .popup-container h4,
+        .popup-container h5,
+        .popup-container h6 {
+          color: ${COLORS.textPrimary} !important;
+        }
+
+        .popup-container p {
+          color: ${COLORS.textSecondary} !important;
+        }
+
         .bg-glow {
           position: absolute;
           width: 500px;

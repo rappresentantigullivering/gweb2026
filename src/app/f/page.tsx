@@ -332,6 +332,19 @@ export default function FormsManagerPage() {
           padding: 2.5rem 1.5rem;
         }
 
+        .forms-container h1,
+        .forms-container h2,
+        .forms-container h3,
+        .forms-container h4,
+        .forms-container h5,
+        .forms-container h6 {
+          color: ${COLORS.textPrimary} !important;
+        }
+
+        .forms-container p {
+          color: ${COLORS.textSecondary} !important;
+        }
+
         .bg-glow {
           position: absolute;
           width: 600px;
