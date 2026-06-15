@@ -68,7 +68,7 @@ export async function proxy(req: NextRequest) {
 
   // Per forms.gulliverancona.it, le rotte forms.gulliverancona.it/[slug] sono form pubblici
   // e non richiedono autenticazione. La home "/" gestisce invece i form e richiede auth.
-  const isPublicFormRoute = subdomain === 'forms' && pathname !== '/';
+  const isPublicFormRoute = subdomain === 'forms' && pathname !== '/' && pathname !== '/f' && pathname !== '/f/';
   if (isPublicFormRoute) {
     if (!pathname.startsWith('/f')) {
       url.pathname = `/f${pathname}`;

@@ -23,6 +23,7 @@ const COLORS = {
 };
 
 export default function FormsManagerPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [forms, setForms] = useState<Record<string, FormData>>({});
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -52,8 +53,37 @@ export default function FormsManagerPage() {
     }
   };
 
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('/api/auth/check');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated === true && (data.roles.includes('forms') || data.roles.includes('admin'))) {
+          setIsAuthenticated(true);
+          await fetchForms();
+        } else {
+          redirectToLogin();
+        }
+      } else {
+        redirectToLogin();
+      }
+    } catch {
+      redirectToLogin();
+    }
+  };
+
+  const redirectToLogin = () => {
+    const host = window.location.host;
+    const devPort = host.split(':')[1] || '3000';
+    const protocol = window.location.protocol;
+    const loginHost = host.includes('localhost')
+      ? `tesserati.localhost:${devPort}`
+      : 'tesserati.gulliverancona.it';
+    window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
+  };
+
   useEffect(() => {
-    fetchForms();
+    checkAuth();
   }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -165,6 +195,35 @@ export default function FormsManagerPage() {
   const totalCount = formsArray.length;
   const activeCount = formsArray.filter(([_, f]) => f.status === 'active').length;
   const suspendedCount = formsArray.filter(([_, f]) => f.status === 'suspended').length;
+  if (isAuthenticated === null) {
+    return (
+      <div className="forms-loading-container">
+        <span className="spinner"></span>
+        <p>Verifica autorizzazione in corso...</p>
+        <style jsx>{`
+          .forms-loading-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #080810;
+            color: #ffffff;
+            gap: 1rem;
+          }
+          .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #e40329;
+            animation: spin 0.8s linear infinite;
+          }
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="forms-container">

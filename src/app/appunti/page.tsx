@@ -33,6 +33,7 @@ const COLORS = {
 };
 
 export default function AppuntiPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [appunti, setAppunti] = useState<Appunto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -42,21 +43,62 @@ export default function AppuntiPage() {
   const [filterWatermark, setFilterWatermark] = useState('');
   const [sheetType, setSheetType] = useState<'digitali' | 'cartacei'>('digitali');
 
-  useEffect(() => {
+  const fetchAppunti = async () => {
     setLoading(true);
     setError('');
-    fetch(`/api/appunti/?sheet=${sheetType}`)
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setAppunti(data);
+    try {
+      const r = await fetch(`/api/appunti/?sheet=${sheetType}`);
+      const data = await r.json();
+      if (Array.isArray(data)) {
+        setAppunti(data);
+      } else {
+        setError(data.error || 'Errore nel caricamento degli appunti.');
+      }
+    } catch {
+      setError('Errore di rete.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('/api/auth/check');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated === true && (data.roles.includes('appunti') || data.roles.includes('admin'))) {
+          setIsAuthenticated(true);
+          await fetchAppunti();
         } else {
-          setError(data.error || 'Errore nel caricamento degli appunti.');
+          redirectToLogin();
         }
-      })
-      .catch(() => setError('Errore di rete.'))
-      .finally(() => setLoading(false));
-  }, [sheetType]);
+      } else {
+        redirectToLogin();
+      }
+    } catch {
+      redirectToLogin();
+    }
+  };
+
+  const redirectToLogin = () => {
+    const host = window.location.host;
+    const devPort = host.split(':')[1] || '3000';
+    const protocol = window.location.protocol;
+    const loginHost = host.includes('localhost')
+      ? `tesserati.localhost:${devPort}`
+      : 'tesserati.gulliverancona.it';
+    window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchAppunti();
+    }
+  }, [sheetType, isAuthenticated]);
 
   const facolta = useMemo(() =>
     [...new Set(appunti.map(a => a.facolta).filter(Boolean))].sort(),
@@ -94,6 +136,35 @@ export default function AppuntiPage() {
       window.location.href = 'https://tesserati.gulliverancona.it';
     }
   };
+  if (isAuthenticated === null) {
+    return (
+      <div className="appunti-loading-container">
+        <span className="spinner"></span>
+        <p>Verifica autorizzazione in corso...</p>
+        <style jsx>{`
+          .appunti-loading-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #080810;
+            color: #ffffff;
+            gap: 1rem;
+          }
+          .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 0.8s linear infinite;
+          }
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="appunti-container">

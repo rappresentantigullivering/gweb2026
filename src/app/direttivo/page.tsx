@@ -1,8 +1,42 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function DirettivoPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('/api/auth/check');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated === true && (data.roles.includes('direttivo') || data.roles.includes('admin'))) {
+          setIsAuthenticated(true);
+        } else {
+          redirectToLogin();
+        }
+      } else {
+        redirectToLogin();
+      }
+    } catch {
+      redirectToLogin();
+    }
+  };
+
+  const redirectToLogin = () => {
+    const host = window.location.host;
+    const devPort = host.split(':')[1] || '3000';
+    const protocol = window.location.protocol;
+    const loginHost = host.includes('localhost')
+      ? `tesserati.localhost:${devPort}`
+      : 'tesserati.gulliverancona.it';
+    window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
   const handleGoHome = () => {
     const host = window.location.host;
     const devPort = host.split(':')[1] || '3000';
@@ -12,6 +46,36 @@ export default function DirettivoPage() {
       window.location.href = 'https://tesserati.gulliverancona.it';
     }
   };
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="direttivo-loading-container">
+        <span className="spinner"></span>
+        <p>Verifica autorizzazione in corso...</p>
+        <style jsx>{`
+          .direttivo-loading-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #0f0f11;
+            color: #ffffff;
+            gap: 1rem;
+          }
+          .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #ec4899;
+            animation: spin 0.8s linear infinite;
+          }
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="wip-container">
