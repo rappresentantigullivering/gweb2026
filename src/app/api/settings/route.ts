@@ -52,17 +52,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, popupActive, popupTitle, popupText } = await req.json();
+    const { 
+      action, 
+      popupActive, 
+      popupTitle, 
+      popupText, 
+      popupPrimaryBtnText, 
+      popupPrimaryBtnUrl, 
+      popupSecondaryBtnText 
+    } = await req.json();
 
     if (action === 'updatePopup') {
       const currentSettings: any = (await redis.get(SETTINGS_KEY)) || {};
       
-      // Controlla se il titolo o il testo sono cambiati rispetto a quelli salvati
+      // Controlla se qualcosa è cambiato rispetto a quanto salvato
       const isTitleChanged = popupTitle !== undefined && popupTitle !== currentSettings.popupTitle;
       const isTextChanged = popupText !== undefined && popupText !== currentSettings.popupText;
+      const isBtn1TextChanged = popupPrimaryBtnText !== undefined && popupPrimaryBtnText !== currentSettings.popupPrimaryBtnText;
+      const isBtn1UrlChanged = popupPrimaryBtnUrl !== undefined && popupPrimaryBtnUrl !== currentSettings.popupPrimaryBtnUrl;
+      const isBtn2TextChanged = popupSecondaryBtnText !== undefined && popupSecondaryBtnText !== currentSettings.popupSecondaryBtnText;
       
       // Se sono cambiati, o se la versione non esiste ancora, generiamo un nuovo timestamp (versione)
-      const popupVersion = (isTitleChanged || isTextChanged || !currentSettings.popupVersion)
+      const popupVersion = (
+        isTitleChanged || 
+        isTextChanged || 
+        isBtn1TextChanged || 
+        isBtn1UrlChanged || 
+        isBtn2TextChanged || 
+        !currentSettings.popupVersion
+      )
         ? Date.now().toString()
         : currentSettings.popupVersion;
 
@@ -71,6 +89,9 @@ export async function POST(req: Request) {
         popupActive: popupActive !== undefined ? popupActive : currentSettings.popupActive,
         popupTitle: popupTitle !== undefined ? popupTitle : currentSettings.popupTitle,
         popupText: popupText !== undefined ? popupText : currentSettings.popupText,
+        popupPrimaryBtnText: popupPrimaryBtnText !== undefined ? popupPrimaryBtnText : currentSettings.popupPrimaryBtnText,
+        popupPrimaryBtnUrl: popupPrimaryBtnUrl !== undefined ? popupPrimaryBtnUrl : currentSettings.popupPrimaryBtnUrl,
+        popupSecondaryBtnText: popupSecondaryBtnText !== undefined ? popupSecondaryBtnText : currentSettings.popupSecondaryBtnText,
         popupVersion
       };
       

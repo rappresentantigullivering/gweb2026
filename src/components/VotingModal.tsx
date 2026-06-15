@@ -17,13 +17,26 @@ interface VotingModalProps {
   forceShow?: boolean;
   previewTitle?: string;
   previewText?: string;
+  previewPrimaryBtnText?: string;
+  previewPrimaryBtnUrl?: string;
+  previewSecondaryBtnText?: string;
 }
 
-export default function VotingModal({ forceShow = false, previewTitle = '', previewText = '' }: VotingModalProps) {
+export default function VotingModal({ 
+  forceShow = false, 
+  previewTitle = '', 
+  previewText = '',
+  previewPrimaryBtnText = '',
+  previewPrimaryBtnUrl = '',
+  previewSecondaryBtnText = ''
+}: VotingModalProps) {
   const [isOpen, setIsOpen] = useState(forceShow);
   const [isActive, setIsActive] = useState(forceShow);
   const [title, setTitle] = useState(previewTitle || 'Hai votato?');
   const [text, setText] = useState(previewText || 'Hai ancora tempo, le votazioni chiudono tra:');
+  const [primaryBtnText, setPrimaryBtnText] = useState(previewPrimaryBtnText || 'Vai al voto');
+  const [primaryBtnUrl, setPrimaryBtnUrl] = useState(previewPrimaryBtnUrl || 'https://uvote2.cineca.it/static/redir.html?idp=samlUnivpm');
+  const [secondaryBtnText, setSecondaryBtnText] = useState(previewSecondaryBtnText || 'Sì, ho già votato');
   const [currentVersion, setCurrentVersion] = useState('');
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isEnded, setIsEnded] = useState(false);
@@ -32,6 +45,11 @@ export default function VotingModal({ forceShow = false, previewTitle = '', prev
     if (forceShow) {
       setIsOpen(true);
       setIsActive(true);
+      setTitle(previewTitle || 'Hai votato?');
+      setText(previewText || 'Hai ancora tempo, le votazioni chiudono tra:');
+      setPrimaryBtnText(previewPrimaryBtnText || 'Vai al voto');
+      setPrimaryBtnUrl(previewPrimaryBtnUrl || 'https://uvote2.cineca.it/static/redir.html?idp=samlUnivpm');
+      setSecondaryBtnText(previewSecondaryBtnText || 'Sì, ho già votato');
       return;
     }
     // 1. Controlla se il popup è attivo globalmente via API
@@ -42,6 +60,9 @@ export default function VotingModal({ forceShow = false, previewTitle = '', prev
         setIsActive(data.popupActive);
         if (data.popupTitle) setTitle(data.popupTitle);
         if (data.popupText) setText(data.popupText);
+        if (data.popupPrimaryBtnText) setPrimaryBtnText(data.popupPrimaryBtnText);
+        if (data.popupPrimaryBtnUrl) setPrimaryBtnUrl(data.popupPrimaryBtnUrl);
+        if (data.popupSecondaryBtnText) setSecondaryBtnText(data.popupSecondaryBtnText);
         if (data.popupVersion) setCurrentVersion(data.popupVersion);
         
         // 2. Se è attivo, controlla se l'utente ha già interagito con questa specifica versione
@@ -58,7 +79,14 @@ export default function VotingModal({ forceShow = false, previewTitle = '', prev
       }
     };
     checkStatus();
-  }, []);
+  }, [
+    forceShow, 
+    previewTitle, 
+    previewText, 
+    previewPrimaryBtnText, 
+    previewPrimaryBtnUrl, 
+    previewSecondaryBtnText
+  ]);
 
   useEffect(() => {
     const tick = () => {
@@ -221,33 +249,37 @@ export default function VotingModal({ forceShow = false, previewTitle = '', prev
             flexDirection: 'column',
             gap: '1.25rem'
           }}>
-            <Link 
-              href="https://uvote2.cineca.it/static/redir.html?idp=samlUnivpm"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="voting-modal-btn-primary"
-              onClick={handleClose}
-            >
-              Vai al voto
-            </Link>
+            {primaryBtnUrl && primaryBtnText && (
+              <Link 
+                href={primaryBtnUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="voting-modal-btn-primary"
+                onClick={handleClose}
+              >
+                {primaryBtnText}
+              </Link>
+            )}
             
-            <button 
-              onClick={handleClose}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'rgba(255, 255, 255, 0.3)',
-                fontSize: '0.9rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                padding: '0.5rem',
-                transition: 'color 0.2s',
-                textDecoration: 'underline',
-                textUnderlineOffset: '4px'
-              }}
-            >
-              Sì, ho già votato
-            </button>
+            {secondaryBtnText && (
+              <button 
+                onClick={handleClose}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'rgba(255, 255, 255, 0.3)',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  transition: 'color 0.2s',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '4px'
+                }}
+              >
+                {secondaryBtnText}
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -21,6 +21,9 @@ export default function PopupPage() {
   const [popupActive, setPopupActive] = useState(false);
   const [popupTitle, setPopupTitle] = useState('');
   const [popupText, setPopupText] = useState('');
+  const [popupPrimaryBtnText, setPopupPrimaryBtnText] = useState('');
+  const [popupPrimaryBtnUrl, setPopupPrimaryBtnUrl] = useState('');
+  const [popupSecondaryBtnText, setPopupSecondaryBtnText] = useState('');
   const [showPopupEdit, setShowPopupEdit] = useState(false);
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -38,6 +41,9 @@ export default function PopupPage() {
       setPopupActive(data.popupActive);
       setPopupTitle(data.popupTitle || 'Hai votato?');
       setPopupText(data.popupText || 'Hai ancora tempo, le votazioni chiudono tra:');
+      setPopupPrimaryBtnText(data.popupPrimaryBtnText || 'Vai al voto');
+      setPopupPrimaryBtnUrl(data.popupPrimaryBtnUrl || 'https://uvote2.cineca.it/static/redir.html?idp=samlUnivpm');
+      setPopupSecondaryBtnText(data.popupSecondaryBtnText || 'Sì, ho già votato');
     } catch (e) {
       console.error('Failed to load settings:', e);
     }
@@ -109,6 +115,9 @@ export default function PopupPage() {
           popupActive,
           popupTitle,
           popupText,
+          popupPrimaryBtnText,
+          popupPrimaryBtnUrl,
+          popupSecondaryBtnText,
         }),
       });
       if (res.ok) {
@@ -246,22 +255,37 @@ export default function PopupPage() {
                   />
                 </div>
 
-                <div className="form-sub-toggle">
-                  <div>
-                    <span className="sub-toggle-title">Mostra il Pop-up</span>
-                    <span className="sub-toggle-desc">Attiva o disattiva contestualmente al salvataggio</span>
-                  </div>
-                  <button 
-                    type="button"
-                    onClick={() => setPopupActive(!popupActive)}
-                    className="toggle-switch-sm"
-                    style={{ '--switch-bg': popupActive ? COLORS.green : 'rgba(255,255,255,0.1)' } as React.CSSProperties}
-                  >
-                    <div 
-                      className="toggle-knob-sm"
-                      style={{ left: popupActive ? '27px' : '3px' }}
-                    />
-                  </button>
+                <div className="form-field">
+                  <label>Testo Bottone Principale</label>
+                  <input
+                    required
+                    type="text"
+                    value={popupPrimaryBtnText}
+                    onChange={e => setPopupPrimaryBtnText(e.target.value)}
+                    placeholder="es. Vai al voto"
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Link Bottone Principale (URL)</label>
+                  <input
+                    required
+                    type="url"
+                    value={popupPrimaryBtnUrl}
+                    onChange={e => setPopupPrimaryBtnUrl(e.target.value)}
+                    placeholder="es. https://example.com"
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Testo Bottone Secondario / Chiudi</label>
+                  <input
+                    required
+                    type="text"
+                    value={popupSecondaryBtnText}
+                    onChange={e => setPopupSecondaryBtnText(e.target.value)}
+                    placeholder="es. Sì, ho già votato"
+                  />
                 </div>
 
                 <button 
@@ -289,7 +313,14 @@ export default function PopupPage() {
 
       {showPreview && (
         <div className="preview-modal-overlay">
-          <VotingModal forceShow={true} previewTitle={popupTitle} previewText={popupText} />
+          <VotingModal 
+            forceShow={true} 
+            previewTitle={popupTitle} 
+            previewText={popupText}
+            previewPrimaryBtnText={popupPrimaryBtnText}
+            previewPrimaryBtnUrl={popupPrimaryBtnUrl}
+            previewSecondaryBtnText={popupSecondaryBtnText}
+          />
           <button 
             onClick={() => setShowPreview(false)}
             className="btn-close-preview"
