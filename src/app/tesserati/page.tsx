@@ -34,10 +34,11 @@ export default function CockpitPage() {
         // Redirect to login if not authenticated
         const host = window.location.host;
         const devPort = host.split(':')[1] || '3000';
+        const protocol = window.location.protocol;
         const loginHost = host.includes('localhost')
           ? `tesserati.localhost:${devPort}`
           : 'tesserati.gulliverancona.it';
-        window.location.href = `https://${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
+        window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
       } finally {
         setLoading(false);
       }

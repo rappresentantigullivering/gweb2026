@@ -47,10 +47,26 @@ export default function ComunicazionePage() {
       try {
         const res = await fetch('/api/auth/check');
         const data = await res.json();
-        setIsAuthenticated(data.authenticated === true);
+        if (data.authenticated !== true) {
+          const host = window.location.host;
+          const devPort = host.split(':')[1] || '3000';
+          const protocol = window.location.protocol;
+          const loginHost = host.includes('localhost')
+            ? `tesserati.localhost:${devPort}`
+            : 'tesserati.gulliverancona.it';
+          window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
+        } else {
+          setIsAuthenticated(true);
+        }
       } catch (err) {
         console.error('Auth check error:', err);
-        setIsAuthenticated(false);
+        const host = window.location.host;
+        const devPort = host.split(':')[1] || '3000';
+        const protocol = window.location.protocol;
+        const loginHost = host.includes('localhost')
+          ? `tesserati.localhost:${devPort}`
+          : 'tesserati.gulliverancona.it';
+        window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
       }
     }
     checkAuth();
@@ -101,8 +117,13 @@ export default function ComunicazionePage() {
   async function handleLogout() {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      setIsAuthenticated(false);
-      setPosts({});
+      const host = window.location.host;
+      const devPort = host.split(':')[1] || '3000';
+      const protocol = window.location.protocol;
+      const loginHost = host.includes('localhost')
+        ? `tesserati.localhost:${devPort}`
+        : 'tesserati.gulliverancona.it';
+      window.location.href = `${protocol}//${loginHost}/login`;
     } catch (err) {
       console.error('Logout error:', err);
     }

@@ -80,7 +80,13 @@ export default function AdminPage() {
         await fetchUsers();
         await fetchRequests();
       } else {
-        window.location.href = '/login';
+        const host = window.location.host;
+        const devPort = host.split(':')[1] || '3000';
+        const protocol = window.location.protocol;
+        const loginHost = host.includes('localhost')
+          ? `tesserati.localhost:${devPort}`
+          : 'tesserati.gulliverancona.it';
+        window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
       }
     } catch {
       notify('Errore di verifica autenticazione', 'err');
@@ -285,7 +291,13 @@ export default function AdminPage() {
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
+      const host = window.location.host;
+      const devPort = host.split(':')[1] || '3000';
+      const protocol = window.location.protocol;
+      const loginHost = host.includes('localhost')
+        ? `tesserati.localhost:${devPort}`
+        : 'tesserati.gulliverancona.it';
+      window.location.href = `${protocol}//${loginHost}/login`;
     } catch {
       notify('Logout fallito', 'err');
     }
