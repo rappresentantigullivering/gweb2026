@@ -129,6 +129,16 @@ export default function ComunicazionePage() {
     }
   }
 
+  const handleGoHome = () => {
+    const host = window.location.host;
+    const devPort = host.split(':')[1] || '3000';
+    if (host.includes('localhost')) {
+      window.location.href = `http://tesserati.localhost:${devPort}`;
+    } else {
+      window.location.href = 'https://tesserati.gulliverancona.it';
+    }
+  };
+
   async function handleSavePost(e: React.FormEvent) {
     e.preventDefault();
     if (!formPost.titolo || !formPost.data_pubblicazione || !formPost.canva_link) {
@@ -331,10 +341,15 @@ export default function ComunicazionePage() {
       {/* NAVBAR */}
       <header className={styles.navHeader}>
         <div className={styles.navInner}>
-          <div className={styles.logoArea}>
-            <span className={styles.logoTitle}>GULLIVER</span>
-            <div className={styles.logoDot} />
-            <span className={styles.logoSub}>Comunicazione</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+            <button onClick={handleGoHome} className={styles.btnBack}>
+              ← Dashboard
+            </button>
+            <div className={styles.logoArea}>
+              <span className={styles.logoTitle}>GULLIVER</span>
+              <div className={styles.logoDot} />
+              <span className={styles.logoSub}>Comunicazione</span>
+            </div>
           </div>
 
           <div className={styles.navControls}>
