@@ -19,6 +19,7 @@ const AVAILABLE_ROLES = [
 
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [requests, setRequests] = useState<{ username: string; requestedAt: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null);
@@ -34,6 +35,11 @@ export default function AdminPage() {
   const [editRoles, setEditRoles] = useState<string[]>([]);
   const [editPassword, setEditPassword] = useState('');
   const [updating, setUpdating] = useState(false);
+
+  // Approve request modal states
+  const [approvingRequest, setApprovingRequest] = useState<{ username: string } | null>(null);
+  const [approveRoles, setApproveRoles] = useState<string[]>(['tesserato']);
+  const [moderating, setModerating] = useState(false);
 
   const notify = (msg: string, type: 'ok' | 'err') => {
     setNotification({ msg, type });
@@ -53,6 +59,18 @@ export default function AdminPage() {
     }
   };
 
+  const fetchRequests = async () => {
+    try {
+      const res = await fetch('/api/users/requests');
+      if (res.ok) {
+        const data = await res.json();
+        setRequests(data.requests || []);
+      }
+    } catch (err: any) {
+      console.error('Errore nel caricamento delle richieste:', err);
+    }
+  };
+
   const checkAuth = async () => {
     try {
       const res = await fetch('/api/auth/check');
@@ -60,6 +78,7 @@ export default function AdminPage() {
         const data = await res.json();
         setCurrentUser(data.username);
         await fetchUsers();
+        await fetchRequests();
       } else {
         window.location.href = '/login';
       }
@@ -171,6 +190,72 @@ export default function AdminPage() {
     }
   };
 
+  const handleApproveRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!approvingRequest) return;
+    setModerating(true);
+    try {
+      const res = await fetch('/api/users/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'approve',
+          username: approvingRequest.username,
+          roles: approveRoles,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setApprovingRequest(null);
+        setApproveRoles(['tesserato']);
+        await fetchUsers();
+        await fetchRequests();
+        notify('Richiesta approvata con successo!', 'ok');
+      } else {
+        notify(data.error || 'Errore durante l\'approvazione', 'err');
+      }
+    } catch {
+      notify('Errore di rete', 'err');
+    } finally {
+      setModerating(false);
+    }
+  };
+
+  const handleRejectRequest = async (username: string) => {
+    if (!window.confirm(`Sei sicuro di voler rifiutare la richiesta di registrazione di "${username}"?`)) {
+      return;
+    }
+    try {
+      const res = await fetch('/api/users/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'reject',
+          username,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        await fetchRequests();
+        notify('Richiesta rifiutata.', 'ok');
+      } else {
+        notify(data.error || 'Errore durante il rifiuto', 'err');
+      }
+    } catch {
+      notify('Errore di rete', 'err');
+    }
+  };
+
+  const toggleApproveRole = (roleId: string) => {
+    if (approveRoles.includes(roleId)) {
+      setApproveRoles(approveRoles.filter(r => r !== roleId));
+    } else {
+      setApproveRoles([...approveRoles, roleId]);
+    }
+  };
+
   const toggleNewRole = (roleId: string) => {
     if (newRoles.includes(roleId)) {
       setNewRoles(newRoles.filter(r => r !== roleId));
@@ -277,61 +362,106 @@ export default function AdminPage() {
       {/* Main Content Layout */}
       <main className="admin-main animate-fade-up">
         <div className="admin-grid">
-          {/* User List Panel */}
-          <section className="admin-panel user-list-section">
-            <h2>Utenti Registrati</h2>
-            {users.length > 0 ? (
-              <div className="users-list">
-                {users.map((user) => (
-                  <div key={user.username} className={`user-item ${user.username === currentUser ? 'self-user' : ''}`}>
-                    <div className="user-info">
-                      <div className="username-row">
-                        <h3>{user.username}</h3>
-                        {user.username === currentUser && <span className="self-tag">Tu</span>}
+          {/* Left Column: Users List & Pending Requests */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {/* User List Panel */}
+            <section className="admin-panel user-list-section">
+              <h2>Utenti Registrati</h2>
+              {users.length > 0 ? (
+                <div className="users-list">
+                  {users.map((user) => (
+                    <div key={user.username} className={`user-item ${user.username === currentUser ? 'self-user' : ''}`}>
+                      <div className="user-info">
+                        <div className="username-row">
+                          <h3>{user.username}</h3>
+                          {user.username === currentUser && <span className="self-tag">Tu</span>}
+                        </div>
+                        <div className="roles-row">
+                          {user.roles.map((r) => {
+                            const config = getRoleConfig(r);
+                            return (
+                              <span 
+                                key={r} 
+                                className="role-badge"
+                                style={{ color: config.color, background: config.bg, borderColor: config.border }}
+                              >
+                                {config.label}
+                              </span>
+                            );
+                          })}
+                        </div>
                       </div>
-                      <div className="roles-row">
-                        {user.roles.map((r) => {
-                          const config = getRoleConfig(r);
-                          return (
-                            <span 
-                              key={r} 
-                              className="role-badge"
-                              style={{ color: config.color, background: config.bg, borderColor: config.border }}
-                            >
-                              {config.label}
-                            </span>
-                          );
-                        })}
+
+                      <div className="user-actions">
+                        <button 
+                          onClick={() => {
+                            setEditingUser(user);
+                            setEditRoles(user.roles);
+                          }}
+                          className="btn-user-action edit"
+                        >
+                          Modifica
+                        </button>
+                        
+                        {user.username !== currentUser && (
+                          <button 
+                            onClick={() => handleDeleteUser(user.username)}
+                            className="btn-user-action delete"
+                          >
+                            Elimina
+                          </button>
+                        )}
                       </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-users">Nessun utente configurato.</div>
+              )}
+            </section>
 
-                    <div className="user-actions">
-                      <button 
-                        onClick={() => {
-                          setEditingUser(user);
-                          setEditRoles(user.roles);
-                        }}
-                        className="btn-user-action edit"
-                      >
-                        Modifica
-                      </button>
-                      
-                      {user.username !== currentUser && (
+            {/* Pending Requests Panel */}
+            <section className="admin-panel pending-requests-section">
+              <h2>Richieste di Registrazione</h2>
+              {requests.length > 0 ? (
+                <div className="users-list">
+                  {requests.map((req) => (
+                    <div key={req.username} className="user-item">
+                      <div className="user-info">
+                        <div className="username-row">
+                          <h3>{req.username}</h3>
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.2rem' }}>
+                          Richiesto il: {new Date(req.requestedAt).toLocaleString('it-IT')}
+                        </div>
+                      </div>
+
+                      <div className="user-actions">
                         <button 
-                          onClick={() => handleDeleteUser(user.username)}
+                          onClick={() => {
+                            setApprovingRequest(req);
+                            setApproveRoles(['tesserato']);
+                          }}
+                          className="btn-user-action edit"
+                          style={{ borderColor: 'rgba(74,222,128,0.3)', color: '#4ade80', background: 'rgba(74,222,128,0.05)' }}
+                        >
+                          Accetta
+                        </button>
+                        <button 
+                          onClick={() => handleRejectRequest(req.username)}
                           className="btn-user-action delete"
                         >
-                          Elimina
+                          Rifiuta
                         </button>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-users">Nessun utente configurato.</div>
-            )}
-          </section>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-users">Nessuna richiesta di registrazione pendente.</div>
+              )}
+            </section>
+          </div>
 
           {/* Add User Panel */}
           <section className="admin-panel add-user-section">
@@ -447,6 +577,63 @@ export default function AdminPage() {
                   className="btn-modal save"
                 >
                   {updating ? 'Salvataggio...' : 'Salva Modifiche'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Approve Request Modal */}
+      {approvingRequest && (
+        <div className="modal-overlay">
+          <div className="modal-card animate-fade-up">
+            <h2>Approva Registrazione: {approvingRequest.username}</h2>
+            <div className="divider-red"></div>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+              Assegna i ruoli per abilitare l'accesso dell'utente ai sottodomini configurati.
+            </p>
+
+            <form onSubmit={handleApproveRequest} className="modal-form">
+              <div className="form-group">
+                <label>Configura Ruoli per l'utente</label>
+                <div className="roles-selectors-grid">
+                  {AVAILABLE_ROLES.map((role) => (
+                    <button
+                      key={role.id}
+                      type="button"
+                      onClick={() => toggleApproveRole(role.id)}
+                      className={`role-selector-card ${approveRoles.includes(role.id) ? 'selected' : ''}`}
+                      style={{ '--role-color-glow': role.color } as React.CSSProperties}
+                    >
+                      <div className="selector-title-row">
+                        <span className="selector-checkbox"></span>
+                        <span className="selector-label">{role.label}</span>
+                      </div>
+                      <span className="selector-desc">{role.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setApprovingRequest(null);
+                    setApproveRoles(['tesserato']);
+                  }}
+                  className="btn-modal cancel"
+                >
+                  Annulla
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={moderating}
+                  className="btn-modal save"
+                  style={{ background: 'linear-gradient(135deg, #10b981, #059669)', boxShadow: '0 4px 12px rgba(16,185,129,0.2)' }}
+                >
+                  {moderating ? 'Approvazione...' : 'Approva e Abilita'}
                 </button>
               </div>
             </form>

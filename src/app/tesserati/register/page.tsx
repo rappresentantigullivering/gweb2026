@@ -1,59 +1,85 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useState, Suspense } from 'react';
 
-function LoginForm() {
-  const searchParams = useSearchParams();
+function RegisterForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const [redirectUrl, setRedirectUrl] = useState('');
-
-  useEffect(() => {
-    const redirect = searchParams.get('redirect');
-    if (redirect) {
-      setRedirectUrl(decodeURIComponent(redirect));
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
+
+    // Client-side validations
+    const sanitizedUsername = username.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+    if (!sanitizedUsername || sanitizedUsername.length < 3) {
+      setError('Lo username deve contenere almeno 3 caratteri alfanumerici, punti o trattini.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('La password deve contenere almeno 6 caratteri.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Le password non coincidono.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/users/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: sanitizedUsername, password }),
       });
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Autenticazione fallita');
+        throw new Error(data.error || 'Invio richiesta fallito');
       }
 
-      // Successful login
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
-      } else {
-        // Fallback to cockpit root
-        window.location.href = '/';
-      }
+      setSuccess(data.message || 'Richiesta inviata con successo!');
     } catch (err: any) {
       setError(err.message || 'Si è verificato un errore');
+    } finally {
       setLoading(false);
     }
   };
+
+  if (success) {
+    return (
+      <div className="login-card text-center animate-fade-up">
+        <div className="success-icon-wrapper">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h1>Richiesta Inviata</h1>
+        <div className="divider-red-center"></div>
+        <p className="success-desc">
+          {success}
+        </p>
+        <button onClick={() => window.location.href = '/login'} className="btn btn-primary btn-submit" style={{ marginTop: '1rem' }}>
+          <span>Torna al Login</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="login-card animate-fade-up">
       <div className="login-header">
         <div className="logo-badge">G</div>
-        <h1>Area Tesserati</h1>
-        <p>Accedi al portale unico di Gulliver Ancona</p>
+        <h1>Registrazione</h1>
+        <p>Invia una richiesta di iscrizione all'area tesserati</p>
       </div>
 
       <form onSubmit={handleSubmit} className="login-form">
@@ -75,13 +101,14 @@ function LoginForm() {
               type="text"
               id="username"
               required
-              placeholder="Inserisci il tuo username"
+              placeholder="es. nome.cognome"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={loading}
               autoComplete="username"
             />
           </div>
+          <span className="field-hint">Solo lettere minuscole, numeri, punti, trattini o underscores.</span>
         </div>
 
         <div className="form-group">
@@ -91,11 +118,27 @@ function LoginForm() {
               type="password"
               id="password"
               required
-              placeholder="Inserisci la tua password"
+              placeholder="Almeno 6 caratteri"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
-              autoComplete="current-password"
+              autoComplete="new-password"
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="confirm-password">Conferma Password</label>
+          <div className="input-wrapper">
+            <input
+              type="password"
+              id="confirm-password"
+              required
+              placeholder="Ripeti la password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={loading}
+              autoComplete="new-password"
             />
           </div>
         </div>
@@ -105,7 +148,7 @@ function LoginForm() {
             <span className="spinner"></span>
           ) : (
             <>
-              <span>Accedi</span>
+              <span>Invia Richiesta</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -116,15 +159,15 @@ function LoginForm() {
       </form>
 
       <div className="login-footer">
-        <a href="/register" className="link-register">
-          Non hai un account? Invia richiesta di registrazione
+        <a href="/login" className="link-back-login">
+          Hai già un account? Accedi
         </a>
       </div>
     </div>
   );
 }
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className="login-container">
       {/* Background ambient decorations */}
@@ -136,7 +179,7 @@ export default function LoginPage() {
           <p style={{ color: 'var(--gray-500)', margin: '2rem 0' }}>Caricamento portale...</p>
         </div>
       }>
-        <LoginForm />
+        <RegisterForm />
       </Suspense>
 
       <style jsx global>{`
@@ -201,9 +244,36 @@ export default function LoginPage() {
           z-index: 2;
         }
 
+        .success-icon-wrapper {
+          width: 70px;
+          height: 70px;
+          border-radius: 50%;
+          background: rgba(16, 185, 129, 0.1);
+          border: 1.5px solid rgba(16, 185, 129, 0.3);
+          color: #10b981;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 1.5rem;
+        }
+
+        .success-desc {
+          font-size: 0.95rem;
+          line-height: 1.6;
+          margin-bottom: 1.5rem;
+        }
+
+        .divider-red-center {
+          width: 50px;
+          height: 3px;
+          background: var(--red-primary);
+          border-radius: var(--radius-full);
+          margin: 0.75rem auto 1.25rem;
+        }
+
         .login-header {
           text-align: center;
-          margin-bottom: 2.25rem;
+          margin-bottom: 2rem;
         }
 
         .logo-badge {
@@ -238,7 +308,7 @@ export default function LoginPage() {
         .login-form {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1.25rem;
         }
 
         .error-alert {
@@ -256,7 +326,7 @@ export default function LoginPage() {
         .form-group {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.4rem;
         }
 
         .form-group label {
@@ -268,6 +338,11 @@ export default function LoginPage() {
           letter-spacing: 0.05em;
         }
 
+        .field-hint {
+          font-size: 0.72rem;
+          color: var(--gray-500);
+        }
+
         .input-wrapper {
           position: relative;
         }
@@ -277,7 +352,7 @@ export default function LoginPage() {
           background: rgba(255, 255, 255, 0.04);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: var(--radius-md);
-          padding: 0.85rem 1.25rem;
+          padding: 0.8rem 1.25rem;
           color: var(--white);
           font-family: var(--font-body);
           font-size: 0.95rem;
@@ -301,6 +376,22 @@ export default function LoginPage() {
           margin-top: 0.5rem;
         }
 
+        .login-footer {
+          margin-top: 1.5rem;
+          text-align: center;
+        }
+
+        .link-back-login {
+          font-size: 0.85rem;
+          color: var(--gray-400);
+          transition: color var(--transition-fast);
+        }
+
+        .link-back-login:hover {
+          color: var(--red-light);
+          text-decoration: underline;
+        }
+
         .spinner {
           width: 20px;
           height: 20px;
@@ -312,22 +403,6 @@ export default function LoginPage() {
 
         @keyframes spin {
           to { transform: rotate(360deg); }
-        }
-
-        .login-footer {
-          margin-top: 1.5rem;
-          text-align: center;
-        }
-
-        .link-register {
-          font-size: 0.85rem;
-          color: var(--gray-400);
-          transition: color var(--transition-fast);
-        }
-
-        .link-register:hover {
-          color: var(--red-light);
-          text-decoration: underline;
         }
 
         @media (max-width: 480px) {

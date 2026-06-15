@@ -57,8 +57,8 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Percorsi pubblici del portale tesserati (es. login e unauthorized) non richiedono auth
-  if (subdomain === 'tesserati' && (pathname.startsWith('/login') || pathname.startsWith('/unauthorized'))) {
+  // Percorsi pubblici del portale tesserati (es. login, register e unauthorized) non richiedono auth
+  if (subdomain === 'tesserati' && (pathname.startsWith('/login') || pathname.startsWith('/register') || pathname.startsWith('/unauthorized'))) {
     if (!pathname.startsWith('/tesserati')) {
       url.pathname = `/tesserati${pathname === '/' ? '' : pathname}`;
       return NextResponse.rewrite(url);
