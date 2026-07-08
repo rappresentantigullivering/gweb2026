@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 const links = [
-  { name: 'kit27_qr.png', url: 'https://www.gulliverancona.it/kit27/' },
-  { name: 'guide27_qr.png', url: 'https://www.gulliverancona.it/guide27/' },
-  { name: 'gruppi27_qr.png', url: 'https://www.gulliverancona.it/gruppi27/' },
+  { name: 'kit26_qr.png', url: 'https://www.gulliverancona.it/kit26/' },
+  { name: 'guide26_qr.png', url: 'https://www.gulliverancona.it/guide26/' },
+  { name: 'gruppi26_qr.png', url: 'https://www.gulliverancona.it/gruppi26/' },
   { name: 'affittigulliver_qr.png', url: 'https://t.me/affittigulliver' }
 ];
 

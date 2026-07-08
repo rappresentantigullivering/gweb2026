@@ -2,11 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Guide dello Studente 2026/2027 | Gulliver",
-  description: "Le Guide dello Studente Gulliver per l'anno accademico 2026/2027 saranno disponibili a partire da Settembre.",
+  title: "Kit dello Studente 2026/2027 | Gulliver",
+  description: "Il Kit dello Studente Gulliver per l'anno accademico 2026/2027 sarà disponibile a partire da Settembre.",
 };
 
-export default function Guide27Page() {
+export default function Kit26Page() {
   return (
     <>
       <div style={{
@@ -25,10 +25,10 @@ export default function Guide27Page() {
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <span className="section-tag section-tag-white">Anno Accademico 2026/2027</span>
           <h1 style={{ color: 'var(--white)', marginTop: '1rem', fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900 }}>
-            Guide dello Studente 2027
+            Kit dello Studente 2026
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.85)', marginTop: '1rem', fontSize: '1.2rem', maxWidth: '600px', marginInline: 'auto' }}>
-            Tutto quello che c&apos;è da sapere sulla burocrazia, le borse di studio e la vita accademica.
+            La guida completa per l&apos;università e la vita studentesca all&apos;UNIVPM.
           </p>
         </div>
       </div>
@@ -44,24 +44,11 @@ export default function Guide27Page() {
             gap: '1.5rem',
             borderTop: '5px solid var(--red-primary)'
           }}>
-            <div style={{
-              fontSize: '4rem',
-              lineHeight: 1,
-              animation: 'float 3s ease-in-out infinite'
-            }}>
-              📚
-            </div>
-            <style dangerouslySetInnerHTML={{__html: `
-              @keyframes float {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-10px); }
-              }
-            `}} />
-            
             <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>In fase di aggiornamento</h2>
             
             <p style={{ fontSize: '1.05rem', color: 'var(--gray-600)', maxWidth: '500px', lineHeight: 1.7 }}>
-              Le nostre guide pratiche su <strong>borse di studio ERDIS, iscrizioni, esenzioni tasse e portale dello studente</strong> per il nuovo anno accademico sono in fase di revisione e saranno pubblicate a breve.
+              I nostri rappresentanti stanno lavorando alla redazione del nuovo Kit dello Studente 2026/2027. 
+              In questa pagina saranno disponibili le informazioni aggiornate riguardanti la didattica, i servizi di Ateneo e i trasporti.
             </p>
 
             <div style={{
@@ -73,7 +60,7 @@ export default function Guide27Page() {
               color: 'var(--red-primary)',
               marginTop: '1rem'
             }}>
-              📅 Disponibile a partire da Settembre 2026
+              Disponibile da Settembre 2026
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
