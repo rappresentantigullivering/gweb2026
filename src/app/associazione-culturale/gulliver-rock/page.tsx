@@ -6,7 +6,7 @@ import PastEditions from './PastEditions';
 
 export const metadata: Metadata = {
   title: 'Gulliver Rock | Gulliver UNIVPM',
-  description: 'Gulliver Rock è lo storico festival musicale gratuito organizzato ogni anno dalla nostra associazione. Le foto dell\'edizione 2026 con Ele A saranno caricate a breve.',
+  description: 'Gulliver Rock è lo storico festival musicale gratuito organizzato ogni anno dalla nostra associazione. Le foto dell\'edizione 2026 con Ele A sono disponibili.',
 };
 
 export default function GulliverRockPage() {
@@ -52,8 +52,8 @@ export default function GulliverRockPage() {
             Musica, cultura e socialità. Il festival musicale indipendente organizzato interamente dalla componente studentesca.
           </p>
           <div className={styles.heroCtas}>
-            <a href="#edizione-2026" className="btn btn-white btn-lg" style={{ color: 'var(--red-primary)' }}>
-              Foto & Report 2026
+            <a href="https://tr.ee/tBS-q4G2QD" target="_blank" rel="noopener noreferrer" className="btn btn-white btn-lg" style={{ color: 'var(--red-primary)' }}>
+              Guarda le Foto 2026
             </a>
             <a href="#edizioni" className="btn btn-outline-white btn-lg">
               Edizioni passate
@@ -131,7 +131,7 @@ export default function GulliverRockPage() {
             {/* Event Info & Timetable */}
             <div className={styles.eventInfo}>
               <div className="card" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.75rem', height: '100%' }}>
-                <span className={styles.editionBadge}>EDIZIONE CONCLUSA · FOTO IN ARRIVO</span>
+                <span className={styles.editionBadge}>EDIZIONE CONCLUSA · FOTO DISPONIBILI</span>
                 <h3 className={styles.eventTitle}>Gulliver Rock 2026</h3>
                 
                 <div className={styles.eventDetails}>
@@ -177,6 +177,16 @@ export default function GulliverRockPage() {
                     </div>
                   </div>
                 </div>
+
+                <a 
+                  href="https://tr.ee/tBS-q4G2QD" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn btn-primary" 
+                  style={{ justifyContent: 'center', width: '100%', marginTop: '0.5rem', marginBottom: '0.5rem' }}
+                >
+                  Sfoglia le foto dell&apos;evento
+                </a>
 
                 {/* TIMETABLE */}
                 <div className={styles.timetable}>

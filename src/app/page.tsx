@@ -21,10 +21,10 @@ export default function HomePage() {
         <div className={styles.heroPhoto}>
           <div className={styles.heroBg} />
           <div className={`container ${styles.heroContent}`}>
-            <Link href="/associazione-culturale/gulliver-rock" className={styles.heroRockAlert}>
-              <span className={styles.heroRockBadge}>Foto in arrivo</span>
-              <span className={styles.heroRockText}>Gulliver Rock 2026 · Le foto dell'evento saranno pubblicate a breve!</span>
-            </Link>
+            <a href="https://tr.ee/tBS-q4G2QD" target="_blank" rel="noopener noreferrer" className={styles.heroRockAlert}>
+              <span className={styles.heroRockBadge}>Foto disponibili</span>
+              <span className={styles.heroRockText}>Gulliver Rock 2026 · Guarda le foto ufficiali dell&apos;evento!</span>
+            </a>
             <h1 className={styles.heroSlogan}>
               Essere studenti significa avere dei diritti.
               <br />
@@ -110,17 +110,17 @@ export default function HomePage() {
       <section className={styles.rockBanner} id="rock-banner">
         <div className={`container ${styles.rockBannerInner}`}>
           <div className={styles.rockBannerText}>
-            <span className="section-tag section-tag-white">Foto in arrivo!</span>
+            <span className="section-tag section-tag-white">Foto disponibili!</span>
             <h2>Gulliver Rock</h2>
             <p>
-              La XXXIII edizione è da poco conclusa, grazie a tuttɜ per aver partecipato! Stiamo preparando le foto ufficiali dell&apos;evento: a brevissimo le caricheremo sul sito e sull&apos;instagram ufficiale @acu_gulliver. Resta sintonizzatɜ!
+              La XXXIII edizione è conclusa! Grazie a tuttɜ per aver partecipato. Le foto ufficiali dell&apos;evento sono disponibili online.
             </p>
             <div className={styles.rockBannerActions} style={{ marginTop: '1rem' }}>
-              <Link href="/associazione-culturale/gulliver-rock" className="btn btn-white btn-lg" id="banner-gulliver-rock-info">
-                Scopri lo storico del festival
-              </Link>
-              <Link href="/associazione-culturale/gulliver-rock#edizioni" className="btn btn-outline-white btn-lg" id="banner-gulliver-rock-history">
-                Edizioni passate
+              <a href="https://tr.ee/tBS-q4G2QD" target="_blank" rel="noopener noreferrer" className="btn btn-white btn-lg" id="banner-gulliver-rock-photos">
+                Guarda le foto
+              </a>
+              <Link href="/associazione-culturale/gulliver-rock" className="btn btn-outline-white btn-lg" id="banner-gulliver-rock-info">
+                Scopri il festival
               </Link>
             </div>
           </div>
