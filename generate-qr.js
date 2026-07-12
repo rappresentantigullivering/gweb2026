@@ -7,7 +7,8 @@ const links = [
   { name: 'gruppi26_qr.png', url: 'https://www.gulliverancona.it/gruppi26/' },
   { name: 'affittigulliver_qr.png', url: 'https://t.me/affittigulliver' },
   { name: 'matricoleunivpm2025_qr.png', url: 'https://t.me/matricoleunivpm2025' },
-  { name: 'semestrefiltrounivpm2026_qr.png', url: 'https://t.me/semestrefiltrounivpm2026' }
+  { name: 'semestrefiltrounivpm2026_qr.png', url: 'https://t.me/semestrefiltrounivpm2026' },
+  { name: 'eng-guida26_qr.png', url: 'https://www.gulliverancona.it/eng-guida26/' }
 ];
 
 async function downloadQR() {
