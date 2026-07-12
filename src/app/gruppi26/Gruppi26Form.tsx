@@ -218,7 +218,7 @@ export default function Gruppi26Form() {
                     <optgroup key={group.faculty} label={group.faculty.toUpperCase()}>
                       {group.courses.map((course) => (
                         <option 
-                          key={course.name} 
+                          key={`${course.type}-${course.name}`} 
                           value={JSON.stringify({ name: course.name, url: course.url, type: course.type })}
                         >
                           {course.type} in {course.name}
