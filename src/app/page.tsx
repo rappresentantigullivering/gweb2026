@@ -21,10 +21,10 @@ export default function HomePage() {
         <div className={styles.heroPhoto}>
           <div className={styles.heroBg} />
           <div className={`container ${styles.heroContent}`}>
-            <a href="https://tr.ee/tBS-q4G2QD" target="_blank" rel="noopener noreferrer" className={styles.heroRockAlert}>
-              <span className={styles.heroRockBadge}>Foto disponibili</span>
-              <span className={styles.heroRockText}>Gulliver Rock 2026 · Guarda le foto ufficiali dell&apos;evento!</span>
-            </a>
+            <Link href="/matricole" className={styles.heroRockAlert}>
+              <span className={styles.heroRockBadge}>Nuovo A.A.</span>
+              <span className={styles.heroRockText}>Portale Matricole 2026/2027 online</span>
+            </Link>
             <h1 className={styles.heroSlogan}>
               Essere studenti significa avere dei diritti.
               <br />
@@ -33,8 +33,8 @@ export default function HomePage() {
               </span>
             </h1>
             <div className={styles.heroActions}>
-              <Link href="/associazione-culturale/gulliver-rock" className="btn btn-primary btn-lg" id="hero-gulliver-rock" style={{ background: 'var(--red-primary)', border: 'none', boxShadow: '0 0 15px rgba(255, 77, 109, 0.5)' }}>
-                Gulliver Rock
+              <Link href="/matricole" className="btn btn-primary btn-lg" id="hero-matricole" style={{ background: 'var(--red-primary)', border: 'none', boxShadow: '0 0 15px rgba(255, 77, 109, 0.5)' }}>
+                Portale Matricole
               </Link>
               <Link href="/chi-siamo" className="btn btn-outline-white btn-lg" id="hero-chi-siamo">
                 Chi siamo
@@ -150,11 +150,14 @@ export default function HomePage() {
             <p>Tutto quello che ti serve per iniziare al meglio: guide, gruppi e contatti.</p>
           </div>
           <div className={styles.matricoleBannerActions}>
-            <Link href="/matricole/kit" className="btn btn-primary btn-lg" id="banner-kit">
+            <Link href="/kit26" className="btn btn-primary btn-lg" id="banner-kit">
               Kit dello Studente
             </Link>
-            <Link href="/matricole/gruppi" className="btn btn-outline btn-lg" id="banner-gruppi">
+            <Link href="/gruppi26" className="btn btn-outline-white btn-lg" id="banner-gruppi">
               Gruppi WhatsApp & Telegram
+            </Link>
+            <Link href="/guide26" className="btn btn-outline-white btn-lg" id="banner-guida">
+              Guida DSU
             </Link>
           </div>
         </div>

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import styles from './Navbar.module.css';
 
 const NAV_ITEMS = [
-  { label: 'Gulliver Rock', href: '/associazione-culturale/gulliver-rock' },
+  { label: 'Matricole 2026', href: '/matricole' },
   { label: 'Chi siamo', href: '/chi-siamo' },
   {
     label: 'Associazione Culturale',
@@ -30,8 +30,10 @@ const NAV_ITEMS = [
     label: 'Matricole',
     href: '/matricole',
     children: [
-      { label: 'Gruppi WhatsApp & Telegram', href: '/matricole/gruppi' },
-      { label: 'Kit dello Studente', href: '/matricole/kit' },
+      { label: 'Kit dello Studente', href: '/kit26' },
+      { label: 'Gruppi WhatsApp & Telegram', href: '/gruppi26' },
+      { label: 'Guida Servizi ERDIS', href: '/guide26' },
+      { label: 'International Student Guide', href: '/eng-guida26' },
     ],
   },
   { label: 'UDU', href: 'https://unioneuniversitari.it/', external: true },
