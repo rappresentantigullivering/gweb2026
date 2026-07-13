@@ -77,7 +77,7 @@ export default function DSUPage() {
                 Leggi la proposta integrale scaricando il documento PDF ufficiale.
               </p>
               <a 
-                href="/docs/programmi/PROGRAMMA DSU 2026.pdf" 
+                href="/docs/2025/programmi/PROGRAMMA DSU 2026.pdf"
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"

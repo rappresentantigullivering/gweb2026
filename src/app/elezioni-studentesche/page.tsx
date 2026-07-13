@@ -55,7 +55,7 @@ export default function ElezioniPage() {
             <div className={styles.pdfFooter}>
               <p>Il caricamento del manifesto dipende dalla velocità della tua connessione.</p>
               <a 
-                href="/docs/manifesto-elettorale-aggiornato.pdf" 
+                href="/docs/2025/manifesto-elettorale-aggiornato.pdf"
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="btn btn-primary"
@@ -81,5 +81,3 @@ export default function ElezioniPage() {
     </>
   );
 }
-
-

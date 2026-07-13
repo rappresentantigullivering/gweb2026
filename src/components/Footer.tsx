@@ -98,6 +98,8 @@ export default function Footer() {
             <span>·</span>
             <Link href="/trasparenza">Trasparenza</Link>
             <span>·</span>
+            <Link href="/archivio">Archivio</Link>
+            <span>·</span>
             <a href="https://www.unionedegliuniversitari.it" target="_blank" rel="noopener noreferrer">UDU Nazionale</a>
           </div>
         </div>

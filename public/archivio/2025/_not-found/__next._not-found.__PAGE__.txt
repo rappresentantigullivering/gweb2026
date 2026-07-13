@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[7656,["7656","static/chunks/7656-a0ab11627bc4fe2d.js","6161","static/chunks/6161-8c24157f755d61a5.js","8974","static/chunks/app/page-e3921bec5d04ee29.js"],""]
+3:I[7704,[],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","div",null,{"style":{"minHeight":"100vh","display":"flex","alignItems":"center","justifyContent":"center","padding":"2rem","textAlign":"center","flexDirection":"column","gap":"1.5rem"},"children":[["$","h1",null,{"style":{"fontSize":"6rem","fontFamily":"var(--font-heading)","fontWeight":900,"color":"var(--red-primary)","lineHeight":1},"children":"404"}],["$","h2",null,{"children":"Pagina non trovata"}],["$","p",null,{"style":{"color":"var(--gray-500)","maxWidth":"400px"},"children":"La pagina che stai cercando non esiste o è stata spostata."}],["$","$L2",null,{"href":"/","className":"btn btn-primary btn-lg","id":"404-home","children":"Torna alla Home"}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"Fxr0txZhru2oYd0rdZju7"}
+5:null

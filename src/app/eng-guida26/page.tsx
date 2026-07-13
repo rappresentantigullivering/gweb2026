@@ -72,7 +72,7 @@ export default function EngGuida26Page() {
             </p>
 
             <a 
-              href="/docs/eng-guida26-provvisoria.pdf" 
+              href="/docs/2026/eng-guida26-provvisoria.pdf"
               target="_blank" 
               rel="noopener noreferrer" 
               className="btn btn-primary btn-lg" 
@@ -88,7 +88,7 @@ export default function EngGuida26Page() {
 
             <div style={{ marginTop: '0.5rem' }}>
               <a 
-                href="/docs/eng-guida26-provvisoria.pdf" 
+                href="/docs/2026/eng-guida26-provvisoria.pdf"
                 download 
                 style={{ 
                   color: 'var(--gray-500)', 

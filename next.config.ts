@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/archivio/2025/",
+        destination: "/archivio/2025/index.html",
+      },
+      {
+        source: "/archivio/2025/:path+/",
+        destination: "/archivio/2025/:path*/index.html",
+      },
+    ];
+  },
 };
 
 export default withMDX(nextConfig);

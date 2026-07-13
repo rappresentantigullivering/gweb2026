@@ -68,7 +68,7 @@ export default function KitPage() {
                 Scarica subito il Kit dellə Studentə e inizia al meglio il tuo percorso universitario!
               </p>
               <a 
-                href="/docs/kit-dello-studente-2025-26.pdf" 
+                href="/docs/2025/kit-dello-studente-2025-26.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.downloadButton}
@@ -83,7 +83,7 @@ export default function KitPage() {
               
               <div style={{ marginTop: '1.5rem' }}>
                 <a 
-                  href="/docs/kit-dello-studente-2025-26.pdf" 
+                  href="/docs/2025/kit-dello-studente-2025-26.pdf"
                   download 
                   style={{ 
                     color: 'var(--gray-500)', 
