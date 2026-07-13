@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/contatti',
     '/privacy',
     '/trasparenza',
+    '/archivio',
     '/elezioni-studentesche',
     '/elezioni-studentesche/candidati',
     '/elezioni-studentesche/gulliver46',

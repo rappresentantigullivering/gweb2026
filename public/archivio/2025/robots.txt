@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /404
+
+User-Agent: facebookexternalhit
+Allow: /
+
+Sitemap: https://www.gulliverancona.it/sitemap.xml

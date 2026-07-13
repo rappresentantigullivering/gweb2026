@@ -1,0 +1,10 @@
+1:"$Sreact.fragment"
+2:I[4716,[],"ClientPageRoot"]
+3:I[9882,["8958","static/chunks/app/elezioni-studentesche/monitor-voto/page-0b8a7d12232afc39.js"],"default"]
+6:I[7704,[],"OutletBoundary"]
+7:"$Sreact.suspense"
+:HL["/archivio/2025/_next/static/css/f581b549a9844010.css","style"]
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","link","0",{"rel":"stylesheet","href":"/archivio/2025/_next/static/css/f581b549a9844010.css","precedence":"next"}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"Fxr0txZhru2oYd0rdZju7"}
+4:{}
+5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
+8:null

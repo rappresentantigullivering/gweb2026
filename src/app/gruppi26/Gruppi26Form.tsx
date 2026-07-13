@@ -91,7 +91,7 @@ const facultyData: FacultyGroup[] = [
       { name: "Scienze Biologiche A-L", url: "https://chat.whatsapp.com/FkfnrThWbrSIMa2tgkN72f", type: "Triennale" },
       { name: "Scienze Biologiche M-Z", url: "https://chat.whatsapp.com/BWpx7cEcrr8G1jJv15JceV", type: "Triennale" },
       { name: "Environmental Sciences and Civil Protection", url: "https://chat.whatsapp.com/JDDKeHBoHFB1kWVfzJ5C0t", type: "Triennale" },
-      { name: "Enviromental Hazard and Disaster Risk Management", url: "PENDING", type: "Magistrale" },
+      { name: "Enviromental Hazard and Disaster Risk Management", url: "https://chat.whatsapp.com/JunPNyYQGT41KwgyEUviBe?s=cl&p=a&ilr=4", type: "Magistrale" },
       { name: "Scienze della Nutrizione e dell'Alimentazione", url: "https://chat.whatsapp.com/HWqraqrKgQBBmZ5kuGNEg1?s=cl&p=a&ilr=4", type: "Magistrale" },
       { name: "Biologia Molecolare Applicata (computazionale e tecnologie biologiche)", url: "https://chat.whatsapp.com/GGd958CQvv9L7Tp6QLjI5X", type: "Magistrale" },
       { name: "Marine Biology", url: "https://chat.whatsapp.com/GVzcZhkuUCR9CbouvuQVZr", type: "Magistrale" }

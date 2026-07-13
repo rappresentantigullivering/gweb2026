@@ -45,7 +45,7 @@ export default function IngegneriaPage() {
                 Leggi la proposta integrale scaricando il documento PDF ufficiale.
               </p>
               <a 
-                href="/docs/programmi/PROGRAMMA DI INGEGNERIA 2026.pdf" 
+                href="/docs/2025/programmi/PROGRAMMA DI INGEGNERIA 2026.pdf"
                 className="btn btn-primary btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"

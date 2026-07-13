@@ -47,7 +47,7 @@ export default function GruppiPage() {
                 </p>
               </div>
               <a 
-                href="/docs/gruppi-matricole-2025-26.pdf" 
+                href="/docs/2025/gruppi-matricole-2025-26.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.downloadButton}
@@ -62,7 +62,7 @@ export default function GruppiPage() {
 
               <div style={{ marginTop: '1rem' }}>
                 <a 
-                  href="/docs/gruppi-matricole-2025-26.pdf" 
+                  href="/docs/2025/gruppi-matricole-2025-26.pdf"
                   download 
                   style={{ 
                     color: 'var(--gray-500)', 
