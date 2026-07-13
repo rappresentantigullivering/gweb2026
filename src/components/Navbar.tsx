@@ -21,7 +21,6 @@ const NAV_ITEMS = [
     label: 'Elezioni Studentesche',
     href: '/elezioni-studentesche',
     children: [
-      { label: 'Scopri i candidati', href: '/elezioni-studentesche/candidati' },
       { label: 'Programma elettorale', href: '/elezioni-studentesche/programma' },
       { label: 'Gioca a Gulliver46', href: '/elezioni-studentesche/gulliver46' },
     ],
@@ -32,7 +31,7 @@ const NAV_ITEMS = [
     children: [
       { label: 'Kit dello Studente', href: '/kit26' },
       { label: 'Gruppi WhatsApp & Telegram', href: '/gruppi26' },
-      { label: 'Guida Servizi ERDIS', href: '/guide26' },
+      { label: 'Guida DSU', href: '/guida26' },
       { label: 'International Student Guide', href: '/eng-guida26' },
     ],
   },

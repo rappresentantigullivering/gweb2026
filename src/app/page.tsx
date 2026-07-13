@@ -107,37 +107,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={styles.rockBanner} id="rock-banner">
-        <div className={`container ${styles.rockBannerInner}`}>
-          <div className={styles.rockBannerText}>
-            <span className="section-tag section-tag-white">Foto disponibili!</span>
-            <h2>Gulliver Rock</h2>
-            <p>
-              La XXXIII edizione è conclusa! Grazie a tuttɜ per aver partecipato. Le foto ufficiali dell&apos;evento sono disponibili online.
-            </p>
-            <div className={styles.rockBannerActions} style={{ marginTop: '1rem' }}>
-              <a href="https://tr.ee/tBS-q4G2QD" target="_blank" rel="noopener noreferrer" className="btn btn-white btn-lg" id="banner-gulliver-rock-photos">
-                Guarda le foto
-              </a>
-              <Link href="/associazione-culturale/gulliver-rock" className="btn btn-outline-white btn-lg" id="banner-gulliver-rock-info">
-                Scopri il festival
-              </Link>
-            </div>
-          </div>
-          <div className={styles.rockBannerPoster}>
-            <Link href="/associazione-culturale/gulliver-rock">
-              <Image
-                src="/locandina-elea.png"
-                alt="Locandina Gulliver Rock 2026"
-                width={520}
-                height={730}
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-                priority
-              />
-            </Link>
-          </div>
-        </div>
-      </section>
 
 
 
@@ -156,7 +125,7 @@ export default function HomePage() {
             <Link href="/gruppi26" className="btn btn-outline-white btn-lg" id="banner-gruppi">
               Gruppi WhatsApp & Telegram
             </Link>
-            <Link href="/guide26" className="btn btn-outline-white btn-lg" id="banner-guida">
+            <Link href="/guida26" className="btn btn-outline-white btn-lg" id="banner-guida">
               Guida DSU
             </Link>
           </div>

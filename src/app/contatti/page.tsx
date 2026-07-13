@@ -23,8 +23,8 @@ const AULETTE = [
     dove: "Piano terra, aula T29",
     tel: "071.220.7026",
     email: "gulliverecon@gmail.com",
-    referente: "Mattia Taliani",
-    telefono: "351 9248800",
+    referente: "Aurora Moretti",
+    telefono: "347 5227229",
     color: styles.cardYellow,
   },
   {
@@ -33,8 +33,8 @@ const AULETTE = [
     dove: "Polo Monte Dago, quota 150",
     tel: "071.220.4509",
     email: "rappresentantigulliver.ing@gmail.com",
-    referente: "Chiara Carlomagno",
-    telefono: "351 4244272",
+    referente: "Pier Francesco Capretta",
+    telefono: "334 2135364",
     color: styles.cardPurple,
   },
   {
@@ -122,14 +122,14 @@ export default function ContattiPage() {
               <h3>Contatti</h3>
               <div className={styles.referentiList}>
                 <div className={styles.referente}>
-                  <strong>Sabrina Brizzola</strong>
-                  <span>Coordinatrice Lista Gulliver - Sinistra Universitaria</span>
-                  <a href="tel:3314622474" className={styles.contactLink}>331 462 2474</a>
+                  <strong>Mattia Taliani</strong>
+                  <span>Coordinatore Lista Gulliver - Sinistra Universitaria</span>
+                  <a href="tel:3519248800" className={styles.contactLink}>351 924 8800</a>
                 </div>
                 <div className={styles.referente}>
-                  <strong>Veronica Barlassina</strong>
+                  <strong>Sara Beccerica</strong>
                   <span>Presidente Gulliver APS</span>
-                  <a href="tel:3394862440" className={styles.contactLink}>339 486 2440</a>
+                  <a href="tel:3898839234" className={styles.contactLink}>389 883 9234</a>
                 </div>
               </div>
             </div>

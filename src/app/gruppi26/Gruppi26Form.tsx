@@ -251,7 +251,7 @@ export default function Gruppi26Form() {
               </p>
               
               <a 
-                href="/docs/26/pdf-gruppi-whatsapp.pdf" 
+                href="/docs/2026/pdf-gruppi-whatsapp.pdf" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.downloadButton}
