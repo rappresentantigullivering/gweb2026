@@ -21,10 +21,10 @@ Il portale raccoglie diversi strumenti e aree tematiche:
 
 Il progetto è costruito con le seguenti tecnologie:
 
-- **Framework**: [Next.js 15](https://nextjs.org/)
+- **Framework**: [Next.js 16](https://nextjs.org/)
 - **Linguaggio**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: Vanilla CSS con Custom Properties
-- **Hosting**: Netlify/Vercel
+- **Hosting**: Vercel
 
 ---
 

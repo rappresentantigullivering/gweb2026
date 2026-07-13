@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <div className="container" style={{ maxWidth: '760px' }}>
         <h1>Privacy Policy</h1>
         <div className="divider-red" style={{ marginBottom: '2rem', marginTop: '1rem' }} />
-        <p>Questa pagina descrive le pratiche di raccolta e utilizzo dei dati del sito gullivernacona.it</p>
+        <p>Questa pagina descrive le pratiche di raccolta e utilizzo dei dati del sito gulliverancona.it</p>
         <h2 style={{ marginTop: '2rem', fontSize: '1.3rem' }}>Titolare del trattamento</h2>
         <p style={{ marginTop: '0.75rem' }}>
           Associazione Culturale Gulliver – Lista di Rappresentanza UNIVPM<br />
@@ -29,13 +29,13 @@ export default function PrivacyPage() {
             <strong>Dati forniti volontariamente:</strong> qualora l'utente decida di compilare i moduli di contatto, iscrizione o partecipazione accessibili tramite il dominio <code>forms.gulliverancona.it</code>, i dati saranno gestiti tramite la piattaforma terza <strong>Tally.so</strong>. Ti invitiamo a consultare la relativa informativa privacy sul loro sito web prima dell'invio.
           </li>
           <li style={{ marginBottom: '0.5rem', lineHeight: '1.6' }}>
-            <strong>Dati di navigazione e tecnici:</strong> i sistemi informatici acquisiscono informazioni statistiche in forma strettamente anonima (tramite Vercel Analytics) e dati tecnici di instradamento del traffico necessari alla fornitura del servizio (tramite Cloudflare e Netlify).
+            <strong>Dati di navigazione e tecnici:</strong> i sistemi informatici acquisiscono informazioni statistiche in forma strettamente anonima (tramite Vercel Analytics) e dati tecnici di instradamento del traffico necessari alla fornitura del servizio (tramite Cloudflare e Vercel).
           </li>
           <li style={{ marginBottom: '0.5rem', lineHeight: '1.6' }}>
             <strong>Uso del LocalStorage tecnico:</strong> per evitare di mostrare ripetutamente il pop-up informativo di voto agli utenti che lo hanno già chiuso, viene salvato sul browser un valore tecnico temporaneo (<code>gulliver_vote_interacted_version</code>). Questa informazione risiede esclusivamente sul dispositivo dell'utente e non viene usata per attività di tracciamento o profilazione.
           </li>
           <li style={{ lineHeight: '1.6' }}>
-            <strong>Cookie tecnici di sessione:</strong> esclusivamente per gli utenti amministratori che effettuano l'accesso al pannello di controllo (<code>admin.gulliverancona.it</code>), viene utilizzato un cookie tecnico di sessione denominato <code>gweb-admin-session</code>. Questo cookie ha la finalità esclusiva di mantenere attiva e sicura la sessione dell'utente, non viene utilizzato per attività di profilazione o tracciamento ed è rimosso alla chiusura del browser o al momento del logout.
+            <strong>Cookie tecnici di sessione:</strong> per gli utenti autorizzati che accedono ai servizi interni sui sottodomini di <code>gulliverancona.it</code>, viene utilizzato un cookie tecnico di sessione denominato <code>gulliver_session</code>. Questo cookie ha la finalità esclusiva di mantenere attiva e sicura la sessione dell'utente, non viene utilizzato per attività di profilazione o tracciamento ed è eliminato al logout o alla scadenza della sessione.
           </li>
         </ul>
 
@@ -57,9 +57,9 @@ export default function PrivacyPage() {
         <p style={{ marginTop: '0.75rem' }}>
           La gestione dei DNS (Domain Name System) e l'instradamento del traffico verso il nostro dominio sono affidati a <strong>Cloudflare, Inc.</strong> Questo ci permette di proteggere la piattaforma da attacchi informatici e di garantire connessioni sicure e stabili in tutto il mondo.
           <br /><br />
-          Parallelamente, il sito web è ospitato sulle piattaforme cloud di Netlify (Netlify, Inc.) e Vercel (Vercel Inc.). Questa configurazione a doppia infrastruttura, orchestrata e bilanciata attraverso Cloudflare, assicura una maggiore resilienza, ridondanza e continuità operativa (uptime garantito).
+          Il sito web è ospitato sulla piattaforma cloud di <strong>Vercel Inc.</strong>, mentre Cloudflare gestisce DNS e instradamento del dominio.
           <br /><br />
-          I provider Cloudflare, Netlify e Vercel elaborano a livello di server informazioni tecniche standard (come indirizzi IP a livello di pacchetto di rete e log di sistema) che sono strettamente e unicamente necessarie per la fornitura tecnica del servizio, l'ottimizzazione delle performance di rete e la salvaguardia della sicurezza dell'infrastruttura (come la mitigazione di attacchi DDoS). Tutti i dati tecnici sono trattati e protetti in rigorosa conformità alle rispettive privacy policy aziendali.
+          I provider Cloudflare e Vercel elaborano a livello di server informazioni tecniche standard (come indirizzi IP a livello di pacchetto di rete e log di sistema) necessarie alla fornitura tecnica del servizio, all'ottimizzazione delle performance di rete e alla salvaguardia della sicurezza dell'infrastruttura (come la mitigazione di attacchi DDoS), secondo le rispettive informative e condizioni applicabili.
         </p>
       </div>
     </div>
