@@ -178,10 +178,10 @@ export default function Gruppi26Form() {
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <span className="section-tag section-tag-white">Anno Accademico 2026/2027</span>
           <h1 style={{ color: 'var(--white)', marginTop: '1rem', fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900 }}>
-            Gruppi WhatsApp Matricole 2026
+            Gruppi Matricole 2026 - 2027
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.85)', marginTop: '1rem', fontSize: '1.2rem', maxWidth: '600px', marginInline: 'auto' }}>
-            Incontra i tuoi futuri compagni di corso e rimani sempre aggiornato.
+            Incontra lə tuə futurə compagnə di corso e rimani sempre aggiornatə.
           </p>
         </div>
       </div>
