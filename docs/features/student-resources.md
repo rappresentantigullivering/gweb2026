@@ -18,6 +18,7 @@ guida. Non è richiesto login o controllo matricola.
 - Pagine precedenti ancora presenti: `/matricole/kit`, `/matricole/gruppi`.
 - Edizione 2026: `/kit26`, `/gruppi26`, `/guida26`, `/eng-guida26`.
 - Documenti: principalmente `public/docs/2026/`, con materiale storico sotto anno.
+- QR code per stampa e comunicazione: `public/docs/2026/qrcode/`.
 
 `/gruppi26` è un componente client: contiene una struttura facoltà/corsi e apre link
 esterni. Include anche il PDF riepilogativo dei gruppi. Il corso “Enviromental Hazard
@@ -28,6 +29,11 @@ and Disaster Risk Management” è collegato al relativo invito WhatsApp.
 I link ai gruppi e i testi sono nel codice delle pagine, non in Redis. I PDF sono asset
 versionati. La pagina non verifica appartenenza all'ateneo; una proposta separata è
 documentata come non implementata.
+
+I QR dell'edizione si rigenerano con `npm run qr:generate`. Il manifesto nome → URL è
+in `scripts/generate-qr-codes.mjs`; dopo la generazione ogni codice va scansionato
+fisicamente prima della stampa. Il file `guide26_qr.png` punta alla route canonica
+`/guida26/`.
 
 ## Dipendenze
 
@@ -44,6 +50,8 @@ documentata come non implementata.
 - Se si introduce verifica identità, affrontare privacy, accessibilità, rate limit,
   recupero e costi; non seguire una proposta come se fosse già approvata.
 - Aggiornare anno, testi, immagini e documenti come un unico rilascio coerente.
+- Per una nuova edizione creare `public/docs/<anno>/qrcode/` senza sovrascrivere i QR
+  già utilizzati nei materiali stampati degli anni precedenti.
 
 ## Verifica
 

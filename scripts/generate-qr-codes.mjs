@@ -11,7 +11,7 @@ const links = [
   { name: 'eng-guida26_qr.png', url: 'https://www.gulliverancona.it/eng-guida26/' },
 ];
 
-const qrFolder = join(process.cwd(), 'docs', '2026', 'qrcodes');
+const qrFolder = join(process.cwd(), 'public', 'docs', '2026', 'qrcode');
 
 async function generateQrCodes() {
   console.log('Generating and downloading QR codes...');

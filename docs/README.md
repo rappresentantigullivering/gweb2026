@@ -45,10 +45,6 @@ devono essere scambiate per funzionalità disponibili.
 
 - [Current image](current-image.md): colori, font, componenti, tono e regole di coerenza.
 
-### Materiali per edizione
-
-- [Materiali 2026](2026/README.md): QR code e altri artefatti operativi dell'edizione.
-
 ### Funzionalità
 
 - [Sito pubblico e navigazione](features/public-site.md)
