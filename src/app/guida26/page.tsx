@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Guide dello Studente 2026/2027 | Gulliver",
+  title: "Guida Erdis 2026 | Gulliver",
   description: "Le Guide dello Studente Gulliver per l'anno accademico 2026/2027.",
 };
 
@@ -25,11 +25,8 @@ export default function Guide26Page() {
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <span className="section-tag section-tag-white">Anno Accademico 2026/2027</span>
           <h1 style={{ color: 'var(--white)', marginTop: '1rem', fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900 }}>
-            Guide dello Studente 2026
+            Guida Erdis 2026
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.85)', marginTop: '1rem', fontSize: '1.2rem', maxWidth: '600px', marginInline: 'auto' }}>
-            Tutto quello che c&apos;è da sapere sulla burocrazia, le borse di studio e la vita accademica.
-          </p>
         </div>
       </div>
 
