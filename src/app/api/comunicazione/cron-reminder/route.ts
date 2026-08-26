@@ -17,6 +17,37 @@ function formatTime(date: Date) {
   }
 }
 
+const TIPO_LABELS: Record<string, string> = {
+  post: 'Post',
+  carosello: 'Carosello',
+  reel: 'Reel',
+  storia: 'Storia',
+  collab: 'Collab',
+  annuncio: 'Annuncio',
+};
+
+interface ReminderPost {
+  titolo?: string;
+  tipo?: string;
+  canva_link?: string;
+  responsabile?: string;
+}
+
+function tipoLabel(post: ReminderPost) {
+  return (post.tipo && TIPO_LABELS[post.tipo]) || 'Post';
+}
+
+/** Il link Canva e facoltativo: reel e storie spesso non ne hanno uno. */
+function materialeLine(post: ReminderPost, label: string) {
+  if (post.canva_link) {
+    return `\n🎨 <b>Materiale:</b> <a href="${post.canva_link}">${label}</a>`;
+  }
+  if (post.responsabile) {
+    return `\n👤 <b>Responsabile:</b> ${post.responsabile}`;
+  }
+  return '';
+}
+
 async function sendTelegramMessage(text: string) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -73,6 +104,7 @@ export async function GET(req: Request) {
     for (const id in currentData) {
       const post = currentData[id];
       if (!post.data_pubblicazione) continue;
+      if (post.stato_grafica === 'published') continue;
 
       const pubDate = new Date(post.data_pubblicazione);
       const pubMs = pubDate.getTime();
@@ -88,14 +120,14 @@ export async function GET(req: Request) {
       if (diffHours > 18 && diffHours <= 25 && !post.reminders_sent.includes('24h_warn')) {
         let text = '';
         if (post.stato_grafica === 'done') {
-          text = `<b>✅ GRAFICA PRONTA (24h all'uscita)</b>\n\n` +
-                 `Il post <b>"${post.titolo}"</b> è programmato per domani alle <b>${formatTime(pubDate)}</b>.\n\n` +
-                 `🎨 <b>Canva:</b> <a href="${post.canva_link}">Apri progetto</a>\n` +
+          text = `<b>✅ CONTENUTO PRONTO (24h all'uscita)</b>\n\n` +
+                 `Il contenuto <b>"${post.titolo}"</b> (${tipoLabel(post)}) è programmato per domani alle <b>${formatTime(pubDate)}</b>.` +
+                 materialeLine(post, 'Apri progetto') + `\n\n` +
                  `📝 <b>Didascalia pronta:</b>\n<pre>${post.didascalia || '(Nessuna didascalia)'}</pre>`;
         } else {
-          text = `<b>⚠️ COMPILAZIONE IN RITARDO (24h all'uscita)</b>\n\n` +
-                 `Mancano solo 24 ore alla pubblicazione del post <b>"${post.titolo}"</b> (${formatTime(pubDate)}) e la grafica non è ancora segnata come pronta!\n\n` +
-                 `🎨 <b>Canva:</b> <a href="${post.canva_link}">Apri e collabora</a>`;
+          text = `<b>⚠️ CONTENUTO IN RITARDO (24h all'uscita)</b>\n\n` +
+                 `Mancano solo 24 ore alla pubblicazione di <b>"${post.titolo}"</b> (${tipoLabel(post)}, ore ${formatTime(pubDate)}) e non è ancora segnato come pronto!` +
+                 materialeLine(post, 'Apri e collabora');
         }
 
         const sent = await sendTelegramMessage(text);
@@ -109,8 +141,8 @@ export async function GET(req: Request) {
       // 2. Promemoria finale 1 ora prima dell'uscita (finestra di controllo: tra 0 e 1.2 ore prima)
       if (diffHours > 0 && diffHours <= 1.2 && !post.reminders_sent.includes('1h_final')) {
         const text = `<b>⏳ IN USCITA TRA UN'ORA</b>\n\n` +
-                     `Il post <b>"${post.titolo}"</b> deve essere pubblicato tra circa un'ora (ore <b>${formatTime(pubDate)}</b>)!\n\n` +
-                     `🎨 <b>Canva:</b> <a href="${post.canva_link}">Link progetto</a>\n\n` +
+                     `<b>"${post.titolo}"</b> (${tipoLabel(post)}) deve essere pubblicato tra circa un'ora (ore <b>${formatTime(pubDate)}</b>)!` +
+                     materialeLine(post, 'Link progetto') + `\n\n` +
                      `📝 <b>Didascalia da copiare:</b>\n<pre>${post.didascalia || '(Nessuna didascalia)'}</pre>`;
 
         const sent = await sendTelegramMessage(text);

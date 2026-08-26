@@ -1,17 +1,128 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import styles from './page.module.css';
+
+/* ────────────────────────────────────────────────────────────────
+   Modello dati
+   ──────────────────────────────────────────────────────────────── */
+
+type Stato = 'idea' | 'todo' | 'in_progress' | 'done' | 'published';
+type Tipo = 'post' | 'carosello' | 'reel' | 'storia' | 'collab' | 'annuncio';
 
 interface Post {
   id: string;
   titolo: string;
-  data_pubblicazione: string; // ISO string or YYYY-MM-DDTHH:mm
-  canva_link: string;
+  data_pubblicazione: string; // ISO string oppure YYYY-MM-DDTHH:mm
+  canva_link?: string;        // opzionale: reel/storie spesso non hanno Canva
   didascalia: string;
-  stato_grafica: 'todo' | 'in_progress' | 'done';
+  stato_grafica: Stato;
+  tipo?: Tipo;                // default: 'post' (retrocompatibilità)
+  responsabile?: string;
+  note?: string;
   reminders_sent?: string[];
 }
+
+const TIPI: { id: Tipo; label: string; icon: string }[] = [
+  { id: 'post', label: 'Post', icon: '🖼️' },
+  { id: 'carosello', label: 'Carosello', icon: '🎠' },
+  { id: 'reel', label: 'Reel', icon: '🎬' },
+  { id: 'storia', label: 'Storia', icon: '⚡' },
+  { id: 'collab', label: 'Collab', icon: '🤝' },
+  { id: 'annuncio', label: 'Annuncio', icon: '📣' },
+];
+
+const STATI: { id: Stato; label: string; short: string }[] = [
+  { id: 'idea', label: 'Idea', short: 'Idea' },
+  { id: 'todo', label: 'Da fare', short: 'Da fare' },
+  { id: 'in_progress', label: 'In corso', short: 'In corso' },
+  { id: 'done', label: 'Pronto', short: 'Pronto' },
+  { id: 'published', label: 'Pubblicato', short: 'Online' },
+];
+
+const CAPTION_LIMIT = 2200;   // limite didascalia Instagram
+const HASHTAG_LIMIT = 30;     // limite hashtag per post
+
+const MESI = [
+  'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+  'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre',
+];
+
+const GIORNI_CORTI = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+
+/* ────────────────────────────────────────────────────────────────
+   Helper
+   ──────────────────────────────────────────────────────────────── */
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+function tipoOf(post: Post): Tipo {
+  return (post.tipo && TIPI.some(t => t.id === post.tipo) ? post.tipo : 'post') as Tipo;
+}
+
+function statoOf(post: Post): Stato {
+  return (post.stato_grafica && STATI.some(s => s.id === post.stato_grafica)
+    ? post.stato_grafica
+    : 'todo') as Stato;
+}
+
+function tipoLabel(t: Tipo) {
+  return TIPI.find(x => x.id === t)?.label ?? 'Post';
+}
+
+function statoLabel(s: Stato) {
+  return STATI.find(x => x.id === s)?.label ?? 'Da fare';
+}
+
+/** Variabili CSS per colorare badge/bordi in base a formato e stato. */
+function accentVars(post: Post): React.CSSProperties {
+  return {
+    ['--accent' as string]: `var(--tipo-${tipoOf(post)})`,
+    ['--stato-color' as string]: `var(--stato-${statoOf(post)})`,
+  } as React.CSSProperties;
+}
+
+function dayKeyOf(d: Date) {
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+/** Sposta un contenuto su un altro giorno mantenendo l'orario. */
+function moveToDay(iso: string, y: number, m: number, d: number) {
+  const src = new Date(iso);
+  const hh = Number.isNaN(src.getTime()) ? 14 : src.getHours();
+  const mm = Number.isNaN(src.getTime()) ? 0 : src.getMinutes();
+  return `${y}-${pad(m + 1)}-${pad(d)}T${pad(hh)}:${pad(mm)}`;
+}
+
+function countHashtags(text: string) {
+  return (text.match(/#[\p{L}\p{N}_]+/gu) || []).length;
+}
+
+function loginUrl() {
+  const host = window.location.host;
+  const devPort = host.split(':')[1] || '3000';
+  const protocol = window.location.protocol;
+  const loginHost = host.includes('localhost')
+    ? `tesserati.localhost:${devPort}`
+    : 'tesserati.gulliverancona.it';
+  return `${protocol}//${loginHost}`;
+}
+
+const emptyForm: Partial<Post> = {
+  id: '',
+  titolo: '',
+  data_pubblicazione: '',
+  canva_link: '',
+  didascalia: '',
+  stato_grafica: 'todo',
+  tipo: 'post',
+  responsabile: '',
+  note: '',
+};
+
+/* ────────────────────────────────────────────────────────────────
+   Componente
+   ──────────────────────────────────────────────────────────────── */
 
 export default function ComunicazionePage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -19,73 +130,57 @@ export default function ComunicazionePage() {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // App state
   const [posts, setPosts] = useState<Record<string, Post>>({});
-  const [activeTab, setActiveTab] = useState<'calendar' | 'list'>('calendar');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'board' | 'list'>('calendar');
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | Stato>('all');
+  const [tipoFilter, setTipoFilter] = useState<'all' | Tipo>('all');
 
-  // Calendar state
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Modal states
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [dayModal, setDayModal] = useState<{ y: number; m: number; d: number } | null>(null);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [formPost, setFormPost] = useState<Partial<Post>>({
-    id: '',
-    titolo: '',
-    data_pubblicazione: '',
-    canva_link: '',
-    didascalia: '',
-    stato_grafica: 'todo',
-  });
+  const [formPost, setFormPost] = useState<Partial<Post>>(emptyForm);
+  const [saving, setSaving] = useState(false);
 
-  // Verify auth on mount
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    window.setTimeout(() => setToast(null), 2600);
+  }, []);
+
+  /* ── Auth ─────────────────────────────────────────────────────── */
   useEffect(() => {
     async function checkAuth() {
       try {
         const res = await fetch('/api/auth/check');
         const data = await res.json();
         if (data.authenticated !== true) {
-          const host = window.location.host;
-          const devPort = host.split(':')[1] || '3000';
-          const protocol = window.location.protocol;
-          const loginHost = host.includes('localhost')
-            ? `tesserati.localhost:${devPort}`
-            : 'tesserati.gulliverancona.it';
-          window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
+          window.location.href = `${loginUrl()}/login?redirect=${encodeURIComponent(window.location.href)}`;
         } else {
           setIsAuthenticated(true);
         }
       } catch (err) {
         console.error('Auth check error:', err);
-        const host = window.location.host;
-        const devPort = host.split(':')[1] || '3000';
-        const protocol = window.location.protocol;
-        const loginHost = host.includes('localhost')
-          ? `tesserati.localhost:${devPort}`
-          : 'tesserati.gulliverancona.it';
-        window.location.href = `${protocol}//${loginHost}/login?redirect=${encodeURIComponent(window.location.href)}`;
+        window.location.href = `${loginUrl()}/login?redirect=${encodeURIComponent(window.location.href)}`;
       }
     }
     checkAuth();
   }, []);
 
-  // Fetch posts if authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchPosts();
-    }
+    if (isAuthenticated) fetchPosts();
   }, [isAuthenticated]);
 
   async function fetchPosts() {
     try {
       const res = await fetch('/api/comunicazione');
-      if (res.ok) {
-        const data = await res.json();
-        setPosts(data);
-      }
+      if (res.ok) setPosts(await res.json());
     } catch (err) {
       console.error('Error fetching posts:', err);
     }
@@ -107,7 +202,7 @@ export default function ComunicazionePage() {
         const data = await res.json();
         setLoginError(data.error || 'Password incorretta');
       }
-    } catch (err) {
+    } catch {
       setLoginError('Impossibile connettersi al server');
     } finally {
       setLoading(false);
@@ -117,87 +212,90 @@ export default function ComunicazionePage() {
   async function handleLogout() {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      const host = window.location.host;
-      const devPort = host.split(':')[1] || '3000';
-      const protocol = window.location.protocol;
-      const loginHost = host.includes('localhost')
-        ? `tesserati.localhost:${devPort}`
-        : 'tesserati.gulliverancona.it';
-      window.location.href = `${protocol}//${loginHost}/login`;
+      window.location.href = `${loginUrl()}/login`;
     } catch (err) {
       console.error('Logout error:', err);
     }
   }
 
   const handleGoHome = () => {
-    const host = window.location.host;
-    const devPort = host.split(':')[1] || '3000';
-    if (host.includes('localhost')) {
-      window.location.href = `http://tesserati.localhost:${devPort}`;
-    } else {
-      window.location.href = 'https://tesserati.gulliverancona.it';
-    }
+    window.location.href = loginUrl();
   };
+
+  /* ── CRUD ─────────────────────────────────────────────────────── */
+
+  /** Salva (create o update) e aggiorna lo stato locale. */
+  const persistPost = useCallback(async (post: Post, isEdit: boolean) => {
+    const res = await fetch('/api/comunicazione', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: isEdit ? 'update' : 'create', post }),
+    });
+    if (!res.ok) throw new Error('save failed');
+    const result = await res.json();
+    const saved: Post = result.post || post;
+    setPosts(prev => ({ ...prev, [saved.id]: saved }));
+    return saved;
+  }, []);
 
   async function handleSavePost(e: React.FormEvent) {
     e.preventDefault();
-    if (!formPost.titolo || !formPost.data_pubblicazione || !formPost.canva_link) {
-      alert('Tutti i campi obbligatori devono essere compilati.');
+    if (!formPost.titolo?.trim() || !formPost.data_pubblicazione) {
+      showToast('Titolo e data di pubblicazione sono obbligatori.');
       return;
     }
 
     const isEdit = !!formPost.id;
-    const postData = {
-      ...formPost,
-      id: isEdit ? formPost.id : 'post_' + Date.now(),
+    const postData: Post = {
+      ...(formPost as Post),
+      titolo: formPost.titolo.trim(),
+      canva_link: formPost.canva_link?.trim() || '',
+      didascalia: formPost.didascalia || '',
+      responsabile: formPost.responsabile?.trim() || '',
+      note: formPost.note?.trim() || '',
+      tipo: (formPost.tipo as Tipo) || 'post',
+      stato_grafica: (formPost.stato_grafica as Stato) || 'todo',
+      id: isEdit ? formPost.id! : 'post_' + Date.now(),
     };
 
+    setSaving(true);
     try {
-      const res = await fetch('/api/comunicazione', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: isEdit ? 'update' : 'create',
-          post: postData,
-        }),
-      });
-
-      if (res.ok) {
-        const result = await res.json();
-        setPosts(prev => ({
-          ...prev,
-          [postData.id!]: result.post || postData as Post,
-        }));
-        setIsFormModalOpen(false);
-        setFormPost({
-          id: '',
-          titolo: '',
-          data_pubblicazione: '',
-          canva_link: '',
-          didascalia: '',
-          stato_grafica: 'todo',
-        });
-      } else {
-        alert('Errore nel salvataggio del post.');
-      }
+      await persistPost(postData, isEdit);
+      setIsFormModalOpen(false);
+      setFormPost(emptyForm);
+      showToast(isEdit ? 'Contenuto aggiornato ✓' : 'Contenuto aggiunto in calendario ✓');
     } catch (err) {
       console.error('Save error:', err);
-      alert('Errore di connessione.');
+      showToast('Errore nel salvataggio. Riprova.');
+    } finally {
+      setSaving(false);
     }
   }
 
+  /** Aggiorna al volo alcuni campi (drag&drop, cambio stato rapido). */
+  const patchPost = useCallback(async (id: string, patch: Partial<Post>) => {
+    const current = posts[id];
+    if (!current) return;
+    const updated: Post = { ...current, ...patch };
+    setPosts(prev => ({ ...prev, [id]: updated }));      // ottimistico
+    setSelectedPost(prev => (prev && prev.id === id ? updated : prev));
+    try {
+      await persistPost(updated, true);
+    } catch (err) {
+      console.error('Patch error:', err);
+      setPosts(prev => ({ ...prev, [id]: current }));    // rollback
+      showToast('Errore di salvataggio, modifica annullata.');
+    }
+  }, [posts, persistPost, showToast]);
+
   async function handleDeletePost(id: string) {
-    if (!confirm('Sei sicuro di voler eliminare questo post?')) return;
+    if (!confirm('Sei sicuro di voler eliminare questo contenuto?')) return;
     try {
       const res = await fetch('/api/comunicazione', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'delete',
-          post: { id },
-        }),
+        body: JSON.stringify({ action: 'delete', post: { id } }),
       });
-
       if (res.ok) {
         setPosts(prev => {
           const next = { ...prev };
@@ -206,98 +304,155 @@ export default function ComunicazionePage() {
         });
         setIsDetailModalOpen(false);
         setSelectedPost(null);
+        showToast('Contenuto eliminato.');
       } else {
-        alert('Errore nell\'eliminazione.');
+        showToast('Errore nell\'eliminazione.');
       }
     } catch (err) {
       console.error('Delete error:', err);
+      showToast('Errore di connessione.');
     }
   }
 
-  async function handleUpdateStatus(id: string, status: 'todo' | 'in_progress' | 'done') {
-    const post = posts[id];
-    if (!post) return;
-
-    const updated = { ...post, stato_grafica: status };
-    try {
-      const res = await fetch('/api/comunicazione', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'update',
-          post: updated,
-        }),
-      });
-
-      if (res.ok) {
-        setPosts(prev => ({
-          ...prev,
-          [id]: updated,
-        }));
-        if (selectedPost && selectedPost.id === id) {
-          setSelectedPost(updated);
-        }
-      }
-    } catch (err) {
-      console.error('Error updating status:', err);
-    }
+  function handleDuplicate(post: Post) {
+    const next = new Date(post.data_pubblicazione);
+    next.setDate(next.getDate() + 7);
+    setFormPost({
+      ...post,
+      id: '',
+      titolo: post.titolo + ' (copia)',
+      stato_grafica: 'todo',
+      reminders_sent: [],
+      data_pubblicazione: `${next.getFullYear()}-${pad(next.getMonth() + 1)}-${pad(next.getDate())}T${pad(next.getHours())}:${pad(next.getMinutes())}`,
+    });
+    setIsDetailModalOpen(false);
+    setIsFormModalOpen(true);
   }
 
-  // Helper date calculations
-  const monthNames = [
-    'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
-    'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
-  ];
+  function openNewPost(prefillDate?: string) {
+    setFormPost({ ...emptyForm, data_pubblicazione: prefillDate || '' });
+    setIsFormModalOpen(true);
+  }
 
+  function openEdit(post: Post) {
+    setFormPost({ ...emptyForm, ...post, tipo: tipoOf(post), stato_grafica: statoOf(post) });
+    setIsDetailModalOpen(false);
+    setIsFormModalOpen(true);
+  }
+
+  const handleCopyCaption = (text: string) => {
+    navigator.clipboard.writeText(text);
+    showToast('Didascalia copiata negli appunti 📋');
+  };
+
+  /* ── Date & derivazioni ───────────────────────────────────────── */
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const startDayOfWeek = new Date(year, month, 1).getDay(); // Sun = 0, Mon = 1...
-  // Convert Sunday=0 to Sunday=6 and Monday=1 to Monday=0
+  const startDayOfWeek = new Date(year, month, 1).getDay();
   const adjustedStartOffset = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
 
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+  const goToday = () => setCurrentDate(new Date());
 
-  // Copy text helper
-  const handleCopyCaption = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert('Didascalia copiata negli appunti! 📋');
-  };
+  const postsList = useMemo(() => Object.values(posts), [posts]);
 
-  // Filter & Search logic
-  const postsList = Object.values(posts);
-  const filteredPosts = postsList.filter(post => {
+  const matchesFilters = useCallback((post: Post) => {
+    const q = searchQuery.trim().toLowerCase();
     const matchesSearch =
-      post.titolo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.didascalia.toLowerCase().includes(searchQuery.toLowerCase());
+      !q ||
+      post.titolo.toLowerCase().includes(q) ||
+      (post.didascalia || '').toLowerCase().includes(q) ||
+      (post.responsabile || '').toLowerCase().includes(q);
+    const matchesStatus = statusFilter === 'all' || statoOf(post) === statusFilter;
+    const matchesTipo = tipoFilter === 'all' || tipoOf(post) === tipoFilter;
+    return matchesSearch && matchesStatus && matchesTipo;
+  }, [searchQuery, statusFilter, tipoFilter]);
 
-    const matchesStatus =
-      statusFilter === 'all' || post.stato_grafica === statusFilter;
+  const filteredPosts = useMemo(
+    () => postsList
+      .filter(matchesFilters)
+      .sort((a, b) => new Date(a.data_pubblicazione).getTime() - new Date(b.data_pubblicazione).getTime()),
+    [postsList, matchesFilters],
+  );
 
-    return matchesSearch && matchesStatus;
-  }).sort((a, b) => new Date(a.data_pubblicazione).getTime() - new Date(b.data_pubblicazione).getTime());
-
-  // Group posts by publication day for the calendar
-  const getPostsForDay = (day: number) => {
-    return postsList.filter(post => {
+  /** Mappa giorno → contenuti (già filtrati) per il calendario. */
+  const postsByDay = useMemo(() => {
+    const map: Record<string, Post[]> = {};
+    for (const post of filteredPosts) {
       const d = new Date(post.data_pubblicazione);
-      return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
-    }).sort((a, b) => new Date(a.data_pubblicazione).getTime() - new Date(b.data_pubblicazione).getTime());
-  };
+      if (Number.isNaN(d.getTime())) continue;
+      const key = dayKeyOf(d);
+      (map[key] ||= []).push(post);
+    }
+    return map;
+  }, [filteredPosts]);
 
+  /** Statistiche del mese visualizzato (non filtrate). */
+  const monthStats = useMemo(() => {
+    const inMonth = postsList.filter(p => {
+      const d = new Date(p.data_pubblicazione);
+      return !Number.isNaN(d.getTime()) && d.getFullYear() === year && d.getMonth() === month;
+    });
+    const byStato = Object.fromEntries(STATI.map(s => [s.id, 0])) as Record<Stato, number>;
+    const byTipo = Object.fromEntries(TIPI.map(t => [t.id, 0])) as Record<Tipo, number>;
+    for (const p of inMonth) {
+      byStato[statoOf(p)] += 1;
+      byTipo[tipoOf(p)] += 1;
+    }
+    const now = Date.now();
+    const daFare = inMonth.filter(p => {
+      const s = statoOf(p);
+      return s !== 'done' && s !== 'published' && new Date(p.data_pubblicazione).getTime() >= now;
+    }).length;
+    const inRitardo = inMonth.filter(p => {
+      const s = statoOf(p);
+      return s !== 'done' && s !== 'published' && new Date(p.data_pubblicazione).getTime() < now;
+    }).length;
+    return { total: inMonth.length, byStato, byTipo, daFare, inRitardo };
+  }, [postsList, year, month]);
+
+  /* ── Drag & drop ──────────────────────────────────────────────── */
+  function onDragStartPost(e: React.DragEvent, id: string) {
+    setDragId(id);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', id);
+  }
+
+  function onDropOnDay(e: React.DragEvent, day: number) {
+    e.preventDefault();
+    setDropTarget(null);
+    const id = dragId || e.dataTransfer.getData('text/plain');
+    setDragId(null);
+    const post = posts[id];
+    if (!post) return;
+    const nextDate = moveToDay(post.data_pubblicazione, year, month, day);
+    if (nextDate === post.data_pubblicazione) return;
+    patchPost(id, { data_pubblicazione: nextDate });
+    showToast(`Spostato al ${day} ${MESI[month].toLowerCase()}`);
+  }
+
+  function onDropOnColumn(e: React.DragEvent, stato: Stato) {
+    e.preventDefault();
+    setDropTarget(null);
+    const id = dragId || e.dataTransfer.getData('text/plain');
+    setDragId(null);
+    const post = posts[id];
+    if (!post || statoOf(post) === stato) return;
+    patchPost(id, { stato_grafica: stato });
+    showToast(`Spostato in "${statoLabel(stato)}"`);
+  }
+
+  /* ── Schermate di servizio ────────────────────────────────────── */
   if (isAuthenticated === null) {
     return (
       <div className={styles.pageWrapper}>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <div style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.5)' }}>Caricamento...</div>
-        </div>
+        <div className={styles.loadingScreen}>Caricamento…</div>
       </div>
     );
   }
 
-  // --- LOGIN SCREEN ---
   if (!isAuthenticated) {
     return (
       <div className={styles.pageWrapper}>
@@ -309,8 +464,9 @@ export default function ComunicazionePage() {
               </svg>
             </div>
             <h1 className={styles.loginTitle}>Area Comunicazione</h1>
-            <p className={styles.loginDesc}>Inserisci la password di amministrazione per accedere al calendario editoriale.</p>
-            
+            <p className={styles.loginDesc}>
+              Inserisci la password di amministrazione per accedere al calendario editoriale.
+            </p>
             <form onSubmit={handleLogin}>
               <div className={styles.formGroup} style={{ textAlign: 'left' }}>
                 <label htmlFor="pass">Password</label>
@@ -324,9 +480,9 @@ export default function ComunicazionePage() {
                   required
                 />
               </div>
-              {loginError && <p style={{ color: 'var(--red-light)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>{loginError}</p>}
-              <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%', border: 'none', background: 'var(--red-primary)' }} disabled={loading}>
-                {loading ? 'Verifica...' : 'Accedi'}
+              {loginError && <p className={styles.loginError}>{loginError}</p>}
+              <button type="submit" className={styles.btnPrimary} style={{ width: '100%' }} disabled={loading}>
+                {loading ? 'Verifica…' : 'Accedi'}
               </button>
             </form>
           </div>
@@ -335,16 +491,17 @@ export default function ComunicazionePage() {
     );
   }
 
-  // --- DASHBOARD ---
+  /* ── Dashboard ────────────────────────────────────────────────── */
+  const captionLength = (formPost.didascalia || '').length;
+  const hashtagCount = countHashtags(formPost.didascalia || '');
+
   return (
     <div className={styles.pageWrapper}>
       {/* NAVBAR */}
       <header className={styles.navHeader}>
         <div className={styles.navInner}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <button onClick={handleGoHome} className={styles.btnBack}>
-              ← Dashboard
-            </button>
+          <div className={styles.navSide}>
+            <button onClick={handleGoHome} className={styles.btnBack}>← Dashboard</button>
             <div className={styles.logoArea}>
               <span className={styles.logoTitle}>GULLIVER</span>
               <div className={styles.logoDot} />
@@ -354,186 +511,312 @@ export default function ComunicazionePage() {
 
           <div className={styles.navControls}>
             <div className={styles.tabGroup}>
-              <button
-                className={`${styles.tabButton} ${activeTab === 'calendar' ? styles.tabButtonActive : ''}`}
-                onClick={() => setActiveTab('calendar')}
-              >
-                Calendario
-              </button>
-              <button
-                className={`${styles.tabButton} ${activeTab === 'list' ? styles.tabButtonActive : ''}`}
-                onClick={() => setActiveTab('list')}
-              >
-                Lista Post
-              </button>
+              {([
+                { id: 'calendar', label: 'Calendario' },
+                { id: 'board', label: 'Bacheca' },
+                { id: 'list', label: 'Lista' },
+              ] as const).map(tab => (
+                <button
+                  key={tab.id}
+                  className={`${styles.tabButton} ${activeTab === tab.id ? styles.tabButtonActive : ''}`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
-            <button
-              className="btn btn-primary"
-              style={{ background: 'var(--red-primary)', border: 'none', padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
-              onClick={() => {
-                setFormPost({
-                  id: '',
-                  titolo: '',
-                  data_pubblicazione: '',
-                  canva_link: '',
-                  didascalia: '',
-                  stato_grafica: 'todo',
-                });
-                setIsFormModalOpen(true);
-              }}
-            >
-              + Nuovo Post
-            </button>
-
-            <button className={styles.logoutBtn} onClick={handleLogout} title="Disconnetti">
-              Esci
-            </button>
+            <button className={styles.btnPrimary} onClick={() => openNewPost()}>+ Nuovo</button>
+            <button className={styles.logoutBtn} onClick={handleLogout} title="Disconnetti">Esci</button>
           </div>
         </div>
       </header>
 
-      {/* DASHBOARD CONTENT */}
       <main className={styles.contentArea}>
-        {activeTab === 'calendar' ? (
-          // --- CALENDAR TAB ---
-          <div>
+        {/* STATISTICHE DEL MESE */}
+        <div className={styles.statsRow}>
+          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--red-primary)' } as React.CSSProperties}>
+            <span className={styles.statValue}>{monthStats.total}</span>
+            <span className={styles.statLabel}>Contenuti · {MESI[month]}</span>
+          </div>
+          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--stato-todo)' } as React.CSSProperties}>
+            <span className={styles.statValue}>{monthStats.daFare}</span>
+            <span className={styles.statLabel}>Da preparare</span>
+          </div>
+          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--stato-done)' } as React.CSSProperties}>
+            <span className={styles.statValue}>{monthStats.byStato.done}</span>
+            <span className={styles.statLabel}>Grafiche pronte</span>
+          </div>
+          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--stato-published)' } as React.CSSProperties}>
+            <span className={styles.statValue}>{monthStats.byStato.published}</span>
+            <span className={styles.statLabel}>Pubblicati</span>
+          </div>
+          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--tipo-reel)' } as React.CSSProperties}>
+            <span className={styles.statValue}>{monthStats.byTipo.reel + monthStats.byTipo.storia}</span>
+            <span className={styles.statLabel}>Reel + Storie</span>
+          </div>
+          <div className={styles.statCard} style={{ ['--accent' as string]: monthStats.inRitardo > 0 ? 'var(--stato-in_progress)' : 'var(--line-strong)' } as React.CSSProperties}>
+            <span className={styles.statValue}>{monthStats.inRitardo}</span>
+            <span className={styles.statLabel}>Scaduti non pronti</span>
+          </div>
+        </div>
+
+        {/* TOOLBAR: navigazione mese + ricerca */}
+        <div className={styles.toolbar}>
+          {activeTab === 'calendar' ? (
             <div className={styles.monthControls}>
-              <button className={styles.monthNavBtn} onClick={prevMonth}>&larr;</button>
-              <h2 className={styles.monthTitle}>{monthNames[month]} {year}</h2>
-              <button className={styles.monthNavBtn} onClick={nextMonth}>&rarr;</button>
+              <button className={styles.monthNavBtn} onClick={prevMonth} aria-label="Mese precedente">←</button>
+              <h2 className={styles.monthTitle}>{MESI[month]} {year}</h2>
+              <button className={styles.monthNavBtn} onClick={nextMonth} aria-label="Mese successivo">→</button>
+              <button className={styles.todayBtn} onClick={goToday}>Oggi</button>
             </div>
+          ) : (
+            <h2 className={styles.monthTitle}>
+              {activeTab === 'board' ? 'Flusso di produzione' : 'Tutti i contenuti'}
+            </h2>
+          )}
 
-            <div className={styles.calendarGrid}>
-              {/* Day headers */}
-              {['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map(d => (
-                <div key={d} className={styles.calendarHeaderDay}>{d}</div>
-              ))}
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="Cerca titolo, didascalia o responsabile…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
-              {/* Offset days */}
-              {Array.from({ length: adjustedStartOffset }).map((_, i) => (
-                <div key={'empty-' + i} className={`${styles.calendarCell} ${styles.calendarCellEmpty}`} />
-              ))}
+        {/* FILTRI */}
+        <div className={styles.toolbar}>
+          <div className={styles.filterRow}>
+            <button
+              className={`${styles.chip} ${tipoFilter === 'all' ? styles.chipActive : ''}`}
+              onClick={() => setTipoFilter('all')}
+            >
+              Tutti i formati
+            </button>
+            {TIPI.map(t => (
+              <button
+                key={t.id}
+                className={`${styles.chip} ${tipoFilter === t.id ? styles.chipActive : ''}`}
+                style={{ ['--accent' as string]: `var(--tipo-${t.id})` } as React.CSSProperties}
+                onClick={() => setTipoFilter(tipoFilter === t.id ? 'all' : t.id)}
+              >
+                <span className={styles.chipDot} />
+                {t.label}
+              </button>
+            ))}
+          </div>
 
-              {/* Real days */}
-              {Array.from({ length: daysInMonth }).map((_, i) => {
-                const day = i + 1;
-                const isToday =
-                  new Date().getDate() === day &&
-                  new Date().getMonth() === month &&
-                  new Date().getFullYear() === year;
+          <div className={styles.filterRow}>
+            <button
+              className={`${styles.chip} ${statusFilter === 'all' ? styles.chipActive : ''}`}
+              onClick={() => setStatusFilter('all')}
+            >
+              Ogni stato
+            </button>
+            {STATI.map(s => (
+              <button
+                key={s.id}
+                className={`${styles.chip} ${statusFilter === s.id ? styles.chipActive : ''}`}
+                style={{ ['--accent' as string]: `var(--stato-${s.id})` } as React.CSSProperties}
+                onClick={() => setStatusFilter(statusFilter === s.id ? 'all' : s.id)}
+              >
+                <span className={styles.chipDot} />
+                {s.short}
+              </button>
+            ))}
+          </div>
+        </div>
 
-                const dayPosts = getPostsForDay(day);
+        {/* ---------------- CALENDARIO ---------------- */}
+        {activeTab === 'calendar' && (
+          <div className={styles.calendarGrid}>
+            {GIORNI_CORTI.map(d => (
+              <div key={d} className={styles.calendarHeaderDay}>{d}</div>
+            ))}
 
-                return (
-                  <div
-                    key={'day-' + day}
-                    className={`${styles.calendarCell} ${isToday ? styles.calendarCellToday : ''}`}
-                    onClick={() => {
-                      // Imposta la data nel form
-                      const pad = (n: number) => String(n).padStart(2, '0');
-                      const defaultDateTime = `${year}-${pad(month + 1)}-${pad(day)}T14:00`;
-                      setFormPost({
-                        id: '',
-                        titolo: '',
-                        data_pubblicazione: defaultDateTime,
-                        canva_link: '',
-                        didascalia: '',
-                        stato_grafica: 'todo',
-                      });
-                      setIsFormModalOpen(true);
-                    }}
-                  >
+            {Array.from({ length: adjustedStartOffset }).map((_, i) => (
+              <div key={'empty-' + i} className={`${styles.calendarCell} ${styles.calendarCellEmpty}`} />
+            ))}
+
+            {Array.from({ length: daysInMonth }).map((_, i) => {
+              const day = i + 1;
+              const cellDate = new Date(year, month, day);
+              const today = new Date();
+              const isToday =
+                today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+              const isPast = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+              const weekdayIdx = (cellDate.getDay() + 6) % 7;
+              const isWeekend = weekdayIdx >= 5;
+              const dayPosts = postsByDay[dayKeyOf(cellDate)] || [];
+              const visible = dayPosts.slice(0, 4);
+              const hidden = dayPosts.length - visible.length;
+              const dropKey = 'day-' + day;
+
+              return (
+                <div
+                  key={dropKey}
+                  className={[
+                    styles.calendarCell,
+                    isToday ? styles.calendarCellToday : '',
+                    isPast && !isToday ? styles.calendarCellPast : '',
+                    isWeekend ? styles.calendarCellWeekend : '',
+                    dayPosts.length === 0 ? styles.calendarCellNoPosts : '',
+                    dropTarget === dropKey ? styles.calendarCellDrop : '',
+                  ].filter(Boolean).join(' ')}
+                  onClick={() => openNewPost(`${year}-${pad(month + 1)}-${pad(day)}T14:00`)}
+                  onDragOver={(e) => { e.preventDefault(); setDropTarget(dropKey); }}
+                  onDragLeave={() => setDropTarget(prev => (prev === dropKey ? null : prev))}
+                  onDrop={(e) => onDropOnDay(e, day)}
+                >
+                  <div className={styles.cellHead}>
                     <span className={styles.dayNumber}>{day}</span>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', width: '100%', flex: 1 }}>
-                      {dayPosts.map(post => {
-                        const dateObj = new Date(post.data_pubblicazione);
-                        const hhmm = dateObj.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+                    <span className={styles.dayWeekdayLabel}>{GIORNI_CORTI[weekdayIdx]}</span>
+                    <span className={styles.addHint}>+</span>
+                  </div>
 
-                        return (
-                          <div
-                            key={post.id}
-                            className={styles.cellPostBadge}
-                            onClick={(e) => {
-                              e.stopPropagation(); // Previeni apertura form inserimento
+                  <div className={styles.cellPostList}>
+                    {visible.map(post => {
+                      const dateObj = new Date(post.data_pubblicazione);
+                      const hhmm = dateObj.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+                      return (
+                        <div
+                          key={post.id}
+                          role="button"
+                          tabIndex={0}
+                          draggable
+                          onDragStart={(e) => { e.stopPropagation(); onDragStartPost(e, post.id); }}
+                          onDragEnd={() => { setDragId(null); setDropTarget(null); }}
+                          className={`${styles.cellPostBadge} ${dragId === post.id ? styles.cellPostBadgeDragging : ''}`}
+                          style={accentVars(post)}
+                          title={`${tipoLabel(tipoOf(post))} · ${post.titolo}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPost(post);
+                            setIsDetailModalOpen(true);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setSelectedPost(post);
                               setIsDetailModalOpen(true);
-                            }}
-                          >
-                            <span className={`${styles.statusDot} ${styles['statusDot_' + post.stato_grafica]}`} />
+                            }
+                          }}
+                        >
+                          <span className={styles.badgeMeta}>
+                            <span className={styles.statusDot} />
                             <span className={styles.badgeTime}>{hhmm}</span>
-                            <span className={styles.badgeTitle}>{post.titolo}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
+                            <span className={styles.badgeTipo}>{tipoLabel(tipoOf(post))}</span>
+                          </span>
+                          <span className={styles.badgeTitle}>{post.titolo}</span>
+                        </div>
+                      );
+                    })}
+
+                    {hidden > 0 && (
+                      <button
+                        className={styles.cellMore}
+                        onClick={(e) => { e.stopPropagation(); setDayModal({ y: year, m: month, d: day }); }}
+                      >
+                        +{hidden} altri
+                      </button>
+                    )}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
-        ) : (
-          // --- LIST TAB ---
-          <div>
-            <div className={styles.filterBar}>
-              <input
-                type="text"
-                className={styles.input}
-                style={{ flex: 1 }}
-                placeholder="Cerca per titolo o descrizione..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        )}
 
-              <div className={styles.tabGroup}>
-                {[
-                  { id: 'all', label: 'Tutti' },
-                  { id: 'todo', label: 'Da fare' },
-                  { id: 'in_progress', label: 'In corso' },
-                  { id: 'done', label: 'Pronti' }
-                ].map(opt => (
-                  <button
-                    key={opt.id}
-                    className={`${styles.tabButton} ${statusFilter === opt.id ? styles.tabButtonActive : ''}`}
-                    style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}
-                    onClick={() => setStatusFilter(opt.id)}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+        {/* ---------------- BACHECA (KANBAN) ---------------- */}
+        {activeTab === 'board' && (
+          <div className={styles.boardGrid}>
+            {STATI.map(col => {
+              const colPosts = filteredPosts.filter(p => statoOf(p) === col.id);
+              const dropKey = 'col-' + col.id;
+              return (
+                <div
+                  key={col.id}
+                  className={`${styles.boardColumn} ${dropTarget === dropKey ? styles.boardColumnDrop : ''}`}
+                  style={{ ['--accent' as string]: `var(--stato-${col.id})` } as React.CSSProperties}
+                  onDragOver={(e) => { e.preventDefault(); setDropTarget(dropKey); }}
+                  onDragLeave={() => setDropTarget(prev => (prev === dropKey ? null : prev))}
+                  onDrop={(e) => onDropOnColumn(e, col.id)}
+                >
+                  <div className={styles.boardColumnHead}>
+                    <span className={styles.chipDot} />
+                    <span className={styles.boardColumnTitle}>{col.label}</span>
+                    <span className={styles.boardCount}>{colPosts.length}</span>
+                  </div>
 
-            {filteredPosts.length > 0 ? (
-              <div className={styles.listContainer}>
-                {filteredPosts.map(post => {
-                  const dateObj = new Date(post.data_pubblicazione);
-                  const formattedDate = dateObj.toLocaleString('it-IT', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  });
+                  {colPosts.length === 0 ? (
+                    <div className={styles.boardEmpty}>Trascina qui</div>
+                  ) : (
+                    colPosts.map(post => {
+                      const d = new Date(post.data_pubblicazione);
+                      return (
+                        <div
+                          key={post.id}
+                          className={styles.boardCard}
+                          style={accentVars(post)}
+                          draggable
+                          onDragStart={(e) => onDragStartPost(e, post.id)}
+                          onDragEnd={() => { setDragId(null); setDropTarget(null); }}
+                          onClick={() => { setSelectedPost(post); setIsDetailModalOpen(true); }}
+                        >
+                          <span className={styles.boardCardTitle}>{post.titolo}</span>
+                          <span className={styles.boardCardMeta}>
+                            <span className={styles.badgeTipo}>{tipoLabel(tipoOf(post))}</span>
+                            ·
+                            <span>
+                              {d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })} ·{' '}
+                              {d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                            {post.responsabile ? <span>· {post.responsabile}</span> : null}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-                  return (
-                    <div key={post.id} className={styles.postCard}>
+        {/* ---------------- LISTA ---------------- */}
+        {activeTab === 'list' && (
+          filteredPosts.length > 0 ? (
+            <div className={styles.listContainer}>
+              {filteredPosts.map((post, idx) => {
+                const dateObj = new Date(post.data_pubblicazione);
+                const prev = idx > 0 ? new Date(filteredPosts[idx - 1].data_pubblicazione) : null;
+                const newDay = !prev || dayKeyOf(prev) !== dayKeyOf(dateObj);
+                const dayHeader = dateObj.toLocaleDateString('it-IT', {
+                  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+                });
+                const hhmm = dateObj.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+                return (
+                  <div key={post.id}>
+                    {newDay && <div className={styles.listDayHeader}>{dayHeader}</div>}
+
+                    <div className={styles.postCard} style={accentVars(post)}>
                       <div className={styles.cardHeader}>
                         <div className={styles.cardTitleArea}>
-                          <span className={styles.cardDate}>{formattedDate}</span>
+                          <span className={styles.cardDate}>Ore {hhmm}</span>
                           <h3 className={styles.cardTitle}>{post.titolo}</h3>
                         </div>
-
-                        <span className={`${styles.statusBadge} ${styles['statusBadge_' + post.stato_grafica]}`}>
-                          {post.stato_grafica === 'todo' && '🔴 Da fare'}
-                          {post.stato_grafica === 'in_progress' && '🟡 In corso'}
-                          {post.stato_grafica === 'done' && '🟢 Pronto'}
-                        </span>
+                        <div className={styles.cardBadges}>
+                          <span className={styles.tipoBadge}>{tipoLabel(tipoOf(post))}</span>
+                          <span className={styles.statusBadge}>{statoLabel(statoOf(post))}</span>
+                        </div>
                       </div>
 
                       {post.didascalia && (
                         <div className={styles.captionBox}>
-                          <p className={styles.captionText}>{post.didascalia}</p>
+                          <p className={`${styles.captionText} ${styles.captionClamp}`}>{post.didascalia}</p>
                           <button
                             className={styles.copyBtn}
                             onClick={() => handleCopyCaption(post.didascalia)}
@@ -545,79 +828,91 @@ export default function ComunicazionePage() {
                       )}
 
                       <div className={styles.cardFooter}>
-                        <a href={post.canva_link} target="_blank" rel="noopener noreferrer" className={styles.canvaBtn}>
-                          <span>Apri Canva</span>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="7" y1="17" x2="17" y2="7" />
-                            <polyline points="7 7 17 7 17 17" />
-                          </svg>
-                        </a>
+                        {post.canva_link ? (
+                          <a href={post.canva_link} target="_blank" rel="noopener noreferrer" className={styles.canvaBtn}>
+                            <span>Apri Canva</span>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="7" y1="17" x2="17" y2="7" />
+                              <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                          </a>
+                        ) : (
+                          <span className={styles.noLinkHint}>
+                            {post.responsabile ? `Responsabile: ${post.responsabile}` : 'Nessun link allegato'}
+                          </span>
+                        )}
 
                         <div className={styles.footerActions}>
-                          <button
-                            className={styles.editBtn}
-                            onClick={() => {
-                              setFormPost(post);
-                              setIsFormModalOpen(true);
-                            }}
-                          >
-                            Modifica
-                          </button>
-                          <button
-                            className={styles.deleteBtn}
-                            onClick={() => handleDeletePost(post.id)}
-                          >
-                            Elimina
-                          </button>
+                          <button className={styles.dupBtn} onClick={() => handleDuplicate(post)}>Duplica</button>
+                          <button className={styles.editBtn} onClick={() => openEdit(post)}>Modifica</button>
+                          <button className={styles.deleteBtn} onClick={() => handleDeletePost(post.id)}>Elimina</button>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateSvg}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto' }}>
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
               </div>
-            ) : (
-              <div className={styles.emptyState}>
-                <div className={styles.emptyStateSvg}>
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto' }}>
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                </div>
-                <p>Nessun post programmato corrisponde alla ricerca.</p>
-              </div>
-            )}
-          </div>
+              <p>Nessun contenuto corrisponde ai filtri attivi.</p>
+            </div>
+          )
         )}
       </main>
 
-      {/* --- FORM MODAL (ADD / EDIT) --- */}
+      {/* --- MODALE FORM (NUOVO / MODIFICA) --- */}
       {isFormModalOpen && (
         <div className={styles.modalOverlay} onClick={() => setIsFormModalOpen(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{formPost.id ? 'Modifica Post' : 'Nuovo Post'}</h3>
+              <h3 className={styles.modalTitle}>{formPost.id ? 'Modifica contenuto' : 'Nuovo contenuto'}</h3>
               <button className={styles.closeBtn} onClick={() => setIsFormModalOpen(false)}>&times;</button>
             </div>
-            
-            <form onSubmit={handleSavePost}>
+
+            <form onSubmit={handleSavePost} style={{ display: 'contents' }}>
               <div className={styles.modalBody}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="titolo">Titolo del Post *</label>
+                  <span className={styles.fieldLabel}>Formato</span>
+                  <div className={styles.tipoPicker}>
+                    {TIPI.map(t => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        className={`${styles.tipoOption} ${(formPost.tipo || 'post') === t.id ? styles.tipoOptionActive : ''}`}
+                        style={{ ['--accent' as string]: `var(--tipo-${t.id})` } as React.CSSProperties}
+                        onClick={() => setFormPost(prev => ({ ...prev, tipo: t.id }))}
+                      >
+                        <span>{t.icon}</span> {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="titolo">Titolo *</label>
                   <input
                     type="text"
                     id="titolo"
                     className={styles.input}
                     required
+                    placeholder="Es. Reel gruppi matricole"
                     value={formPost.titolo || ''}
                     onChange={(e) => setFormPost(prev => ({ ...prev, titolo: e.target.value }))}
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label htmlFor="data_pub">Data e Ora *</label>
+                    <label htmlFor="data_pub">Data e ora *</label>
                     <input
                       type="datetime-local"
                       id="data_pub"
@@ -627,53 +922,92 @@ export default function ComunicazionePage() {
                       onChange={(e) => setFormPost(prev => ({ ...prev, data_pubblicazione: e.target.value }))}
                     />
                   </div>
-                  
+
                   <div className={styles.formGroup}>
-                    <label htmlFor="stato_g">Stato Grafica</label>
+                    <label htmlFor="stato_g">Stato</label>
                     <select
                       id="stato_g"
                       className={styles.select}
                       value={formPost.stato_grafica || 'todo'}
-                      onChange={(e) => setFormPost(prev => ({ ...prev, stato_grafica: e.target.value as any }))}
+                      onChange={(e) => setFormPost(prev => ({ ...prev, stato_grafica: e.target.value as Stato }))}
                     >
-                      <option value="todo">🔴 Da fare</option>
-                      <option value="in_progress">🟡 In corso</option>
-                      <option value="done">🟢 Pronto</option>
+                      {STATI.map(s => (
+                        <option key={s.id} value={s.id}>{s.label}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="canva_l">Link Progetto Canva *</label>
-                  <input
-                    type="url"
-                    id="canva_l"
-                    className={styles.input}
-                    required
-                    placeholder="https://www.canva.com/..."
-                    value={formPost.canva_link || ''}
-                    onChange={(e) => setFormPost(prev => ({ ...prev, canva_link: e.target.value }))}
-                  />
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="canva_l">
+                      Link Canva / materiale <span className={styles.optionalTag}>(facoltativo)</span>
+                    </label>
+                    <input
+                      type="url"
+                      id="canva_l"
+                      className={styles.input}
+                      placeholder="https://www.canva.com/…"
+                      value={formPost.canva_link || ''}
+                      onChange={(e) => setFormPost(prev => ({ ...prev, canva_link: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="resp">
+                      Responsabile <span className={styles.optionalTag}>(facoltativo)</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="resp"
+                      className={styles.input}
+                      placeholder="Chi se ne occupa"
+                      value={formPost.responsabile || ''}
+                      onChange={(e) => setFormPost(prev => ({ ...prev, responsabile: e.target.value }))}
+                    />
+                  </div>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label htmlFor="cap">Didascalia (Caption)</label>
+                  <label htmlFor="cap">Didascalia</label>
                   <textarea
                     id="cap"
                     className={styles.textarea}
-                    placeholder="Scrivi qui gli hashtag e il testo del post..."
+                    placeholder="Testo del post, call to action e hashtag…"
                     value={formPost.didascalia || ''}
                     onChange={(e) => setFormPost(prev => ({ ...prev, didascalia: e.target.value }))}
                   />
+                  <div className={styles.charCounter}>
+                    <span className={captionLength > CAPTION_LIMIT ? styles.charCounterOver : ''}>
+                      {captionLength} / {CAPTION_LIMIT} caratteri
+                    </span>
+                    <span className={hashtagCount > HASHTAG_LIMIT ? styles.charCounterOver : ''}>
+                      {hashtagCount} / {HASHTAG_LIMIT} hashtag
+                    </span>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="note">
+                    Note interne <span className={styles.optionalTag}>(facoltativo)</span>
+                  </label>
+                  <textarea
+                    id="note"
+                    className={styles.textarea}
+                    style={{ minHeight: '80px' }}
+                    placeholder="Riferimenti, musica del reel, chi gira le clip, cosa manca…"
+                    value={formPost.note || ''}
+                    onChange={(e) => setFormPost(prev => ({ ...prev, note: e.target.value }))}
+                  />
                 </div>
               </div>
-              
+
               <div className={styles.modalFooter}>
-                <button type="button" className="btn btn-outline" style={{ color: 'var(--red-light)', border: '1px solid rgba(255,255,255,0.1)' }} onClick={() => setIsFormModalOpen(false)}>
+                <button type="button" className={styles.btnGhost} onClick={() => setIsFormModalOpen(false)}>
                   Annulla
                 </button>
-                <button type="submit" className="btn btn-primary" style={{ background: 'var(--red-primary)', border: 'none' }}>
-                  Salva
+                <button type="submit" className={styles.btnPrimary} disabled={saving}>
+                  {saving ? 'Salvataggio…' : 'Salva'}
                 </button>
               </div>
             </form>
@@ -681,47 +1015,61 @@ export default function ComunicazionePage() {
         </div>
       )}
 
-      {/* --- DETAILED VIEW MODAL (FROM CALENDAR CLICK) --- */}
+      {/* --- MODALE DETTAGLIO --- */}
       {isDetailModalOpen && selectedPost && (
         <div className={styles.modalOverlay} onClick={() => setIsDetailModalOpen(false)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modal} style={accentVars(selectedPost)} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span className={styles.cardDate}>{new Date(selectedPost.data_pubblicazione).toLocaleString('it-IT')}</span>
-                <h3 className={styles.modalTitle} style={{ marginTop: '0.25rem' }}>{selectedPost.titolo}</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', minWidth: 0 }}>
+                <div className={styles.cardBadges}>
+                  <span className={styles.tipoBadge}>{tipoLabel(tipoOf(selectedPost))}</span>
+                  <span className={styles.statusBadge}>{statoLabel(statoOf(selectedPost))}</span>
+                </div>
+                <h3 className={styles.modalTitle}>{selectedPost.titolo}</h3>
+                <span className={styles.cardDate}>
+                  {new Date(selectedPost.data_pubblicazione).toLocaleString('it-IT', {
+                    weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
+                  })}
+                </span>
               </div>
               <button className={styles.closeBtn} onClick={() => setIsDetailModalOpen(false)}>&times;</button>
             </div>
 
             <div className={styles.modalBody}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '1.5rem', marginBottom: '1.5rem', alignItems: 'center' }}>
-                <div>
-                  <span className={styles.artistRole} style={{ margin: 0, fontSize: '0.7rem' }}>Link Condiviso</span>
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <a href={selectedPost.canva_link} target="_blank" rel="noopener noreferrer" className={styles.canvaBtn} style={{ width: '100%', justifyContent: 'center' }}>
-                      🎨 Apri Canva Project
-                    </a>
-                  </div>
+              <div className={styles.detailMetaGrid}>
+                <div className={styles.detailMetaCell}>
+                  <span className={styles.fieldLabel}>Stato</span>
+                  <select
+                    className={styles.select}
+                    value={statoOf(selectedPost)}
+                    onChange={(e) => patchPost(selectedPost.id, { stato_grafica: e.target.value as Stato })}
+                  >
+                    {STATI.map(s => (
+                      <option key={s.id} value={s.id}>{s.label}</option>
+                    ))}
+                  </select>
                 </div>
 
-                <div className={styles.formGroup} style={{ margin: 0 }}>
-                  <label htmlFor="detail_status">Stato Grafica</label>
-                  <select
-                    id="detail_status"
-                    className={styles.select}
-                    value={selectedPost.stato_grafica}
-                    onChange={(e) => handleUpdateStatus(selectedPost.id, e.target.value as any)}
-                  >
-                    <option value="todo">🔴 Da fare</option>
-                    <option value="in_progress">🟡 In corso</option>
-                    <option value="done">🟢 Pronto</option>
-                  </select>
+                <div className={styles.detailMetaCell}>
+                  <span className={styles.fieldLabel}>Responsabile</span>
+                  <span className={styles.detailMetaValue}>{selectedPost.responsabile || '—'}</span>
+                </div>
+
+                <div className={styles.detailMetaCell}>
+                  <span className={styles.fieldLabel}>Materiale</span>
+                  {selectedPost.canva_link ? (
+                    <a href={selectedPost.canva_link} target="_blank" rel="noopener noreferrer" className={styles.canvaBtn}>
+                      🎨 Apri Canva
+                    </a>
+                  ) : (
+                    <span className={styles.noLinkHint}>Nessun link allegato</span>
+                  )}
                 </div>
               </div>
 
               {selectedPost.didascalia && (
                 <div className={styles.formGroup}>
-                  <label>Didascalia</label>
+                  <span className={styles.fieldLabel}>Didascalia</span>
                   <div className={styles.captionBox}>
                     <p className={styles.captionText}>{selectedPost.didascalia}</p>
                     <button
@@ -732,46 +1080,88 @@ export default function ComunicazionePage() {
                       📋
                     </button>
                   </div>
+                  <span className={styles.helpText}>
+                    {selectedPost.didascalia.length} caratteri · {countHashtags(selectedPost.didascalia)} hashtag
+                  </span>
+                </div>
+              )}
+
+              {selectedPost.note && (
+                <div className={styles.formGroup}>
+                  <span className={styles.fieldLabel}>Note interne</span>
+                  <div className={styles.captionBox}>
+                    <p className={styles.captionText} style={{ marginRight: 0 }}>{selectedPost.note}</p>
+                  </div>
                 </div>
               )}
             </div>
 
             <div className={styles.modalFooter} style={{ justifyContent: 'space-between' }}>
-              <button
-                type="button"
-                className={styles.deleteBtn}
-                style={{ padding: '0.5rem 0' }}
-                onClick={() => handleDeletePost(selectedPost.id)}
-              >
+              <button className={styles.deleteBtn} onClick={() => handleDeletePost(selectedPost.id)}>
                 Elimina
               </button>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  style={{ color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)' }}
-                  onClick={() => {
-                    setFormPost(selectedPost);
-                    setIsDetailModalOpen(false);
-                    setIsFormModalOpen(true);
-                  }}
-                >
-                  Modifica
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  style={{ background: 'var(--red-primary)', border: 'none' }}
-                  onClick={() => setIsDetailModalOpen(false)}
-                >
-                  Chiudi
-                </button>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button className={styles.btnGhost} onClick={() => handleDuplicate(selectedPost)}>Duplica</button>
+                <button className={styles.btnGhost} onClick={() => openEdit(selectedPost)}>Modifica</button>
+                <button className={styles.btnPrimary} onClick={() => setIsDetailModalOpen(false)}>Chiudi</button>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* --- MODALE GIORNO (elenco completo) --- */}
+      {dayModal && (
+        <div className={styles.modalOverlay} onClick={() => setDayModal(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>
+                {new Date(dayModal.y, dayModal.m, dayModal.d).toLocaleDateString('it-IT', {
+                  weekday: 'long', day: 'numeric', month: 'long',
+                })}
+              </h3>
+              <button className={styles.closeBtn} onClick={() => setDayModal(null)}>&times;</button>
+            </div>
+
+            <div className={styles.modalBody}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {(postsByDay[`${dayModal.y}-${dayModal.m}-${dayModal.d}`] || []).map(post => (
+                  <div
+                    key={post.id}
+                    className={styles.boardCard}
+                    style={accentVars(post)}
+                    onClick={() => { setSelectedPost(post); setDayModal(null); setIsDetailModalOpen(true); }}
+                  >
+                    <span className={styles.boardCardTitle}>{post.titolo}</span>
+                    <span className={styles.boardCardMeta}>
+                      <span className={styles.badgeTipo}>{tipoLabel(tipoOf(post))}</span>
+                      ·
+                      <span>{new Date(post.data_pubblicazione).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
+                      · <span>{statoLabel(statoOf(post))}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.modalFooter}>
+              <button
+                className={styles.btnPrimary}
+                onClick={() => {
+                  const { y, m, d } = dayModal;
+                  setDayModal(null);
+                  openNewPost(`${y}-${pad(m + 1)}-${pad(d)}T14:00`);
+                }}
+              >
+                + Aggiungi contenuto
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- TOAST --- */}
+      {toast && <div className={styles.toast}>{toast}</div>}
     </div>
   );
 }
