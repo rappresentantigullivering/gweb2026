@@ -144,3 +144,33 @@ export async function verifyPassword(password: string, storedHash: string): Prom
     return false;
   }
 }
+
+/**
+ * Normalizza uno username nella forma con cui viene salvato su Redis.
+ * Registrazione, creazione da pannello admin e login devono usare questa
+ * stessa funzione: altrimenti un nome scritto con spazi o accenti viene
+ * salvato ripulito ma cercato al login nella forma originale, e l'utente
+ * riceve "Utente non registrato" pur essendo stato approvato.
+ */
+export function normalizeUsername(username: string): string {
+  return username.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+}
+
+/**
+ * Cerca uno username in una mappa di utenti tollerando le differenze di
+ * formattazione. Prova prima la corrispondenza esatta, cosi' le vecchie
+ * chiavi non normalizzate continuano a funzionare, poi quella normalizzata.
+ * Restituisce la chiave reale trovata, oppure null.
+ */
+export function resolveUsernameKey(
+  username: string,
+  map: Record<string, unknown>,
+): string | null {
+  const exact = username.trim().toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(map, exact)) return exact;
+
+  const normalized = normalizeUsername(username);
+  if (normalized && Object.prototype.hasOwnProperty.call(map, normalized)) return normalized;
+
+  return null;
+}

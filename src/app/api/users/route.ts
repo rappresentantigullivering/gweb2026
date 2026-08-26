@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { cookies } from 'next/headers';
-import { verifyAndDecodeSession, hashPassword } from '@/lib/auth';
+import { verifyAndDecodeSession, hashPassword, normalizeUsername, resolveUsernameKey } from '@/lib/auth';
 
 const redis = Redis.fromEnv();
 const USERS_KEY = 'gulliver:users';
@@ -62,12 +62,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Parametri mancanti' }, { status: 400 });
     }
 
-    const sanitizedUsername = username.trim().toLowerCase();
+    const usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || {};
+
+    // In creazione si usa la stessa normalizzazione della registrazione pubblica,
+    // altrimenti un utente creato a mano come "Mario Rossi" verrebbe salvato con
+    // lo spazio e non riuscirebbe mai ad autenticarsi.
+    // In modifica/eliminazione si risolve la chiave davvero presente in mappa.
+    const sanitizedUsername =
+      action === 'create'
+        ? normalizeUsername(username)
+        : resolveUsernameKey(username, usersMap) ?? username.trim().toLowerCase();
+
     if (!sanitizedUsername) {
       return NextResponse.json({ error: 'Username non valido' }, { status: 400 });
     }
-
-    const usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || {};
 
     if (action === 'create') {
       if (usersMap[sanitizedUsername]) {

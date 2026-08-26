@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { Redis } from '@upstash/redis';
-import { signSession, verifyPassword, hashPassword } from '@/lib/auth';
+import { signSession, verifyPassword, resolveUsernameKey } from '@/lib/auth';
 
 const redis = Redis.fromEnv();
 const USERS_KEY = 'gulliver:users';
@@ -15,9 +15,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Username e password richiesti' }, { status: 400 });
     }
 
-    const sanitizedUsername = username.trim().toLowerCase();
     const usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || {};
-    const user = usersMap[sanitizedUsername];
+
+    // La registrazione salva lo username ripulito dai caratteri non ammessi:
+    // qui accettiamo anche la forma digitata dall'utente (spazi, accenti, maiuscole).
+    const userKey = resolveUsernameKey(username, usersMap);
+    const user = userKey ? usersMap[userKey] : null;
 
     if (!user) {
       return NextResponse.json({ error: 'Utente non registrato' }, { status: 401 });

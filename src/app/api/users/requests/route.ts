@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { cookies } from 'next/headers';
-import { verifyAndDecodeSession, hashPassword } from '@/lib/auth';
+import { verifyAndDecodeSession, hashPassword, normalizeUsername, resolveUsernameKey } from '@/lib/auth';
 
 const redis = Redis.fromEnv();
 const USERS_KEY = 'gulliver:users';
@@ -65,8 +65,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Username richiesto' }, { status: 400 });
       }
 
-      const sanitizedUsername = username.trim().toLowerCase();
       const requestsMap = (await redis.get<Record<string, any>>(REQUESTS_KEY)) || {};
+      const sanitizedUsername = resolveUsernameKey(username, requestsMap) ?? normalizeUsername(username);
       const pendingUser = requestsMap[sanitizedUsername];
 
       if (!pendingUser) {
@@ -77,8 +77,9 @@ export async function POST(req: Request) {
         const usersMap = (await redis.get<Record<string, any>>(USERS_KEY)) || {};
         
         // Add to users map
-        usersMap[sanitizedUsername] = {
-          username: sanitizedUsername,
+        const finalUsername = normalizeUsername(sanitizedUsername) || sanitizedUsername;
+        usersMap[finalUsername] = {
+          username: finalUsername,
           passwordHash: pendingUser.passwordHash,
           roles: roles && roles.length > 0 ? roles : ['tesserato']
         };
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Username e password richiesti' }, { status: 400 });
     }
 
-    const sanitizedUsername = username.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+    const sanitizedUsername = normalizeUsername(username);
     if (!sanitizedUsername || sanitizedUsername.length < 3) {
       return NextResponse.json({ error: 'Username non valido (minimo 3 caratteri alfanumerici, punti o trattini)' }, { status: 400 });
     }
