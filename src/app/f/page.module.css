@@ -1,0 +1,50 @@
+/* Stili propri della gestione moduli. */
+
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.flex1 { flex: 1 1 200px; }
+.flex2 { flex: 2 1 280px; }
+
+.submitCell {
+  display: flex;
+  align-items: flex-end;
+  flex: 0 0 auto;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 3rem 1rem;
+  color: var(--ra-txt-3);
+}
+
+.loading p { margin: 0; font-size: 0.88rem; }
+
+.publicLink {
+  color: var(--ra-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.publicLink:hover { color: var(--ra-txt-1); }
+
+@media (max-width: 620px) {
+  .formRow { flex-direction: column; align-items: stretch; }
+  .submitCell { width: 100%; }
+  .submitCell > * { width: 100%; }
+}
