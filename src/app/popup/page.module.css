@@ -1,0 +1,109 @@
+/* Stili propri della gestione pop-up. */
+
+.main {
+  max-width: 640px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--ra-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ra-accent) 28%, transparent);
+  color: var(--ra-accent);
+}
+
+.cardTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 0.35rem;
+}
+
+.cardDesc {
+  font-size: 0.87rem;
+  margin: 0;
+}
+
+.statusBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--ra-surface-1);
+  border: 1px solid var(--ra-line-soft);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+  margin-bottom: 1.5rem;
+}
+
+.statusInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.statusTitle {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--ra-line-soft);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+/* L'anteprima monta il VotingModal reale del sito pubblico: nessuna regola
+   qui dentro deve toccarlo, altrimenti l'anteprima mentirebbe. */
+.previewOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.previewClose {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  background: #ffffff;
+  color: #0b0b0f;
+  border: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
