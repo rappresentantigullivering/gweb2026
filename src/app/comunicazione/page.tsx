@@ -1,6 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import {
+  RaPage, RaHeader, RaButton, RaField, RaInput, RaSelect, RaTextarea,
+  RaModal, RaTabs, RaStatCard, RaStatGrid, RaLoadingScreen,
+  raToast, raConfirm, requireSession, redirectToUnauthorized,
+} from '@/components/riservata';
 import styles from './page.module.css';
 
 /* ────────────────────────────────────────────────────────────────
@@ -98,16 +103,6 @@ function countHashtags(text: string) {
   return (text.match(/#[\p{L}\p{N}_]+/gu) || []).length;
 }
 
-function loginUrl() {
-  const host = window.location.host;
-  const devPort = host.split(':')[1] || '3000';
-  const protocol = window.location.protocol;
-  const loginHost = host.includes('localhost')
-    ? `tesserati.localhost:${devPort}`
-    : 'tesserati.gulliverancona.it';
-  return `${protocol}//${loginHost}`;
-}
-
 const emptyForm: Partial<Post> = {
   id: '',
   titolo: '',
@@ -126,10 +121,6 @@ const emptyForm: Partial<Post> = {
 
 export default function ComunicazionePage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [loading, setLoading] = useState(false);
-
   const [posts, setPosts] = useState<Record<string, Post>>({});
   const [activeTab, setActiveTab] = useState<'calendar' | 'board' | 'list'>('calendar');
   const [searchQuery, setSearchQuery] = useState('');
@@ -147,27 +138,19 @@ export default function ComunicazionePage() {
 
   const [dragId, setDragId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
-
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    window.setTimeout(() => setToast(null), 2600);
+  const showToast = useCallback((msg: string, tone: 'info' | 'success' | 'error' = 'info') => {
+    raToast(msg, tone);
   }, []);
 
   /* ── Auth ─────────────────────────────────────────────────────── */
   useEffect(() => {
     async function checkAuth() {
-      try {
-        const res = await fetch('/api/auth/check');
-        const data = await res.json();
-        if (data.authenticated !== true) {
-          window.location.href = `${loginUrl()}/login?redirect=${encodeURIComponent(window.location.href)}`;
-        } else {
-          setIsAuthenticated(true);
-        }
-      } catch (err) {
-        console.error('Auth check error:', err);
-        window.location.href = `${loginUrl()}/login?redirect=${encodeURIComponent(window.location.href)}`;
+      const session = await requireSession();
+      if (!session) return;
+      if (session.roles.includes('comunicazione') || session.roles.includes('admin')) {
+        setIsAuthenticated(true);
+      } else {
+        redirectToUnauthorized();
       }
     }
     checkAuth();
@@ -185,42 +168,6 @@ export default function ComunicazionePage() {
       console.error('Error fetching posts:', err);
     }
   }
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setLoginError('');
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-      if (res.ok) {
-        setIsAuthenticated(true);
-      } else {
-        const data = await res.json();
-        setLoginError(data.error || 'Password incorretta');
-      }
-    } catch {
-      setLoginError('Impossibile connettersi al server');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleLogout() {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = `${loginUrl()}/login`;
-    } catch (err) {
-      console.error('Logout error:', err);
-    }
-  }
-
-  const handleGoHome = () => {
-    window.location.href = loginUrl();
-  };
 
   /* ── CRUD ─────────────────────────────────────────────────────── */
 
@@ -241,7 +188,7 @@ export default function ComunicazionePage() {
   async function handleSavePost(e: React.FormEvent) {
     e.preventDefault();
     if (!formPost.titolo?.trim() || !formPost.data_pubblicazione) {
-      showToast('Titolo e data di pubblicazione sono obbligatori.');
+      showToast('Titolo e data di pubblicazione sono obbligatori.', 'error');
       return;
     }
 
@@ -263,10 +210,10 @@ export default function ComunicazionePage() {
       await persistPost(postData, isEdit);
       setIsFormModalOpen(false);
       setFormPost(emptyForm);
-      showToast(isEdit ? 'Contenuto aggiornato ✓' : 'Contenuto aggiunto in calendario ✓');
+      showToast(isEdit ? 'Contenuto aggiornato.' : 'Contenuto aggiunto in calendario.', 'success');
     } catch (err) {
       console.error('Save error:', err);
-      showToast('Errore nel salvataggio. Riprova.');
+      showToast('Errore nel salvataggio. Riprova.', 'error');
     } finally {
       setSaving(false);
     }
@@ -284,12 +231,18 @@ export default function ComunicazionePage() {
     } catch (err) {
       console.error('Patch error:', err);
       setPosts(prev => ({ ...prev, [id]: current }));    // rollback
-      showToast('Errore di salvataggio, modifica annullata.');
+      showToast('Errore di salvataggio, modifica annullata.', 'error');
     }
   }, [posts, persistPost, showToast]);
 
   async function handleDeletePost(id: string) {
-    if (!confirm('Sei sicuro di voler eliminare questo contenuto?')) return;
+    const confermato = await raConfirm({
+      title: 'Eliminare il contenuto?',
+      message: 'Verrà rimosso dal calendario e dai promemoria Telegram.',
+      confirmLabel: 'Elimina',
+      tone: 'danger',
+    });
+    if (!confermato) return;
     try {
       const res = await fetch('/api/comunicazione', {
         method: 'POST',
@@ -304,13 +257,13 @@ export default function ComunicazionePage() {
         });
         setIsDetailModalOpen(false);
         setSelectedPost(null);
-        showToast('Contenuto eliminato.');
+        showToast('Contenuto eliminato.', 'success');
       } else {
-        showToast('Errore nell\'eliminazione.');
+        showToast('Errore nell\'eliminazione.', 'error');
       }
     } catch (err) {
       console.error('Delete error:', err);
-      showToast('Errore di connessione.');
+      showToast('Errore di connessione.', 'error');
     }
   }
 
@@ -342,7 +295,7 @@ export default function ComunicazionePage() {
 
   const handleCopyCaption = (text: string) => {
     navigator.clipboard.writeText(text);
-    showToast('Didascalia copiata negli appunti 📋');
+    showToast('Didascalia copiata negli appunti.', 'success');
   };
 
   /* ── Date & derivazioni ───────────────────────────────────────── */
@@ -445,49 +398,11 @@ export default function ComunicazionePage() {
   }
 
   /* ── Schermate di servizio ────────────────────────────────────── */
-  if (isAuthenticated === null) {
+  if (isAuthenticated !== true) {
     return (
-      <div className={styles.pageWrapper}>
-        <div className={styles.loadingScreen}>Caricamento…</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className={styles.pageWrapper}>
-        <div className={styles.loginContainer}>
-          <div className={styles.loginCard}>
-            <div className={styles.loginIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-            </div>
-            <h1 className={styles.loginTitle}>Area Comunicazione</h1>
-            <p className={styles.loginDesc}>
-              Inserisci la password di amministrazione per accedere al calendario editoriale.
-            </p>
-            <form onSubmit={handleLogin}>
-              <div className={styles.formGroup} style={{ textAlign: 'left' }}>
-                <label htmlFor="pass">Password</label>
-                <input
-                  type="password"
-                  id="pass"
-                  className={styles.input}
-                  placeholder="Password di sistema"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              {loginError && <p className={styles.loginError}>{loginError}</p>}
-              <button type="submit" className={styles.btnPrimary} style={{ width: '100%' }} disabled={loading}>
-                {loading ? 'Verifica…' : 'Accedi'}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <RaPage area="comunicazione" center className={styles.palette}>
+        <RaLoadingScreen message="Verifica autorizzazione in corso…" />
+      </RaPage>
     );
   }
 
@@ -496,70 +411,42 @@ export default function ComunicazionePage() {
   const hashtagCount = countHashtags(formPost.didascalia || '');
 
   return (
-    <div className={styles.pageWrapper}>
-      {/* NAVBAR */}
-      <header className={styles.navHeader}>
-        <div className={styles.navInner}>
-          <div className={styles.navSide}>
-            <button onClick={handleGoHome} className={styles.btnBack}>← Dashboard</button>
-            <div className={styles.logoArea}>
-              <span className={styles.logoTitle}>GULLIVER</span>
-              <div className={styles.logoDot} />
-              <span className={styles.logoSub}>Comunicazione</span>
-            </div>
-          </div>
-
-          <div className={styles.navControls}>
-            <div className={styles.tabGroup}>
-              {([
-                { id: 'calendar', label: 'Calendario' },
-                { id: 'board', label: 'Bacheca' },
-                { id: 'list', label: 'Lista' },
-              ] as const).map(tab => (
-                <button
-                  key={tab.id}
-                  className={`${styles.tabButton} ${activeTab === tab.id ? styles.tabButtonActive : ''}`}
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            <button className={styles.btnPrimary} onClick={() => openNewPost()}>+ Nuovo</button>
-            <button className={styles.logoutBtn} onClick={handleLogout} title="Disconnetti">Esci</button>
-          </div>
-        </div>
-      </header>
+    <RaPage area="comunicazione" title="Calendario editoriale" className={styles.palette}>
+      <RaHeader area="comunicazione" label="Comunicazione" showLogout>
+        <RaTabs
+          tabs={[
+            { id: 'calendar', label: 'Calendario' },
+            { id: 'board', label: 'Bacheca' },
+            { id: 'list', label: 'Lista' },
+          ]}
+          active={activeTab}
+          onChange={setActiveTab}
+          size="sm"
+          ariaLabel="Vista del calendario editoriale"
+        />
+        <RaButton variant="accent" size="sm" onClick={() => openNewPost()}>
+          + Nuovo
+        </RaButton>
+      </RaHeader>
 
       <main className={styles.contentArea}>
         {/* STATISTICHE DEL MESE */}
-        <div className={styles.statsRow}>
-          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--red-primary)' } as React.CSSProperties}>
-            <span className={styles.statValue}>{monthStats.total}</span>
-            <span className={styles.statLabel}>Contenuti · {MESI[month]}</span>
-          </div>
-          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--stato-todo)' } as React.CSSProperties}>
-            <span className={styles.statValue}>{monthStats.daFare}</span>
-            <span className={styles.statLabel}>Da preparare</span>
-          </div>
-          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--stato-done)' } as React.CSSProperties}>
-            <span className={styles.statValue}>{monthStats.byStato.done}</span>
-            <span className={styles.statLabel}>Grafiche pronte</span>
-          </div>
-          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--stato-published)' } as React.CSSProperties}>
-            <span className={styles.statValue}>{monthStats.byStato.published}</span>
-            <span className={styles.statLabel}>Pubblicati</span>
-          </div>
-          <div className={styles.statCard} style={{ ['--accent' as string]: 'var(--tipo-reel)' } as React.CSSProperties}>
-            <span className={styles.statValue}>{monthStats.byTipo.reel + monthStats.byTipo.storia}</span>
-            <span className={styles.statLabel}>Reel + Storie</span>
-          </div>
-          <div className={styles.statCard} style={{ ['--accent' as string]: monthStats.inRitardo > 0 ? 'var(--stato-in_progress)' : 'var(--line-strong)' } as React.CSSProperties}>
-            <span className={styles.statValue}>{monthStats.inRitardo}</span>
-            <span className={styles.statLabel}>Scaduti non pronti</span>
-          </div>
-        </div>
+        <RaStatGrid>
+          <RaStatCard value={monthStats.total} label={`Contenuti · ${MESI[month]}`} />
+          <RaStatCard value={monthStats.daFare} label="Da preparare" accent="var(--ra-danger)" />
+          <RaStatCard value={monthStats.byStato.done} label="Grafiche pronte" accent="var(--ra-ok)" />
+          <RaStatCard value={monthStats.byStato.published} label="Pubblicati" accent="var(--ra-info)" />
+          <RaStatCard
+            value={monthStats.byTipo.reel + monthStats.byTipo.storia}
+            label="Reel + storie"
+            accent="var(--tipo-reel)"
+          />
+          <RaStatCard
+            value={monthStats.inRitardo}
+            label="Scaduti non pronti"
+            accent={monthStats.inRitardo > 0 ? 'var(--ra-warn)' : 'var(--ra-line-strong)'}
+          />
+        </RaStatGrid>
 
         {/* TOOLBAR: navigazione mese + ricerca */}
         <div className={styles.toolbar}>
@@ -870,298 +757,239 @@ export default function ComunicazionePage() {
       </main>
 
       {/* --- MODALE FORM (NUOVO / MODIFICA) --- */}
-      {isFormModalOpen && (
-        <div className={styles.modalOverlay} onClick={() => setIsFormModalOpen(false)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{formPost.id ? 'Modifica contenuto' : 'Nuovo contenuto'}</h3>
-              <button className={styles.closeBtn} onClick={() => setIsFormModalOpen(false)}>&times;</button>
+      <RaModal
+        open={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        title={formPost.id ? 'Modifica contenuto' : 'Nuovo contenuto'}
+        footer={
+          <>
+            <RaButton variant="outline" onClick={() => setIsFormModalOpen(false)}>Annulla</RaButton>
+            <RaButton variant="accent" onClick={handleSavePost} disabled={saving} loading={saving}>
+              {saving ? 'Salvataggio…' : 'Salva'}
+            </RaButton>
+          </>
+        }
+      >
+        <form onSubmit={handleSavePost} className={styles.form}>
+          <RaField label="Formato">
+            <div className={styles.tipoPicker}>
+              {TIPI.map(t => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className={`${styles.tipoOption} ${(formPost.tipo || 'post') === t.id ? styles.tipoOptionActive : ''}`}
+                  style={{ ['--accent' as string]: `var(--tipo-${t.id})` } as React.CSSProperties}
+                  onClick={() => setFormPost(prev => ({ ...prev, tipo: t.id }))}
+                >
+                  <span>{t.icon}</span> {t.label}
+                </button>
+              ))}
             </div>
+          </RaField>
 
-            <form onSubmit={handleSavePost} style={{ display: 'contents' }}>
-              <div className={styles.modalBody}>
-                <div className={styles.formGroup}>
-                  <span className={styles.fieldLabel}>Formato</span>
-                  <div className={styles.tipoPicker}>
-                    {TIPI.map(t => (
-                      <button
-                        key={t.id}
-                        type="button"
-                        className={`${styles.tipoOption} ${(formPost.tipo || 'post') === t.id ? styles.tipoOptionActive : ''}`}
-                        style={{ ['--accent' as string]: `var(--tipo-${t.id})` } as React.CSSProperties}
-                        onClick={() => setFormPost(prev => ({ ...prev, tipo: t.id }))}
-                      >
-                        <span>{t.icon}</span> {t.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+          <RaField label="Titolo *" htmlFor="titolo">
+            <RaInput
+              type="text" id="titolo" required
+              placeholder="Es. Reel gruppi matricole"
+              value={formPost.titolo || ''}
+              onChange={(e) => setFormPost(prev => ({ ...prev, titolo: e.target.value }))}
+            />
+          </RaField>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="titolo">Titolo *</label>
-                  <input
-                    type="text"
-                    id="titolo"
-                    className={styles.input}
-                    required
-                    placeholder="Es. Reel gruppi matricole"
-                    value={formPost.titolo || ''}
-                    onChange={(e) => setFormPost(prev => ({ ...prev, titolo: e.target.value }))}
-                  />
-                </div>
+          <div className={styles.formRow}>
+            <RaField label="Data e ora *" htmlFor="data_pub">
+              <RaInput
+                type="datetime-local" id="data_pub" required
+                value={formPost.data_pubblicazione || ''}
+                onChange={(e) => setFormPost(prev => ({ ...prev, data_pubblicazione: e.target.value }))}
+              />
+            </RaField>
 
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="data_pub">Data e ora *</label>
-                    <input
-                      type="datetime-local"
-                      id="data_pub"
-                      className={styles.input}
-                      required
-                      value={formPost.data_pubblicazione || ''}
-                      onChange={(e) => setFormPost(prev => ({ ...prev, data_pubblicazione: e.target.value }))}
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="stato_g">Stato</label>
-                    <select
-                      id="stato_g"
-                      className={styles.select}
-                      value={formPost.stato_grafica || 'todo'}
-                      onChange={(e) => setFormPost(prev => ({ ...prev, stato_grafica: e.target.value as Stato }))}
-                    >
-                      {STATI.map(s => (
-                        <option key={s.id} value={s.id}>{s.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="canva_l">
-                      Link Canva / materiale <span className={styles.optionalTag}>(facoltativo)</span>
-                    </label>
-                    <input
-                      type="url"
-                      id="canva_l"
-                      className={styles.input}
-                      placeholder="https://www.canva.com/…"
-                      value={formPost.canva_link || ''}
-                      onChange={(e) => setFormPost(prev => ({ ...prev, canva_link: e.target.value }))}
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="resp">
-                      Responsabile <span className={styles.optionalTag}>(facoltativo)</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="resp"
-                      className={styles.input}
-                      placeholder="Chi se ne occupa"
-                      value={formPost.responsabile || ''}
-                      onChange={(e) => setFormPost(prev => ({ ...prev, responsabile: e.target.value }))}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="cap">Didascalia</label>
-                  <textarea
-                    id="cap"
-                    className={styles.textarea}
-                    placeholder="Testo del post, call to action e hashtag…"
-                    value={formPost.didascalia || ''}
-                    onChange={(e) => setFormPost(prev => ({ ...prev, didascalia: e.target.value }))}
-                  />
-                  <div className={styles.charCounter}>
-                    <span className={captionLength > CAPTION_LIMIT ? styles.charCounterOver : ''}>
-                      {captionLength} / {CAPTION_LIMIT} caratteri
-                    </span>
-                    <span className={hashtagCount > HASHTAG_LIMIT ? styles.charCounterOver : ''}>
-                      {hashtagCount} / {HASHTAG_LIMIT} hashtag
-                    </span>
-                  </div>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="note">
-                    Note interne <span className={styles.optionalTag}>(facoltativo)</span>
-                  </label>
-                  <textarea
-                    id="note"
-                    className={styles.textarea}
-                    style={{ minHeight: '80px' }}
-                    placeholder="Riferimenti, musica del reel, chi gira le clip, cosa manca…"
-                    value={formPost.note || ''}
-                    onChange={(e) => setFormPost(prev => ({ ...prev, note: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.modalFooter}>
-                <button type="button" className={styles.btnGhost} onClick={() => setIsFormModalOpen(false)}>
-                  Annulla
-                </button>
-                <button type="submit" className={styles.btnPrimary} disabled={saving}>
-                  {saving ? 'Salvataggio…' : 'Salva'}
-                </button>
-              </div>
-            </form>
+            <RaField label="Stato" htmlFor="stato_g">
+              <RaSelect
+                id="stato_g"
+                value={formPost.stato_grafica || 'todo'}
+                onChange={(e) => setFormPost(prev => ({ ...prev, stato_grafica: e.target.value as Stato }))}
+              >
+                {STATI.map(st => <option key={st.id} value={st.id}>{st.label}</option>)}
+              </RaSelect>
+            </RaField>
           </div>
-        </div>
-      )}
+
+          <div className={styles.formRow}>
+            <RaField label="Link Canva / materiale" htmlFor="canva_l" optional>
+              <RaInput
+                type="url" id="canva_l"
+                placeholder="https://www.canva.com/…"
+                value={formPost.canva_link || ''}
+                onChange={(e) => setFormPost(prev => ({ ...prev, canva_link: e.target.value }))}
+              />
+            </RaField>
+
+            <RaField label="Responsabile" htmlFor="resp" optional>
+              <RaInput
+                type="text" id="resp"
+                placeholder="Chi se ne occupa"
+                value={formPost.responsabile || ''}
+                onChange={(e) => setFormPost(prev => ({ ...prev, responsabile: e.target.value }))}
+              />
+            </RaField>
+          </div>
+
+          <RaField label="Didascalia" htmlFor="cap">
+            <RaTextarea
+              id="cap"
+              placeholder="Testo del post, call to action e hashtag…"
+              value={formPost.didascalia || ''}
+              onChange={(e) => setFormPost(prev => ({ ...prev, didascalia: e.target.value }))}
+            />
+            <div className={styles.charCounter}>
+              <span className={captionLength > CAPTION_LIMIT ? styles.charCounterOver : ''}>
+                {captionLength} / {CAPTION_LIMIT} caratteri
+              </span>
+              <span className={hashtagCount > HASHTAG_LIMIT ? styles.charCounterOver : ''}>
+                {hashtagCount} / {HASHTAG_LIMIT} hashtag
+              </span>
+            </div>
+          </RaField>
+
+          <RaField label="Note interne" htmlFor="note" optional>
+            <RaTextarea
+              id="note"
+              style={{ minHeight: '80px' }}
+              placeholder="Riferimenti, musica del reel, chi gira le clip, cosa manca…"
+              value={formPost.note || ''}
+              onChange={(e) => setFormPost(prev => ({ ...prev, note: e.target.value }))}
+            />
+          </RaField>
+        </form>
+      </RaModal>
 
       {/* --- MODALE DETTAGLIO --- */}
-      {isDetailModalOpen && selectedPost && (
-        <div className={styles.modalOverlay} onClick={() => setIsDetailModalOpen(false)}>
-          <div className={styles.modal} style={accentVars(selectedPost)} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', minWidth: 0 }}>
-                <div className={styles.cardBadges}>
-                  <span className={styles.tipoBadge}>{tipoLabel(tipoOf(selectedPost))}</span>
-                  <span className={styles.statusBadge}>{statoLabel(statoOf(selectedPost))}</span>
-                </div>
-                <h3 className={styles.modalTitle}>{selectedPost.titolo}</h3>
-                <span className={styles.cardDate}>
-                  {new Date(selectedPost.data_pubblicazione).toLocaleString('it-IT', {
-                    weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
-                  })}
-                </span>
-              </div>
-              <button className={styles.closeBtn} onClick={() => setIsDetailModalOpen(false)}>&times;</button>
-            </div>
-
-            <div className={styles.modalBody}>
-              <div className={styles.detailMetaGrid}>
-                <div className={styles.detailMetaCell}>
-                  <span className={styles.fieldLabel}>Stato</span>
-                  <select
-                    className={styles.select}
-                    value={statoOf(selectedPost)}
-                    onChange={(e) => patchPost(selectedPost.id, { stato_grafica: e.target.value as Stato })}
-                  >
-                    {STATI.map(s => (
-                      <option key={s.id} value={s.id}>{s.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className={styles.detailMetaCell}>
-                  <span className={styles.fieldLabel}>Responsabile</span>
-                  <span className={styles.detailMetaValue}>{selectedPost.responsabile || '—'}</span>
-                </div>
-
-                <div className={styles.detailMetaCell}>
-                  <span className={styles.fieldLabel}>Materiale</span>
-                  {selectedPost.canva_link ? (
-                    <a href={selectedPost.canva_link} target="_blank" rel="noopener noreferrer" className={styles.canvaBtn}>
-                      🎨 Apri Canva
-                    </a>
-                  ) : (
-                    <span className={styles.noLinkHint}>Nessun link allegato</span>
-                  )}
-                </div>
-              </div>
-
-              {selectedPost.didascalia && (
-                <div className={styles.formGroup}>
-                  <span className={styles.fieldLabel}>Didascalia</span>
-                  <div className={styles.captionBox}>
-                    <p className={styles.captionText}>{selectedPost.didascalia}</p>
-                    <button
-                      className={styles.copyBtn}
-                      onClick={() => handleCopyCaption(selectedPost.didascalia)}
-                      title="Copia didascalia"
-                    >
-                      📋
-                    </button>
-                  </div>
-                  <span className={styles.helpText}>
-                    {selectedPost.didascalia.length} caratteri · {countHashtags(selectedPost.didascalia)} hashtag
-                  </span>
-                </div>
-              )}
-
-              {selectedPost.note && (
-                <div className={styles.formGroup}>
-                  <span className={styles.fieldLabel}>Note interne</span>
-                  <div className={styles.captionBox}>
-                    <p className={styles.captionText} style={{ marginRight: 0 }}>{selectedPost.note}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className={styles.modalFooter} style={{ justifyContent: 'space-between' }}>
-              <button className={styles.deleteBtn} onClick={() => handleDeletePost(selectedPost.id)}>
-                Elimina
-              </button>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <button className={styles.btnGhost} onClick={() => handleDuplicate(selectedPost)}>Duplica</button>
-                <button className={styles.btnGhost} onClick={() => openEdit(selectedPost)}>Modifica</button>
-                <button className={styles.btnPrimary} onClick={() => setIsDetailModalOpen(false)}>Chiudi</button>
-              </div>
+      <RaModal
+        open={isDetailModalOpen && selectedPost !== null}
+        onClose={() => setIsDetailModalOpen(false)}
+        title={selectedPost?.titolo ?? ''}
+        description={selectedPost ? (
+          <span className={styles.detailHead}>
+            <span className={styles.tipoBadge}>{tipoLabel(tipoOf(selectedPost))}</span>
+            <span className={styles.statusBadge}>{statoLabel(statoOf(selectedPost))}</span>
+            <span className={styles.cardDate}>
+              {new Date(selectedPost.data_pubblicazione).toLocaleString('it-IT', {
+                weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
+              })}
+            </span>
+          </span>
+        ) : undefined}
+        footer={selectedPost ? (
+          <div className={styles.detailFooter}>
+            <RaButton variant="danger" onClick={() => handleDeletePost(selectedPost.id)}>Elimina</RaButton>
+            <div className={styles.detailFooterRight}>
+              <RaButton variant="outline" onClick={() => handleDuplicate(selectedPost)}>Duplica</RaButton>
+              <RaButton variant="outline" onClick={() => openEdit(selectedPost)}>Modifica</RaButton>
+              <RaButton variant="accent" onClick={() => setIsDetailModalOpen(false)}>Chiudi</RaButton>
             </div>
           </div>
-        </div>
-      )}
+        ) : undefined}
+      >
+        {selectedPost && (
+          <div style={accentVars(selectedPost)}>
+            <div className={styles.detailMetaGrid}>
+              <RaField label="Stato" htmlFor="detail_stato">
+                <RaSelect
+                  id="detail_stato"
+                  value={statoOf(selectedPost)}
+                  onChange={(e) => patchPost(selectedPost.id, { stato_grafica: e.target.value as Stato })}
+                >
+                  {STATI.map(st => <option key={st.id} value={st.id}>{st.label}</option>)}
+                </RaSelect>
+              </RaField>
+
+              <RaField label="Responsabile">
+                <span className={styles.detailMetaValue}>{selectedPost.responsabile || '—'}</span>
+              </RaField>
+
+              <RaField label="Materiale">
+                {selectedPost.canva_link ? (
+                  <RaButton variant="outline" size="sm" href={selectedPost.canva_link} target="_blank" rel="noopener noreferrer">
+                    Apri Canva
+                  </RaButton>
+                ) : (
+                  <span className={styles.noLinkHint}>Nessun link allegato</span>
+                )}
+              </RaField>
+            </div>
+
+            {selectedPost.didascalia && (
+              <RaField
+                label="Didascalia"
+                hint={`${selectedPost.didascalia.length} caratteri · ${countHashtags(selectedPost.didascalia)} hashtag`}
+              >
+                <div className={styles.captionBox}>
+                  <p className={styles.captionText}>{selectedPost.didascalia}</p>
+                  <button
+                    className={styles.copyBtn}
+                    onClick={() => handleCopyCaption(selectedPost.didascalia)}
+                    title="Copia didascalia"
+                    type="button"
+                  >
+                    📋
+                  </button>
+                </div>
+              </RaField>
+            )}
+
+            {selectedPost.note && (
+              <RaField label="Note interne">
+                <div className={styles.captionBox}>
+                  <p className={styles.captionText} style={{ marginRight: 0 }}>{selectedPost.note}</p>
+                </div>
+              </RaField>
+            )}
+          </div>
+        )}
+      </RaModal>
 
       {/* --- MODALE GIORNO (elenco completo) --- */}
-      {dayModal && (
-        <div className={styles.modalOverlay} onClick={() => setDayModal(null)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>
-                {new Date(dayModal.y, dayModal.m, dayModal.d).toLocaleDateString('it-IT', {
-                  weekday: 'long', day: 'numeric', month: 'long',
-                })}
-              </h3>
-              <button className={styles.closeBtn} onClick={() => setDayModal(null)}>&times;</button>
+      <RaModal
+        open={dayModal !== null}
+        onClose={() => setDayModal(null)}
+        title={dayModal ? new Date(dayModal.y, dayModal.m, dayModal.d).toLocaleDateString('it-IT', {
+          weekday: 'long', day: 'numeric', month: 'long',
+        }) : ''}
+        footer={
+          <RaButton
+            variant="accent"
+            onClick={() => {
+              if (!dayModal) return;
+              const { y, m, d } = dayModal;
+              setDayModal(null);
+              openNewPost(`${y}-${pad(m + 1)}-${pad(d)}T14:00`);
+            }}
+          >
+            + Aggiungi contenuto
+          </RaButton>
+        }
+      >
+        <div className={styles.dayList}>
+          {dayModal && (postsByDay[`${dayModal.y}-${dayModal.m}-${dayModal.d}`] || []).map(post => (
+            <div
+              key={post.id}
+              className={styles.boardCard}
+              style={accentVars(post)}
+              onClick={() => { setSelectedPost(post); setDayModal(null); setIsDetailModalOpen(true); }}
+            >
+              <span className={styles.boardCardTitle}>{post.titolo}</span>
+              <span className={styles.boardCardMeta}>
+                <span className={styles.badgeTipo}>{tipoLabel(tipoOf(post))}</span>
+                ·
+                <span>{new Date(post.data_pubblicazione).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
+                · <span>{statoLabel(statoOf(post))}</span>
+              </span>
             </div>
-
-            <div className={styles.modalBody}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {(postsByDay[`${dayModal.y}-${dayModal.m}-${dayModal.d}`] || []).map(post => (
-                  <div
-                    key={post.id}
-                    className={styles.boardCard}
-                    style={accentVars(post)}
-                    onClick={() => { setSelectedPost(post); setDayModal(null); setIsDetailModalOpen(true); }}
-                  >
-                    <span className={styles.boardCardTitle}>{post.titolo}</span>
-                    <span className={styles.boardCardMeta}>
-                      <span className={styles.badgeTipo}>{tipoLabel(tipoOf(post))}</span>
-                      ·
-                      <span>{new Date(post.data_pubblicazione).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
-                      · <span>{statoLabel(statoOf(post))}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.modalFooter}>
-              <button
-                className={styles.btnPrimary}
-                onClick={() => {
-                  const { y, m, d } = dayModal;
-                  setDayModal(null);
-                  openNewPost(`${y}-${pad(m + 1)}-${pad(d)}T14:00`);
-                }}
-              >
-                + Aggiungi contenuto
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
-      )}
-
-      {/* --- TOAST --- */}
-      {toast && <div className={styles.toast}>{toast}</div>}
-    </div>
+      </RaModal>
+    </RaPage>
   );
 }
