@@ -1,0 +1,48 @@
+/* Stili propri della schermata Direttivo. Tutto il resto e' condiviso. */
+
+.card {
+  width: 100%;
+  max-width: 520px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--ra-surface-1);
+  border: 1px solid var(--ra-line-soft);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ra-txt-2);
+}
+
+/* Il keyframe deve stare nello stesso modulo che lo usa: i nomi delle
+   animazioni vengono hashati e non attraversano i file. */
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ra-accent);
+  box-shadow: 0 0 10px var(--ra-accent);
+  animation: statusPulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.9); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statusDot { animation: none; }
+}
