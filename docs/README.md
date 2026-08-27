@@ -39,6 +39,8 @@ devono essere scambiate per funzionalità disponibili.
 - [Sviluppo locale](project/development.md): avvio, test e convenzioni.
 - [Manutenzione della documentazione](project/documentation-maintenance.md): standard e
   responsabilità.
+- [Design system dell'area riservata](project/design-system-riservata.md): token,
+  primitive e regole condivise dai sottodomini protetti.
 - [Rischi e debito noto](project/known-risks.md): problemi conosciuti e verifiche aperte.
 
 ### Identità visiva

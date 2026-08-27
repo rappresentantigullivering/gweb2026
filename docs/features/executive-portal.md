@@ -3,7 +3,7 @@
 ## Metadati
 
 - **Stato:** Parziale
-- **Ultima verifica:** 2026-07-13, commit `3eae46f`
+- **Ultima verifica:** 2026-08-27, commit `0ffe576`
 - **Punti di ingresso:** `direttivo.gulliverancona.it`, `src/app/direttivo/page.tsx`
 
 ## Scopo e stato attuale
@@ -22,6 +22,9 @@ popup globale.
 - Routing/RBAC: `src/proxy.ts`.
 - Accesso dal cockpit: `src/app/tesserati/page.tsx`.
 - Accento visivo corrente: rosa `#ec4899` su interfaccia scura.
+
+L'interfaccia usa le primitive condivise descritte in
+[Design system dell'area riservata](../project/design-system-riservata.md).
 
 ## Dipendenze
 

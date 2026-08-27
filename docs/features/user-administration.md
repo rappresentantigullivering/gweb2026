@@ -3,7 +3,7 @@
 ## Metadati
 
 - **Stato:** Implementata
-- **Ultima verifica:** 2026-07-13, commit `3eae46f`
+- **Ultima verifica:** 2026-08-27, commit `0ffe576`
 - **Punti di ingresso:** `admin.gulliverancona.it`, `/api/users*`
 
 ## Scopo e flusso
@@ -23,6 +23,9 @@ accessi ai servizi.
 Le password sono hashate prima della persistenza. Le risposte API non espongono gli
 hash. Il sistema impedisce all'admin corrente di eliminare se stesso o rimuovere il
 proprio ruolo amministratore.
+
+L'interfaccia usa le primitive condivise descritte in
+[Design system dell'area riservata](../project/design-system-riservata.md).
 
 ## Ruoli disponibili
 

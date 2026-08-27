@@ -3,7 +3,7 @@
 ## Metadati
 
 - **Stato:** Implementata, automazione scheduler da verificare
-- **Ultima verifica:** 2026-07-13, commit `3eae46f`
+- **Ultima verifica:** 2026-08-27, commit `0ffe576`
 - **Punti di ingresso:** `comunicazione.gulliverancona.it`, `/api/comunicazione*`
 
 ## Scopo e flusso
@@ -27,6 +27,9 @@ gli aggiornamenti per evitare duplicati.
 Il reminder “24h” usa attualmente una finestra maggiore di 18 e fino a 25 ore; quello
 “1h” maggiore di zero e fino a 1,2 ore. `CRON_SECRET` protegge l'endpoint in produzione;
 bot e destinazione arrivano da variabili Telegram.
+
+L'interfaccia usa le primitive condivise descritte in
+[Design system dell'area riservata](../project/design-system-riservata.md).
 
 ## Dipendenze
 

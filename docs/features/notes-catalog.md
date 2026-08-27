@@ -3,7 +3,7 @@
 ## Metadati
 
 - **Stato:** Implementata
-- **Ultima verifica:** 2026-07-13, commit `3eae46f`
+- **Ultima verifica:** 2026-08-27, commit `0ffe576`
 - **Punti di ingresso:** `appunti.gulliverancona.it`, `/api/appunti`
 
 ## Scopo e flusso
@@ -33,6 +33,9 @@ filtri. Il ruolo richiesto è `appunti` oppure `admin`.
 
 Per i cartacei l'ID è generato dalla posizione della riga (`c-<indice>`); un riordino
 del foglio può quindi cambiare gli ID anche se il contenuto resta uguale.
+
+L'interfaccia usa le primitive condivise descritte in
+[Design system dell'area riservata](../project/design-system-riservata.md).
 
 ## Dipendenze
 

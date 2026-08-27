@@ -3,7 +3,7 @@
 ## Metadati
 
 - **Stato:** Implementata
-- **Ultima verifica:** 2026-07-13, commit `3eae46f`
+- **Ultima verifica:** 2026-08-27, commit `0ffe576`
 - **Punti di ingresso:** `forms.gulliverancona.it`, `/f/[slug]`, `/api/forms`
 
 ## Scopo e flusso
@@ -27,6 +27,9 @@ Il servizio crea URL Gulliver stabili che incorporano form Tally:
 L'API GET espone la configurazione necessaria alle pagine pubbliche. Le mutazioni
 richiedono sessione con ruolo `forms`/`admin`; esiste ancora una compatibilità Bearer
 basata su `ADMIN_PASSWORD` da considerare legacy.
+
+L'interfaccia usa le primitive condivise descritte in
+[Design system dell'area riservata](../project/design-system-riservata.md).
 
 ## Slug e stato
 

@@ -3,7 +3,7 @@
 ## Metadati
 
 - **Stato:** Implementata
-- **Ultima verifica:** 2026-07-13, commit `3eae46f`
+- **Ultima verifica:** 2026-08-27, commit `0ffe576`
 - **Punti di ingresso:** `popup.gulliverancona.it`, `/api/settings`, `VotingModal`
 
 ## Scopo e flusso
@@ -28,6 +28,9 @@ compatibilità Bearer legacy basata su `ADMIN_PASSWORD`.
 
 Il componente contiene anche valori elettorali predefiniti e date 12–14 maggio 2026:
 questo legame va controllato prima di ogni campagna non elettorale o nuova elezione.
+
+L'interfaccia usa le primitive condivise descritte in
+[Design system dell'area riservata](../project/design-system-riservata.md).
 
 ## Dipendenze
 
