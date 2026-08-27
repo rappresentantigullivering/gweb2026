@@ -1,0 +1,38 @@
+/* Stili propri della gestione utenti. */
+
+.columns {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.colMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.colSide {
+  position: sticky;
+  top: 5.5rem;
+  min-width: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* Evidenzia la riga dell'amministratore collegato. */
+.selfUser {
+  border-color: color-mix(in srgb, var(--ra-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--ra-accent) 6%, transparent);
+}
+
+@media (max-width: 980px) {
+  .columns { grid-template-columns: 1fr; }
+  .colSide { position: static; }
+}
