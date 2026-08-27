@@ -1,0 +1,95 @@
+/* Stili propri delle tre schermate pubbliche del portale tesserati
+   (accesso, registrazione, accesso negato). Tutto il resto arriva dalle
+   primitive condivise in src/components/riservata. */
+
+.authCard {
+  width: 100%;
+  max-width: 440px;
+}
+
+.authHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  margin-bottom: 1.75rem;
+}
+
+.logoBadge {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--red-primary);
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-red);
+  margin-bottom: 0.6rem;
+}
+
+.authTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.authDesc {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.authFooter {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ra-line-soft);
+  text-align: center;
+}
+
+.authLink {
+  font-size: 0.82rem;
+  color: var(--ra-txt-3);
+  transition: color var(--transition-base);
+}
+
+.authLink:hover {
+  color: var(--ra-txt-1);
+  text-decoration: underline;
+}
+
+/* Cerchio d'icona: verde per la conferma, rosso per l'accesso negato */
+.statusIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  background: color-mix(in srgb, var(--icon-color) 12%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--icon-color) 32%, transparent);
+  color: var(--icon-color);
+}
+
+.centeredText {
+  text-align: center;
+}
+
+.dividerAccent {
+  width: 50px;
+  height: 3px;
+  background: var(--red-primary);
+  border-radius: var(--radius-full);
+  margin: 0.85rem auto 1.25rem;
+}

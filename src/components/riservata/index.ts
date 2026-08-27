@@ -34,6 +34,8 @@ export type { AreaId, RoleId } from './areas';
 
 export {
   areaUrl,
+  useAreaUrl,
+  useDashboardUrl,
   dashboardUrl,
   loginUrl,
   redirectToLogin,
