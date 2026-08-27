@@ -36,6 +36,7 @@ export {
   areaUrl,
   useAreaUrl,
   useDashboardUrl,
+  useIsClient,
   dashboardUrl,
   loginUrl,
   redirectToLogin,

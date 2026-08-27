@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import type { AreaId } from './areas';
 
 /**
@@ -108,20 +108,28 @@ export async function logout(): Promise<void> {
 }
 
 /**
- * Versione a hook di `areaUrl`.
+ * True solo dopo l'idratazione.
  *
- * L'URL dipende da `window.location.host`, che sul server non esiste:
- * calcolarlo durante il render darebbe valori diversi fra HTML servito e
- * primo render nel browser, cioe' un errore di idratazione. Qui il primo
- * render restituisce `undefined` su entrambi i lati e l'indirizzo compare
- * subito dopo il montaggio.
+ * Serve perche' gli indirizzi dell'area riservata dipendono da
+ * `window.location.host`, che sul server non esiste: calcolarli durante il
+ * render darebbe HTML servito e primo render nel browser diversi, cioe' un
+ * errore di idratazione. Rispetto a un `useState` aggiornato in un effetto
+ * questo non provoca un secondo render a catena.
  */
+const subscribeNoop = () => () => {};
+
+export function useIsClient(): boolean {
+  return useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
+}
+
+/** Versione a hook di `areaUrl`: indefinita finche' non si e' nel browser. */
 export function useAreaUrl(area: AreaId, path = ''): string | undefined {
-  const [url, setUrl] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    setUrl(areaUrl(area, path));
-  }, [area, path]);
-  return url;
+  const isClient = useIsClient();
+  return isClient ? areaUrl(area, path) : undefined;
 }
 
 /** Come sopra, per l'hub dei tesserati. */

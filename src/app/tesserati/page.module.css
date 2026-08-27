@@ -1,0 +1,154 @@
+/* Stili propri della dashboard hub. Le primitive stanno in
+   src/components/riservata. */
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding-top: 3.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.userBadge {
+  align-self: flex-start;
+  font-family: var(--font-heading);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ra-txt-3);
+  background: var(--ra-surface-2);
+  border: 1px solid var(--ra-line-soft);
+  padding: 0.28rem 0.7rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.35rem;
+}
+
+.greeting {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.username {
+  background: linear-gradient(120deg, #ffffff 10%, var(--red-light) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  overflow-wrap: anywhere;
+}
+
+.subtitle {
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+/*
+ * Larghezza massima per card e centratura: con auto-fit e senza tetto,
+ * un utente con un solo ruolo si vedrebbe una card larga tutta la pagina,
+ * mentre con `repeat(3, 1fr)` fisso restava un rettangolo stretto a
+ * sinistra e due colonne vuote. Cosi' regge da 1 a 6 elementi.
+ */
+.grid {
+  display: grid;
+  /* 360px e' il massimo che consente tre colonne dentro --max-width
+     (3x360 + 2x24 di gap = 1128, contro i 1152 disponibili). */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
+  justify-content: center;
+  gap: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+.serviceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-height: 100%;
+}
+
+.serviceIcon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--ra-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ra-accent) 28%, transparent);
+  color: var(--ra-accent);
+  margin-bottom: 0.4rem;
+  transition: background var(--transition-base), color var(--transition-base);
+}
+
+.serviceCard:hover .serviceIcon {
+  background: var(--ra-accent);
+  color: #ffffff;
+}
+
+.serviceTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.serviceSubtitle {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin: 0;
+  flex: 1;
+}
+
+.serviceFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ra-line-soft);
+}
+
+.serviceHost {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--ra-txt-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.serviceArrow {
+  color: var(--ra-accent);
+  display: flex;
+  transition: transform var(--transition-base);
+  flex-shrink: 0;
+}
+
+.serviceCard:hover .serviceArrow {
+  transform: translateX(4px);
+}
+
+.emptyCard {
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+@media (max-width: 620px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 2.5rem;
+  }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}

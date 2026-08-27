@@ -10,6 +10,7 @@ import {
   AREA_ACCENT, AREA_LABEL, AVAILABLE_ROLES, roleAccent,
   type AreaId,
 } from '@/components/riservata';
+import hub from '../tesserati/page.module.css';
 
 const AREAS = Object.keys(AREA_ACCENT) as AreaId[];
 const VARIANTS = ['primary', 'accent', 'outline', 'subtle', 'ghost', 'danger', 'success', 'link'] as const;
@@ -66,6 +67,34 @@ export default function RiservataPreview() {
             </div>
             <code style={{ fontSize: '.8rem', opacity: .6 }}>--ra-accent: {AREA_ACCENT[area]}</code>
           </RaToolbar>
+        </RaSection>
+
+        {/* ── Composizione: griglia dell'hub con 1, 2 e 6 card ── */}
+        <RaSection title="Hub tesserati · tenuta della griglia">
+          {[1, 2, 6].map((n) => (
+            <div key={n}>
+              <p style={{ fontSize: '.75rem', opacity: .45, margin: '.75rem 0 .35rem' }}>
+                utente con {n} {n === 1 ? 'ruolo' : 'ruoli'}
+              </p>
+              <div className={hub.grid} style={{ paddingBottom: '1rem' }}>
+                {AREAS.filter((a) => a !== 'tesserati').slice(0, n).map((a) => (
+                  <RaCard key={a} accent={AREA_ACCENT[a]} interactive topBar padding="lg" href="#" className={hub.serviceCard}>
+                    <span className={hub.serviceIcon}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /></svg>
+                    </span>
+                    <h2 className={hub.serviceTitle}>{AREA_LABEL[a]}</h2>
+                    <p className={hub.serviceSubtitle}>Descrizione di esempio del servizio, lunga quanto quelle reali della dashboard.</p>
+                    <span className={hub.serviceFooter}>
+                      <span className={hub.serviceHost}>{a}.gulliverancona.it</span>
+                      <span className={hub.serviceArrow}>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                      </span>
+                    </span>
+                  </RaCard>
+                ))}
+              </div>
+            </div>
+          ))}
         </RaSection>
 
         {/* ── Statistiche ── */}
