@@ -21,6 +21,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/guide26",
+        destination: "/guida26",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withMDX(nextConfig);
