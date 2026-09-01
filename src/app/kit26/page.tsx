@@ -72,7 +72,7 @@ export default function Kit26Page() {
             </p>
 
             <a 
-              href="/docs/2026/kit26-provvisorio.pdf"
+              href="/docs/2026/kit26-27-definitivo.pdf"
               target="_blank" 
               rel="noopener noreferrer" 
               className="btn btn-primary btn-lg" 
@@ -88,7 +88,7 @@ export default function Kit26Page() {
 
             <div style={{ marginTop: '0.5rem' }}>
               <a 
-                href="/docs/2026/kit26-provvisorio.pdf"
+                href="/docs/2026/kit26-27-definitivo.pdf"
                 download 
                 style={{ 
                   color: 'var(--gray-500)', 
