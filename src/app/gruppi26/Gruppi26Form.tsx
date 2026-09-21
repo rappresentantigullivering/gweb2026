@@ -36,7 +36,7 @@ const facultyData: FacultyGroup[] = [
       { name: "Economia Aziendale", url: "https://chat.whatsapp.com/FhuoEfNo3JB3F2Jg4u9e8g", type: "Triennale" },
       { name: "Digital Economics and Business", url: "https://chat.whatsapp.com/I6PYH8a4rVtFAzsbM7gaqH", type: "Triennale" },
       { name: "Sustainability Management and Circular Economy", url: "https://chat.whatsapp.com/FqpHnNzdrXV6y6T1wJJftg", type: "Magistrale" },
-      { name: "Management pubblico e dei sistemi socio-sanitari", url: "https://chat.whatsapp.com/JZCWJkoeWqw2Gz6bNoYNZv", type: "Magistrale" },
+      { name: "Management pubblico e dei sistemi socio-sanitari", url: "https://chat.whatsapp.com/EwC6MUcLZiWEdlGkCsVeTC?s=cl&p=i&mlu=4&ilr=4", type: "Magistrale" },
       { name: "Business Organization and Strategy", url: "https://chat.whatsapp.com/JHZLbdNOm2tIXSpzECgXJY", type: "Magistrale" },
       { name: "International Business", url: "https://chat.whatsapp.com/DpzgCFjc0V0F6TavDFGG0h", type: "Magistrale" },
       { name: "Global Economic Analysis", url: "https://chat.whatsapp.com/JHZLbdNOm2tIXSpzECgXJY", type: "Magistrale" },
