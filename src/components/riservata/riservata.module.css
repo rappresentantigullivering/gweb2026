@@ -100,6 +100,27 @@
   padding: 1.5rem;
 }
 
+/*
+ * Convivenza con la navbar pubblica.
+ *
+ * Sui sottodomini di servizio il layout root non monta la navbar, quindi in
+ * produzione questa regola non si attiva mai. In locale pero' l'area
+ * riservata si raggiunge anche da localhost nudo (localhost:3000/admin), dove
+ * il sottodominio non esiste: li' la navbar c'e', e' position: fixed e alta
+ * 72px, e senza spazio riservato coprirebbe l'intestazione del portale.
+ *
+ * 72px e' l'altezza di .inner in src/components/Navbar.module.css, uguale a
+ * tutti i breakpoint. Il padding non allunga la pagina perche' il reset di
+ * globals.css impone box-sizing: border-box.
+ */
+:global(body[data-public-chrome]) .scope {
+  padding-top: var(--ra-public-navbar, 72px);
+}
+
+:global(body[data-public-chrome]) .headerSticky {
+  top: var(--ra-public-navbar, 72px);
+}
+
 /* ── LAYOUT ──────────────────────────────────────────────────────── */
 .container {
   max-width: var(--max-width);

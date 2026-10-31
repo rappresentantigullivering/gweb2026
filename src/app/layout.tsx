@@ -97,7 +97,14 @@ export default async function RootLayout({
 
   return (
     <html lang="it">
-      <body>
+      {/*
+        data-public-chrome segnala che la navbar pubblica (fixed, alta 72px)
+        e' montata. Serve all'area riservata, che in locale si raggiunge anche
+        da localhost nudo: li' il sottodominio non c'e', la navbar compare e
+        senza questo riferimento finirebbe sopra l'intestazione del portale.
+        Sui sottodomini di servizio l'attributo non viene emesso.
+      */}
+      <body data-public-chrome={isServiceSubdomain ? undefined : 'true'}>
         {!isServiceSubdomain && <Navbar />}
         <main>{children}</main>
         {!isServiceSubdomain && (

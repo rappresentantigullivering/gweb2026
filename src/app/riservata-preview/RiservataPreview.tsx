@@ -36,10 +36,7 @@ export default function RiservataPreview() {
 
   return (
     <RaPage area={area} title="Anteprima design system">
-      {/* Su localhost nudo il layout root mostra la navbar pubblica in
-          position: fixed. In produzione, sui sottodomini, non c'e'. */}
-      <div style={{ height: 44 }} aria-hidden="true" />
-      <RaHeader area={area} meta="lorecalif" showLogout showBack sticky={false}>
+      <RaHeader area={area} meta="lorecalif" showLogout showBack>
         <RaTabs
           tabs={[{ id: 'uno', label: 'Calendario' }, { id: 'due', label: 'Bacheca' }, { id: 'tre', label: 'Lista' }]}
           active={tab}
